@@ -1,11 +1,14 @@
-/*
-Adapated from:
-
-    pybind11/eigen.h: Transparent conversion for dense and sparse Eigen matrices
-    Copyright (c) 2016 Wolf Vollprecht <w.vollprecht@gmail.com>
-                       Wenzel Jakob <wenzel.jakob@epfl.ch>
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE file.
+/*  carma/utils.h: Utility functions for arma converters
+ *  Copyright (c) 2020 Ralph Urlus <rurlus.dev@gmail.com>
+ *  All rights reserved. Use of this source code is governed by a
+ *  Apache-2.0 license that can be found in the LICENSE file.
+ *
+ *  Adapated from:
+ *      pybind11/numpy.h: Basic NumPy support, vectorize() wrapper
+ *
+ *      Copyright (c) 2016 Wenzel Jakob <wenzel.jakob@epfl.ch>
+ *      All rights reserved. Use of this source code is governed by a
+ *      BSD-style license that can be found in the LICENSE file.
 */
 
 /* External headers */
