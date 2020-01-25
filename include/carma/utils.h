@@ -1,20 +1,18 @@
-/*
-Adapated from:
-
-    pybind11/eigen.h: Transparent conversion for dense and sparse Eigen matrices
-    Copyright (c) 2016 Wolf Vollprecht <w.vollprecht@gmail.com>
-                       Wenzel Jakob <wenzel.jakob@epfl.ch>
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the pybind11/LICENSE file.
-
-    arma_wrapper/arma_wrapper.h
-    Copyright (c) 2019 Paul Sangrey
-    https://gitlab.com/sangrey/Arma_Wrapper
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-
+/*  carma/utils.h: Utility functions for arma converters
+ *  Copyright (c) 2020 Ralph Urlus <rurlus.dev@gmail.com>
+ *  All rights reserved. Use of this source code is governed by a
+ *  Apache-2.0 license that can be found in the LICENSE file.
+ *
+ *  Adapated from:
+ *
+ *      pybind11/eigen.h: Transparent conversion for dense and sparse Eigen matrices
+ *      Copyright (c) 2016 Wolf Vollprecht <w.vollprecht@gmail.com>
+ *                         Wenzel Jakob <wenzel.jakob@epfl.ch>
+ *      All rights reserved. Use of this source code is governed by a
+ *      BSD-style license that can be found in the pybind11/LICENSE file.
+ *
+ *      arma_wrapper/arma_wrapper.h:
+ *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
 */
 #include <memory>
 #include <utility>
