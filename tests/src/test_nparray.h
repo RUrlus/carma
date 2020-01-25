@@ -15,6 +15,16 @@ namespace carma { namespace tests {
         py::array_t<double> & arr, size_t index, double value
     );
 
+
+    long test_flat_reference_long(py::array_t<long> & arr, size_t index);
+    double test_flat_reference_double(py::array_t<double> & arr, size_t index);
+    long test_mutable_flat_reference_long(
+        py::array_t<long> & arr, size_t index, long value
+    );
+    double test_mutable_flat_reference_double(
+        py::array_t<double> & arr, size_t index, double value
+    );
+
 } /* tests */
 } /* carma */
 

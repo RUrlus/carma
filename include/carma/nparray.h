@@ -46,6 +46,48 @@ namespace carma {
         return (!is_writable(arr) || !is_owndata(arr) || !is_aligned(arr));
     }
 
+    template <typename T>
+    class flat_reference {
+        /* get flattened, unsafe, unchecked const access to array */
+    private:
+        const unsigned char *ptr;
+        const size_t tsize;
+
+    public:
+        // Constructor
+        flat_reference(const T *data)
+        : ptr{reinterpret_cast<const unsigned char *>(data)}, tsize{sizeof(T)} {}
+
+        flat_reference(const py::array_t<T> &arr)
+        : ptr{reinterpret_cast<const unsigned char *>(arr.data())}, tsize{sizeof(T)} {}
+
+        // offset pointer and dereference
+        const T& operator[](size_t index) const {
+            return *reinterpret_cast<const T *>(ptr + tsize * index);
+        }
+    };
+
+    template <typename T>
+    class mutable_flat_reference {
+        /* get flattened, unsafe, unchecked mutable access to array */
+    private:
+        const unsigned char *ptr;
+        const size_t tsize;
+
+    public:
+        // Constructor
+        mutable_flat_reference(T *data)
+        : ptr{reinterpret_cast<unsigned char *>(data)}, tsize{sizeof(T)} {}
+
+        mutable_flat_reference(py::array_t<T> &arr)
+        : ptr{reinterpret_cast<unsigned char *>(arr.mutable_data())}, tsize{sizeof(T)} {}
+
+        // offset pointer and return
+        T& operator[](size_t index) {
+            return const_cast<T &>(*reinterpret_cast<const T *>(ptr + tsize * index));
+        }
+    };
+
 } /* carma */
 
 #endif /* NPARRAY */
