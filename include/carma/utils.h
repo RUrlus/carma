@@ -90,8 +90,10 @@ namespace carma {
          */
         py::capsule base(data, [](void *f) {
             T *data = reinterpret_cast<T *>(f);
-            // FIXME remove for release
+            #ifndef NDEBUG
+            // if in debug mode let us know what pointer is being freed
             std::cerr << "freeing memory @ " << f << "\n";
+            #endif
             delete[] data;
         });
         return base;
