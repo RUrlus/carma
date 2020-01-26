@@ -1,4 +1,4 @@
-"""Test arma.h."""
+"""Test numpy array to matrix conversion function."""
 import numpy as np
 
 import libs.test_carma as carma
@@ -153,3 +153,64 @@ def test_arr_to_row_copy_C():
     sample = np.asarray(np.random.normal(size=10), dtype=np.float64, order='C')
     flag = carma.arr_to_row(sample, True, False)
     assert flag == 5, test_flags[flag]
+
+
+def test_arr_to_mat_cube():
+    """Test arr_to_cube."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 2, 2)), dtype=np.float64, order='F'
+    )
+    flag = carma.arr_to_cube(sample, False, False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_arr_to_cube_double_c_contiguous():
+    """Test arr_to_mat."""
+    sample = np.asarray(np.random.normal(size=(10, 2, 2)), dtype=np.float64)
+    flag = carma.arr_to_cube(sample, False, False)
+    assert flag == 5, test_flags[flag]
+
+
+def test_arr_to_mat_cube_copy():
+    """Test arr_to_cube."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 2, 2)), dtype=np.float64, order='F'
+    )
+    flag = carma.arr_to_cube(sample, True, False)
+    assert flag == 5, test_flags[flag]
+
+
+def test_to_arma_mat():
+    """Test private implementation of to_arma for matrix."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 2)), dtype=np.float64, order='F'
+    )
+    flag = carma.to_arma_mat(sample, False, False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_to_arma_cube():
+    """Test private implementation of to_arma for matrix."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 2, 2)), dtype=np.float64, order='F'
+    )
+    flag = carma.to_arma_cube(sample, False, False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_to_arma_col():
+    """Test private implementation of to_arma for matrix."""
+    sample = np.asarray(
+        np.random.normal(size=10), dtype=np.float64, order='F'
+    )
+    flag = carma.to_arma_col(sample, False, False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_to_arma_row():
+    """Test private implementation of to_arma for matrix."""
+    sample = np.asarray(
+        np.random.normal(size=10), dtype=np.float64, order='F'
+    )
+    flag = carma.to_arma_row(sample, False, False)
+    assert flag == 0, test_flags[flag]

@@ -25,8 +25,7 @@ namespace carma { namespace tests {
         py::array_t<double> & arr, size_t index, double value
     );
 
-} /* tests */
-} /* carma */
+} /* tests */ } /* carma */
 
 void bind_test_is_f_contiguous(py::module &m);
 void bind_test_is_c_contiguous(py::module &m);
