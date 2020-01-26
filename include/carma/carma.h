@@ -161,7 +161,6 @@ namespace carma {
          * Note that the user set behaviour is overridden is one of the above conditions
          * is true
          *
-         * If the array is 1D we create a column oriented matrix (N, 1)
          */
         // set as array buffer
         py::array_t<T> buffer = py::array_t<T>::ensure(src);
@@ -186,7 +185,14 @@ namespace carma {
             copy = false;
             strict = false;
         }
-        return arma::Cube<T>(static_cast<T *>(info.ptr), info.shape[0], info.shape[1], info.shape[3], copy, strict);
+        return arma::Cube<T>(
+            static_cast<T *>(info.ptr),
+            info.shape[0],
+            info.shape[1],
+            info.shape[2],
+            copy,
+            strict
+        );
     } /* arr_to_mat */
 
     /* The below functor approach is ported from:
