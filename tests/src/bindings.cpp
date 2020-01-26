@@ -6,6 +6,7 @@ namespace py = pybind11;
 
 #include "test_nparray.h"
 #include "test_arr_to_mat.h"
+#include "test_mat_to_arr.h"
 
 PYBIND11_MODULE(test_carma, m) {
     // arr_to_mat
@@ -20,6 +21,12 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_to_arma_col(m);
     bind_test_to_arma_row(m);
     bind_test_to_arma_cube(m);
+    // mat_to_arr
+    bind_test_mat_to_arr(m);
+    bind_test_row_to_arr(m);
+    bind_test_col_to_arr(m);
+    bind_test_cube_to_arr(m);
+    bind_test_mat_to_arr_return(m);
     // nparray
     bind_test_is_owndata(m);
     bind_test_is_aligned(m);
