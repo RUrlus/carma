@@ -11,7 +11,7 @@ pybind11_add_module(${MODNAME}
     MODULE
         ${SUBPATH}/bindings.cpp
         ${SUBPATH}/test_nparray.cpp
-        ${SUBPATH}/test_converters.cpp
+        ${SUBPATH}/test_arr_to_mat.cpp
 )
 
 TARGET_INCLUDE_DIRECTORIES(${MODNAME}

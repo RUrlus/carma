@@ -1,4 +1,4 @@
-#include "test_converters.h"
+#include "test_arr_to_mat.h"
 
 namespace carma { namespace tests {
 
@@ -176,15 +176,165 @@ int test_arr_to_row(py::array_t<double> & arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_col_double */
 
-py::array_t<double> test_mat_to_arr(py::array_t<double> & arr) {
-    //arma::Mat<double> M = carma::arr_to_mat<double>(arr, false, false);
-    return mat_to_arr<double>(carma::arr_to_mat<double>(arr, false, false));
-    //return carma::arr_to_mat<double>(arr, false, false);
-} /* test_mat_to_arr */
+int test_arr_to_cube(py::array_t<double> & arr, bool copy, bool strict) {
+    // attributes of the numpy array
+    size_t arr_N = arr.size();
+    size_t arr_S0 = arr.shape(0);
+    size_t arr_S1 = arr.shape(1);
+    size_t arr_S2 = arr.shape(2);
+    auto arr_p = arr.unchecked<3>();
 
+    // get buffer for raw pointer
+    py::buffer_info info = arr.request();
 
-} /* tests */
-} /* carma */
+    // compute sum of array
+    double arr_sum = 0;
+
+    for (size_t si = 0; si < arr_S2; si++) {
+        for (size_t ci = 0; ci < arr_S1; ci++) {
+        	for (size_t ri = 0; ri < arr_S0; ri++) {
+	    		    arr_sum += arr_p(ri, ci, si);
+            }
+		}
+	}
+
+    // call function to be tested
+    arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
+
+    // ---------------------------------------------------------------
+    double cube_sum = arma::accu(M);
+
+    // variable for test status
+    if (arr_N != M.n_elem) return 1;
+    if (arr_S0 != M.n_rows) return 2;
+    if (arr_S1 != M.n_cols) return 3;
+    if (arr_S2 != M.n_slices) return 3;
+    if (std::abs(arr_sum - cube_sum) > 1e-12) return 4;
+    if (info.ptr != M.memptr()) return 5;
+    return 0;
+} /* arr_to_cube_double */
+
+int test_to_arma_mat(py::array_t<double> & arr, bool copy, bool strict) {
+    size_t arr_N = arr.size();
+    size_t arr_S0 = arr.shape(0);
+    size_t arr_S1 = arr.shape(1);
+    auto arr_p = arr.unchecked<2>();
+
+    // get buffer for raw pointer
+    const py::buffer_info pre_info = arr.request();
+
+    // compute sum of array
+    double arr_sum = 0;
+    for (size_t ci = 0; ci < arr_S1; ci++) {
+    	for (size_t ri = 0; ri < arr_S0; ri++) {
+			 arr_sum += arr_p(ri, ci);
+		}
+	}
+
+    // call function to be tested
+    arma::Mat<double> M = carma::_to_arma<arma::Mat<double>>::from(arr, copy, strict);
+
+    // ---------------------------------------------------------------
+    double mat_sum = arma::accu(M);
+
+    // variable for test status
+    if (arr_N != M.n_elem) return 1;
+    if (arr_S0 != M.n_rows) return 2;
+    if (arr_S1 != M.n_cols) return 3;
+    if (std::abs(arr_sum - mat_sum) > 1e-12) return 4;
+    if (pre_info.ptr != M.memptr()) return 5;
+    return 0;
+} /* arr_to_arma_mat */
+
+int test_to_arma_cube(py::array_t<double> & arr, bool copy, bool strict) {
+    // attributes of the numpy array
+    size_t arr_N = arr.size();
+    size_t arr_S0 = arr.shape(0);
+    size_t arr_S1 = arr.shape(1);
+    size_t arr_S2 = arr.shape(2);
+    auto arr_p = arr.unchecked<3>();
+
+    // get buffer for raw pointer
+    py::buffer_info info = arr.request();
+
+    // compute sum of array
+    double arr_sum = 0;
+
+    for (size_t si = 0; si < arr_S2; si++) {
+        for (size_t ci = 0; ci < arr_S1; ci++) {
+        	for (size_t ri = 0; ri < arr_S0; ri++) {
+	    		    arr_sum += arr_p(ri, ci, si);
+            }
+		}
+	}
+
+    // call function to be tested
+    arma::Cube<double> M = carma::_to_arma<arma::Cube<double>>::from(arr, copy, strict);
+
+    // ---------------------------------------------------------------
+    double cube_sum = arma::accu(M);
+
+    // variable for test status
+    if (arr_N != M.n_elem) return 1;
+    if (arr_S0 != M.n_rows) return 2;
+    if (arr_S1 != M.n_cols) return 3;
+    if (arr_S2 != M.n_slices) return 3;
+    if (std::abs(arr_sum - cube_sum) > 1e-12) return 4;
+    if (info.ptr != M.memptr()) return 5;
+    return 0;
+} /* arr_to_arma_cube */
+
+int test_to_arma_col(py::array_t<double> & arr, bool copy, bool strict) {
+    // attributes of the numpy array
+    size_t arr_N = arr.size();
+    auto arr_p = arr.unchecked<1>();
+
+    // get buffer for raw pointer
+    const py::buffer_info info = arr.request();
+
+    // compute sum of array
+    double arr_sum = 0;
+    for (size_t i = 0; i < arr_N; i++) arr_sum += arr_p[i];
+
+    // call function to be tested
+    arma::Col<double> M = carma::_to_arma<arma::Col<double>>::from(arr, copy, strict);
+
+    // ---------------------------------------------------------------
+    double mat_sum = arma::accu(M);
+
+    // variable for test status
+    if (arr_N != M.n_elem) return 1;
+    if (std::abs(arr_sum - mat_sum) > 1e-12) return 4;
+    if (info.ptr != M.memptr()) return 5;
+    return 0;
+} /* arr_to_arma_col */
+
+int test_to_arma_row(py::array_t<double> & arr, bool copy, bool strict) {
+    // attributes of the numpy array
+    size_t arr_N = arr.size();
+    auto arr_p = arr.unchecked<1>();
+
+    // get buffer for raw pointer
+    const py::buffer_info info = arr.request();
+
+    // compute sum of array
+    double arr_sum = 0;
+    for (size_t i = 0; i < arr_N; i++) arr_sum += arr_p[i];
+
+    // call function to be tested
+    arma::Row<double> M = carma::_to_arma<arma::Row<double>>::from(arr, copy, strict);
+
+    // ---------------------------------------------------------------
+    double mat_sum = arma::accu(M);
+
+    // variable for test status
+    if (arr_N != M.n_elem) return 1;
+    if (std::abs(arr_sum - mat_sum) > 1e-12) return 4;
+    if (info.ptr != M.memptr()) return 5;
+    return 0;
+} /* arr_to_arma_row */
+
+} /* tests */ } /* carma */
 
 void bind_test_arr_to_mat_double(py::module &m) {
     m.def(
@@ -234,10 +384,42 @@ void bind_test_arr_to_row(py::module &m) {
     );
 }
 
-void bind_test_mat_to_arr(py::module &m) {
+void bind_test_arr_to_cube(py::module &m) {
     m.def(
-        "mat_to_arr",
-        &carma::tests::test_mat_to_arr,
-        "Test mat_to_arr"
+        "arr_to_cube",
+        &carma::tests::test_arr_to_cube,
+        "Test arr_to_cube"
+    );
+}
+
+void bind_test_to_arma_mat(py::module &m) {
+    m.def(
+        "to_arma_mat",
+        &carma::tests::test_to_arma_mat,
+        "Test to_arma"
+    );
+}
+
+void bind_test_to_arma_cube(py::module &m) {
+    m.def(
+        "to_arma_cube",
+        &carma::tests::test_to_arma_cube,
+        "Test to_arma"
+    );
+}
+
+void bind_test_to_arma_col(py::module &m) {
+    m.def(
+        "to_arma_col",
+        &carma::tests::test_to_arma_col,
+        "Test to_arma"
+    );
+}
+
+void bind_test_to_arma_row(py::module &m) {
+    m.def(
+        "to_arma_row",
+        &carma::tests::test_to_arma_row,
+        "Test to_arma"
     );
 }
