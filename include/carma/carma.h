@@ -101,8 +101,8 @@ namespace carma {
         }
 
         auto dims = buffer.ndim();
-        if (dims != 1) {
-            throw std::runtime_error("Number of dimensions must be equal to one");
+        if ((dims != 1) && (buffer.shape(1) != 1)) {
+            throw std::runtime_error("Number of columns must <= 1");
         }
 
         py::buffer_info info = buffer.request();
@@ -134,8 +134,8 @@ namespace carma {
         }
 
         auto dims = buffer.ndim();
-        if (dims != 1) {
-            throw std::runtime_error("Number of dimensions must be equal to one");
+        if ((dims != 1) && (buffer.shape(0) != 1)) {
+            throw std::runtime_error("Number of rows must <= 1");
         }
 
         py::buffer_info info = buffer.request();
@@ -276,17 +276,17 @@ namespace carma {
 
     template <typename T> void update_array(arma::Row<T> && src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
-        arr.resize({1, static_cast<ssize_t>(src.n_cols)}, false);
+        arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_cols)}, false);
     } /* update_array */
 
     template <typename T> void update_array(arma::Row<T> & src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
-        arr.resize({1, static_cast<ssize_t>(src.n_cols)}, false);
+        arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_cols)}, false);
     } /* update_array */
 
     template <typename T> void update_array(arma::Row<T> * src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
-        arr.resize({1, static_cast<ssize_t>(src->n_cols)}, false);
+        arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src->n_cols)}, false);
     } /* update_array */
 
     /* ######################################## Col ######################################## */
@@ -323,17 +323,17 @@ namespace carma {
 
     template <typename T> void update_array(arma::Col<T> && src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
-        arr.resize({static_cast<ssize_t>(src.n_rows), 1}, false);
+        arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(1)}, false);
     } /* update_array */
 
     template <typename T> void update_array(arma::Col<T> & src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
-        arr.resize({static_cast<ssize_t>(src.n_rows), 1}, false);
+        arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(1)}, false);
     } /* update_array */
 
     template <typename T> void update_array(arma::Col<T> * src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
-        arr.resize({static_cast<ssize_t>(src->n_rows), 1}, false);
+        arr.resize({static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(1)}, false);
     } /* update_array */
 
     /* ######################################## Mat ######################################## */
@@ -429,18 +429,33 @@ namespace carma {
         return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
     }
 
+    template <typename T> inline py::array_t<T> to_numpy(arma::Row<T> & src, bool copy) {
+        return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
+    }
+
+    template <typename T> inline py::array_t<T> to_numpy(arma::Col<T> & src, bool copy) {
+        return _col_to_arr<T>(std::forward<arma::Col<T>>(src), copy);
+    }
+
     template <typename T> inline py::array_t<T> to_numpy(arma::Col<T> && src, bool copy) {
         return _col_to_arr<T>(std::forward<arma::Col<T>>(src), copy);
+    }
+
+    template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> & src, bool copy) {
+        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> && src, bool copy) {
         return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
     }
 
-    template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> && src, bool copy) {
+    template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> & src, bool copy) {
         return _cube_to_arr<T>(std::forward<arma::Cube<T>>(src), copy);
     }
 
+    template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> && src, bool copy) {
+        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(src), copy);
+    }
 
 } /* carma */
 
