@@ -72,3 +72,92 @@ def test_cube_to_arr_copy():
     """Test arr_to_cube."""
     flag = carma.cube_to_arr(True)
     assert flag == 5, test_flags[flag]
+
+
+def test_to_numpy_mat():
+    """Test to_numpy_mat."""
+    flag = carma.to_numpy_mat(False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_to_numpy_mat_copy():
+    """Test to_numpy_mat."""
+    flag = carma.to_numpy_mat(True)
+    assert flag == 5, test_flags[flag]
+
+
+def test_to_numpy_cube():
+    """Test to_numpy_cube."""
+    flag = carma.to_numpy_cube(False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_to_numpy_cube_copy():
+    """Test to_numpy_cube."""
+    flag = carma.to_numpy_cube(True)
+    assert flag == 5, test_flags[flag]
+
+
+def test_to_numpy_row():
+    """Test to_numpy_row."""
+    flag = carma.to_numpy_row(False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_to_numpy_row_copy():
+    """Test to_numpy_row."""
+    flag = carma.to_numpy_row(True)
+    assert flag == 5, test_flags[flag]
+
+
+def test_to_numpy_col():
+    """Test to_numpy_col."""
+    flag = carma.to_numpy_col(False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_to_numpy_col_copy():
+    """Test to_numpy_col."""
+    flag = carma.to_numpy_col(True)
+    assert flag == 5, test_flags[flag]
+
+
+def test_update_array_mat():
+    """Test update_array."""
+    arr = np.asarray(np.random.normal(size=(10, 2)), dtype=np.float, order='F')
+    flag = carma.update_array_mat(arr, 2)
+    assert flag == 0, test_flags[flag]
+    assert arr.shape == (10, 4)
+    assert np.abs(arr[:, 2:].sum()) < 1e-12, arr
+
+
+def test_update_array_cube():
+    """Test update_array."""
+    arr = np.asarray(
+        np.random.normal(size=(10, 2, 2)), dtype=np.float, order='F'
+    )
+    flag = carma.update_array_cube(arr, 2)
+    assert flag == 0, test_flags[flag]
+    assert arr.shape == (10, 4, 2)
+
+
+def test_update_array_row():
+    """Test update_array."""
+    arr = np.asarray(
+        np.random.normal(size=(1, 10)), dtype=np.float, order='F'
+    )
+    flag = carma.update_array_row(arr, 2)
+    assert flag == 0, test_flags[flag]
+    assert arr.shape == (1, 12)
+    assert np.abs(arr[:, 10:].sum()) < 1e-12, arr
+
+
+def test_update_array_col():
+    """Test update_array."""
+    arr = np.asarray(
+        np.random.normal(size=(10, 1)), dtype=np.float, order='F'
+    )
+    flag = carma.update_array_col(arr, 2)
+    assert flag == 0, test_flags[flag]
+    assert arr.shape == (12, 1)
+    assert np.abs(arr[10:, :].sum()) < 1e-12, arr
