@@ -248,7 +248,7 @@ namespace carma {
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t ncols = static_cast<ssize_t>(src->n_cols);
 
-        T * data = get_data(src, copy);
+        T * data = get_data<arma::Row<T>>(src, copy);
         py::capsule base = create_capsule(data);
 
         return py::array_t<T>(
@@ -295,7 +295,7 @@ namespace carma {
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t nrows = static_cast<ssize_t>(src->n_rows);
 
-        T * data = get_data(src, copy);
+        T * data = get_data<arma::Col<double>>(src, copy);
         py::capsule base = create_capsule(data);
 
         return py::array_t<T>(
@@ -389,7 +389,7 @@ namespace carma {
         ssize_t ncols = static_cast<ssize_t>(src->n_cols);
         ssize_t nslices = static_cast<ssize_t>(src->n_slices);
 
-        T * data = get_data(src, copy);
+        T * data = get_data<arma::Cube<T>>(src, copy);
         py::capsule base = create_capsule(data);
 
         return py::array_t<T>(
