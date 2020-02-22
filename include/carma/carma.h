@@ -243,10 +243,10 @@ namespace carma {
 /*****************************************************************************************
 *                                   Armadillo to Numpy                                   *
 *****************************************************************************************/
-    template <typename T> py::array_t<T> _row_to_arr(arma::Row<T> && src, bool copy) {
+    template <typename T> py::array_t<T> _row_to_arr(arma::Row<T> * src, bool copy) {
         /* Convert armadillo row to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
-        ssize_t ncols = static_cast<ssize_t>(src.n_cols);
+        ssize_t ncols = static_cast<ssize_t>(src->n_cols);
 
         T * data = get_data(src, copy);
         py::capsule base = create_capsule(data);
@@ -261,17 +261,17 @@ namespace carma {
 
     template <typename T> py::array_t<T> row_to_arr(arma::Row<T> && src, bool copy=false) {
         /* Convert armadillo row to numpy array */
-        return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
+        return _row_to_arr<T>(& src, copy);
     } /* row_to_arr */
 
     template <typename T> py::array_t<T> row_to_arr(arma::Row<T> & src, bool copy=false) {
         /* Convert armadillo row to numpy array */
-        return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
+        return _row_to_arr<T>(& src, copy);
     } /* row_to_arr */
 
     template <typename T> py::array_t<T> row_to_arr(arma::Row<T> * src, bool copy=false) {
         /* Convert armadillo row to numpy array */
-        return _row_to_arr<T>(std::forward<arma::Row<T>>(* src), copy);
+        return _row_to_arr<T>(src, copy);
     } /* row_to_arr */
 
     template <typename T> void update_array(arma::Row<T> && src, py::array_t<T> & arr) {
@@ -290,10 +290,10 @@ namespace carma {
     } /* update_array */
 
     /* ######################################## Col ######################################## */
-    template <typename T> py::array_t<T> _col_to_arr(arma::Col<T> && src, bool copy) {
+    template <typename T> py::array_t<T> _col_to_arr(arma::Col<T> * src, bool copy) {
         /* Convert armadillo col to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
-        ssize_t nrows = static_cast<ssize_t>(src.n_rows);
+        ssize_t nrows = static_cast<ssize_t>(src->n_rows);
 
         T * data = get_data(src, copy);
         py::capsule base = create_capsule(data);
@@ -308,17 +308,17 @@ namespace carma {
 
     template <typename T> py::array_t<T> col_to_arr(arma::Col<T> && src, bool copy=false) {
         /* Convert armadillo col to numpy array */
-        return _col_to_arr<T>(std::forward<arma::Col<T>>(src), copy);
+        return _col_to_arr<T>(& src, copy);
     } /* col_to_arr */
 
     template <typename T> py::array_t<T> col_to_arr(arma::Col<T> & src, bool copy=false) {
         /* Convert armadillo col to numpy array */
-        return _col_to_arr<T>(std::forward<arma::Col<T>>(src), copy);
+        return _col_to_arr<T>(& src, copy);
     } /* col_to_arr */
 
     template <typename T> py::array_t<T> col_to_arr(arma::Col<T> * src, bool copy=false) {
         /* Convert armadillo col to numpy array */
-        return _col_to_arr<T>(std::forward<arma::Col<T>>(* src), copy);
+        return _col_to_arr<T>(src, copy);
     } /* col_to_arr */
 
     template <typename T> void update_array(arma::Col<T> && src, py::array_t<T> & arr) {
@@ -337,11 +337,11 @@ namespace carma {
     } /* update_array */
 
     /* ######################################## Mat ######################################## */
-    template <typename T> py::array_t<T> _mat_to_arr(arma::Mat<T> && src, bool copy) {
+    template <typename T> py::array_t<T> _mat_to_arr(arma::Mat<T> * src, bool copy) {
         /* Convert armadillo matrix to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
-        ssize_t nrows = static_cast<ssize_t>(src.n_rows);
-        ssize_t ncols = static_cast<ssize_t>(src.n_cols);
+        ssize_t nrows = static_cast<ssize_t>(src->n_rows);
+        ssize_t ncols = static_cast<ssize_t>(src->n_cols);
 
         T * data = get_data<arma::Mat<T>>(src, copy);
         py::capsule base = create_capsule(data);
@@ -355,15 +355,15 @@ namespace carma {
     } /* _mat_to_arr */
 
     template <typename T> py::array_t<T> mat_to_arr(arma::Mat<T> && src, bool copy=false) {
-        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
+        return _mat_to_arr<T>(& src, copy);
     } /* mat_to_arr */
 
     template <typename T> py::array_t<T> mat_to_arr(arma::Mat<T> & src, bool copy=false) {
-        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
+        return _mat_to_arr<T>(& src, copy);
     } /* mat_to_arr */
 
     template <typename T> py::array_t<T> mat_to_arr(arma::Mat<T> * src, bool copy=false) {
-        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(* src), copy);
+        return _mat_to_arr<T>(src, copy);
     } /* mat_to_arr */
 
     template <typename T> void update_array(arma::Mat<T> && src, py::array_t<T> & arr) {
@@ -382,12 +382,12 @@ namespace carma {
     } /* update_array */
 
     /* ######################################## Cube ######################################## */
-    template <typename T> py::array_t<T> _cube_to_arr(arma::Cube<T> && src, bool copy) {
+    template <typename T> py::array_t<T> _cube_to_arr(arma::Cube<T> * src, bool copy) {
         /* Convert armadillo matrix to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
-        ssize_t nrows = static_cast<ssize_t>(src.n_rows);
-        ssize_t ncols = static_cast<ssize_t>(src.n_cols);
-        ssize_t nslices = static_cast<ssize_t>(src.n_slices);
+        ssize_t nrows = static_cast<ssize_t>(src->n_rows);
+        ssize_t ncols = static_cast<ssize_t>(src->n_cols);
+        ssize_t nslices = static_cast<ssize_t>(src->n_slices);
 
         T * data = get_data(src, copy);
         py::capsule base = create_capsule(data);
@@ -401,15 +401,15 @@ namespace carma {
     } /* _cube_to_arr */
 
     template <typename T> py::array_t<T> cube_to_arr(arma::Cube<T> && src, bool copy=false) {
-        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(src), copy);
+        return _cube_to_arr<T>(& src, copy);
     } /* cube_to_arr */
 
     template <typename T> py::array_t<T> cube_to_arr(arma::Cube<T> & src, bool copy=false) {
-        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(src), copy);
+        return _cube_to_arr<T>(& src, copy);
     } /* cube_to_arr */
 
     template <typename T> py::array_t<T> cube_to_arr(arma::Cube<T> * src, bool copy=false) {
-        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(* src), copy);
+        return _cube_to_arr<T>(src, copy);
     } /* cube_to_arr */
 
     template <typename T> void update_array(arma::Cube<T> && src, py::array_t<T> & arr) {
@@ -426,51 +426,51 @@ namespace carma {
 
     /* ---------------------------------- to_numpy ---------------------------------- */
     template <typename T> inline py::array_t<T> to_numpy(arma::Row<T> * src, bool copy) {
-        return _row_to_arr<T>(std::forward<arma::Row<T>>(* src), copy);
+        return _row_to_arr<T>(src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Row<T> && src, bool copy) {
-        return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
+        return _row_to_arr<T>(& src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Row<T> & src, bool copy) {
-        return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
+        return _row_to_arr<T>(& src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Col<T> * src, bool copy) {
-        return _col_to_arr<T>(std::forward<arma::Col<T>>(* src), copy);
+        return _col_to_arr<T>(src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Col<T> & src, bool copy) {
-        return _col_to_arr<T>(std::forward<arma::Col<T>>(src), copy);
+        return _col_to_arr<T>(& src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Col<T> && src, bool copy) {
-        return _col_to_arr<T>(std::forward<arma::Col<T>>(src), copy);
+        return _col_to_arr<T>(& src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> * src, bool copy) {
-        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(* src), copy);
+        return _mat_to_arr<T>(src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> & src, bool copy) {
-        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
+        return _mat_to_arr<T>(& src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> && src, bool copy) {
-        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
+        return _mat_to_arr<T>(& src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> * src, bool copy) {
-        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(* src), copy);
+        return _cube_to_arr<T>(src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> & src, bool copy) {
-        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(src), copy);
+        return _cube_to_arr<T>(& src, copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> && src, bool copy) {
-        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(src), copy);
+        return _cube_to_arr<T>(& src, copy);
     }
 
 } /* carma */
@@ -524,13 +524,13 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         static handle cast_impl(CType * src, return_value_policy policy, handle) {
             switch (policy) {
                 case return_value_policy::move:
-                    return carma::to_numpy<T>(*src, false).release();
+                    return carma::to_numpy<T>(src, false).release();
                 case return_value_policy::automatic:
-                    return carma::to_numpy<T>(*src, false).release();
+                    return carma::to_numpy<T>(src, false).release();
                 case return_value_policy::take_ownership:
-                    return carma::to_numpy<T>(*src, false).release();
+                    return carma::to_numpy<T>(src, false).release();
                 case return_value_policy::copy:
-                    return carma::to_numpy<T>(*src, true).release();
+                    return carma::to_numpy<T>(src, true).release();
                 default:
                     throw cast_error("unhandled return_value_policy");
             };
@@ -563,7 +563,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         // const pointer return; we copy
         static handle cast(const armaT *src, return_value_policy policy, handle parent) {
             policy = return_value_policy::copy;
-            return cast_impl(* src, policy, parent);
+            return cast_impl(src, policy, parent);
         }
 
     PYBIND11_TYPE_CASTER(armaT, _("Numpy.ndarray[") + npy_format_descriptor<T>::name + _("]"));

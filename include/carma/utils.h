@@ -69,6 +69,21 @@ namespace carma {
     }
 
     template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
+    inline typename armaT::elem_type * get_data(armaT * src, bool copy) {
+        using T = typename armaT::elem_type;
+        if (copy) {
+            size_t N = src->n_elem;
+            T * data = new T[N];
+            std::memcpy(data, src->memptr(), sizeof(T) * N);
+            return data;
+        } else {
+            T * data = src->memptr();
+            arma::access::rw(src->mem) = 0;
+            return data;
+        }
+    } /* get_data */
+
+    template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
     inline typename armaT::elem_type * get_data(armaT & src, bool copy) {
         using T = typename armaT::elem_type;
         if (copy) {
