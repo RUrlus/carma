@@ -7,6 +7,9 @@ namespace py = pybind11;
 
 namespace carma { namespace tests {
     py::array_t<double> test_mat_to_arr_return();
+    py::array_t<double> test_row_to_arr_return();
+    py::array_t<double> test_col_to_arr_return();
+    py::array_t<double> test_cube_to_arr_return();
     int test_mat_to_arr(bool copy);
     int test_row_to_arr(bool copy);
     int test_col_to_arr(bool copy);
@@ -22,10 +25,13 @@ namespace carma { namespace tests {
 } /* tests */ } /* carma */
 
 void bind_test_mat_to_arr(py::module &m);
-void bind_test_cube_to_arr(py::module &m);
 void bind_test_row_to_arr(py::module &m);
 void bind_test_col_to_arr(py::module &m);
+void bind_test_cube_to_arr(py::module &m);
 void bind_test_mat_to_arr_return(py::module &m);
+void bind_test_row_to_arr_return(py::module &m);
+void bind_test_col_to_arr_return(py::module &m);
+void bind_test_cube_to_arr_return(py::module &m);
 void bind_test_to_numpy_mat(py::module &m);
 void bind_test_to_numpy_cube(py::module &m);
 void bind_test_to_numpy_row(py::module &m);
