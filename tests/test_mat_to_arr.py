@@ -13,7 +13,7 @@ test_flags = {
 
 
 def test_mat_to_arr_return():
-    """Test arr_to_mat."""
+    """Test mat_to_arr."""
     arr = carma.mat_to_arr_return()
 
     nan_cnt = np.isnan(arr).sum()
@@ -24,6 +24,60 @@ def test_mat_to_arr_return():
 
     inf_cnt = (arr == np.inf).sum()
     assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
+
+
+def test_row_to_arr_return():
+    """Test row_to_arr."""
+    arr = carma.row_to_arr_return()
+
+    nan_cnt = np.isnan(arr).sum()
+    assert nan_cnt == 0, 'Conversion introduced NaNs'
+
+    zero_cnt = (arr == 0.0).sum()
+    assert zero_cnt == 0, 'Conversion introduced zeros'
+
+    inf_cnt = (arr == np.inf).sum()
+    assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
+
+
+def test_col_to_arr_return():
+    """Test col_to_arr."""
+    arr = carma.col_to_arr_return()
+
+    nan_cnt = np.isnan(arr).sum()
+    assert nan_cnt == 0, 'Conversion introduced NaNs'
+
+    zero_cnt = (arr == 0.0).sum()
+    assert zero_cnt == 0, 'Conversion introduced zeros'
+
+    inf_cnt = (arr == np.inf).sum()
+    assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
+
+
+def test_cube_to_arr_return():
+    """Test cube_to_arr."""
+    arr = carma.cube_to_arr_return()
+
+    nan_cnt = np.isnan(arr).sum()
+    assert nan_cnt == 0, 'Conversion introduced NaNs'
+
+    zero_cnt = (arr == 0.0).sum()
+    assert zero_cnt == 0, 'Conversion introduced zeros'
+
+    inf_cnt = (arr == np.inf).sum()
+    assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
 
 
 def test_mat_to_arr():

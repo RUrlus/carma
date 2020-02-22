@@ -3,9 +3,20 @@
 namespace carma { namespace tests {
 
 py::array_t<double> test_mat_to_arr_return() {
-    arma::mat mat = arma::randu<arma::Mat<double>>(4, 5);
-    return mat_to_arr(mat, false);
+    return mat_to_arr<double>(arma::Mat<double>(4, 5, arma::fill::randu), false);
 } /* test_mat_to_arr */
+
+py::array_t<double> test_row_to_arr_return() {
+    return row_to_arr<double>(arma::Row<double>(100, arma::fill::randu), false);
+} /* test_row_to_arr */
+
+py::array_t<double> test_col_to_arr_return() {
+    return col_to_arr<double>(arma::Col<double>(100, arma::fill::randu), false);
+} /* test_col_to_arr */
+
+py::array_t<double> test_cube_to_arr_return() {
+    return cube_to_arr<double>(arma::Cube<double>(100, 2, 4, arma::fill::randu), false);
+} /* test_cube_to_arr */
 
 int test_mat_to_arr(bool copy) {
     arma::Mat<double> M = arma::randu<arma::Mat<double>>(100, 2);
@@ -420,6 +431,30 @@ void bind_test_mat_to_arr_return(py::module &m) {
         "mat_to_arr_return",
         &carma::tests::test_mat_to_arr_return,
         "Test mat_to_arr"
+    );
+}
+
+void bind_test_row_to_arr_return(py::module &m) {
+    m.def(
+        "row_to_arr_return",
+        &carma::tests::test_row_to_arr_return,
+        "Test row_to_arr"
+    );
+}
+
+void bind_test_col_to_arr_return(py::module &m) {
+    m.def(
+        "col_to_arr_return",
+        &carma::tests::test_col_to_arr_return,
+        "Test col_to_arr"
+    );
+}
+
+void bind_test_cube_to_arr_return(py::module &m) {
+    m.def(
+        "cube_to_arr_return",
+        &carma::tests::test_cube_to_arr_return,
+        "Test cube_to_arr"
     );
 }
 
