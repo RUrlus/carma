@@ -243,7 +243,7 @@ namespace carma {
 /*****************************************************************************************
 *                                   Armadillo to Numpy                                   *
 *****************************************************************************************/
-    template <typename T> py::array_t<T> _row_to_arr(arma::Row<T> * src, bool copy) {
+    template <typename T> inline py::array_t<T> _row_to_arr(arma::Row<T> * src, bool copy) {
         /* Convert armadillo row to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t ncols = static_cast<ssize_t>(src->n_cols);
@@ -253,44 +253,50 @@ namespace carma {
 
         return py::array_t<T>(
             {static_cast<ssize_t>(1), ncols}, // shape
-            {tsize, tsize}, // F-style contiguous strides
+            {ncols * tsize, tsize}, // F-style contiguous strides
             data, // the data pointer
             base // numpy array references this parent
         );
     } /* row_to_arr */
 
-    template <typename T> py::array_t<T> row_to_arr(arma::Row<T> && src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> row_to_arr(arma::Row<T> && src, bool copy=false) {
         /* Convert armadillo row to numpy array */
         return _row_to_arr<T>(& src, copy);
     } /* row_to_arr */
 
-    template <typename T> py::array_t<T> row_to_arr(arma::Row<T> & src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> row_to_arr(arma::Row<T> & src, bool copy=false) {
         /* Convert armadillo row to numpy array */
         return _row_to_arr<T>(& src, copy);
     } /* row_to_arr */
 
-    template <typename T> py::array_t<T> row_to_arr(arma::Row<T> * src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> row_to_arr(arma::Row<T> * src, bool copy=false) {
         /* Convert armadillo row to numpy array */
         return _row_to_arr<T>(src, copy);
     } /* row_to_arr */
 
-    template <typename T> void update_array(arma::Row<T> && src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Row<T> && src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_cols)}, false);
     } /* update_array */
 
-    template <typename T> void update_array(arma::Row<T> & src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Row<T> & src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_cols)}, false);
     } /* update_array */
 
-    template <typename T> void update_array(arma::Row<T> * src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Row<T> * src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src->n_cols)}, false);
     } /* update_array */
 
     /* ######################################## Col ######################################## */
-    template <typename T> py::array_t<T> _col_to_arr(arma::Col<T> * src, bool copy) {
+    template <typename T> inline py::array_t<T> _col_to_arr(arma::Col<T> * src, bool copy) {
         /* Convert armadillo col to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t nrows = static_cast<ssize_t>(src->n_rows);
@@ -306,38 +312,44 @@ namespace carma {
         );
     } /* _col_to_arr */
 
-    template <typename T> py::array_t<T> col_to_arr(arma::Col<T> && src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> col_to_arr(arma::Col<T> && src, bool copy=false) {
         /* Convert armadillo col to numpy array */
         return _col_to_arr<T>(& src, copy);
     } /* col_to_arr */
 
-    template <typename T> py::array_t<T> col_to_arr(arma::Col<T> & src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> col_to_arr(arma::Col<T> & src, bool copy=false) {
         /* Convert armadillo col to numpy array */
         return _col_to_arr<T>(& src, copy);
     } /* col_to_arr */
 
-    template <typename T> py::array_t<T> col_to_arr(arma::Col<T> * src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> col_to_arr(arma::Col<T> * src, bool copy=false) {
         /* Convert armadillo col to numpy array */
         return _col_to_arr<T>(src, copy);
     } /* col_to_arr */
 
-    template <typename T> void update_array(arma::Col<T> && src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Col<T> && src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(1)}, false);
     } /* update_array */
 
-    template <typename T> void update_array(arma::Col<T> & src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Col<T> & src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(1)}, false);
     } /* update_array */
 
-    template <typename T> void update_array(arma::Col<T> * src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Col<T> * src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(1)}, false);
     } /* update_array */
 
     /* ######################################## Mat ######################################## */
-    template <typename T> py::array_t<T> _mat_to_arr(arma::Mat<T> * src, bool copy) {
+    template <typename T> inline py::array_t<T> _mat_to_arr(arma::Mat<T> * src, bool copy) {
         /* Convert armadillo matrix to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t nrows = static_cast<ssize_t>(src->n_rows);
@@ -354,35 +366,44 @@ namespace carma {
         );
     } /* _mat_to_arr */
 
-    template <typename T> py::array_t<T> mat_to_arr(arma::Mat<T> && src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> mat_to_arr(arma::Mat<T> && src, bool copy=false) {
         return _mat_to_arr<T>(& src, copy);
     } /* mat_to_arr */
 
-    template <typename T> py::array_t<T> mat_to_arr(arma::Mat<T> & src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> mat_to_arr(arma::Mat<T> & src, bool copy=false) {
         return _mat_to_arr<T>(& src, copy);
     } /* mat_to_arr */
 
-    template <typename T> py::array_t<T> mat_to_arr(arma::Mat<T> * src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> mat_to_arr(arma::Mat<T> * src, bool copy=false) {
         return _mat_to_arr<T>(src, copy);
     } /* mat_to_arr */
 
-    template <typename T> void update_array(arma::Mat<T> && src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Mat<T> && src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols)}, false);
     } /* update_array */
 
-    template <typename T> void update_array(arma::Mat<T> & src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Mat<T> & src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
         arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols)}, false);
     } /* update_array */
 
-    template <typename T> void update_array(arma::Mat<T> * src, py::array_t<T> & arr) {
+    template <typename T> inline
+    void update_array(arma::Mat<T> * src, py::array_t<T> & arr) {
         /* Update underlying numpy array */
-        arr.resize({static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols)}, false);
+        arr.resize(
+            {static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols)},
+            false
+        );
     } /* update_array */
 
     /* ######################################## Cube ######################################## */
-    template <typename T> py::array_t<T> _cube_to_arr(arma::Cube<T> * src, bool copy) {
+    template <typename T> inline py::array_t<T> _cube_to_arr(arma::Cube<T> * src, bool copy) {
         /* Convert armadillo matrix to numpy array */
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t nrows = static_cast<ssize_t>(src->n_rows);
@@ -400,28 +421,49 @@ namespace carma {
         );
     } /* _cube_to_arr */
 
-    template <typename T> py::array_t<T> cube_to_arr(arma::Cube<T> && src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> cube_to_arr(arma::Cube<T> && src, bool copy=false) {
         return _cube_to_arr<T>(& src, copy);
     } /* cube_to_arr */
 
-    template <typename T> py::array_t<T> cube_to_arr(arma::Cube<T> & src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> cube_to_arr(arma::Cube<T> & src, bool copy=false) {
         return _cube_to_arr<T>(& src, copy);
     } /* cube_to_arr */
 
-    template <typename T> py::array_t<T> cube_to_arr(arma::Cube<T> * src, bool copy=false) {
+    template <typename T> inline
+    py::array_t<T> cube_to_arr(arma::Cube<T> * src, bool copy=false) {
         return _cube_to_arr<T>(src, copy);
     } /* cube_to_arr */
 
-    template <typename T> void update_array(arma::Cube<T> && src, py::array_t<T> & arr) {
-        arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols), static_cast<ssize_t>(src.n_slices)}, false);
+    template <typename T> inline
+    void update_array(arma::Cube<T> && src, py::array_t<T> & arr) {
+        arr.resize(
+            {static_cast<ssize_t>(src.n_rows),
+            static_cast<ssize_t>(src.n_cols),
+            static_cast<ssize_t>(src.n_slices)},
+            false
+        );
     } /* update_array */
 
-    template <typename T> void update_array(arma::Cube<T> & src, py::array_t<T> & arr) {
-        arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols), static_cast<ssize_t>(src.n_slices)}, false);
+    template <typename T> inline
+    void update_array(arma::Cube<T> & src, py::array_t<T> & arr) {
+        arr.resize(
+            {static_cast<ssize_t>(src.n_rows),
+            static_cast<ssize_t>(src.n_cols),
+            static_cast<ssize_t>(src.n_slices)},
+            false
+        );
     } /* update_array */
 
-    template <typename T> void update_array(arma::Cube<T> * src, py::array_t<T> & arr) {
-        arr.resize({static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols), static_cast<ssize_t>(src->n_slices)}, false);
+    template <typename T> inline
+    void update_array(arma::Cube<T> * src, py::array_t<T> & arr) {
+        arr.resize(
+            {static_cast<ssize_t>(src->n_rows),
+            static_cast<ssize_t>(src->n_cols),
+            static_cast<ssize_t>(src->n_slices)},
+            false
+        );
     } /* update_array */
 
     /* ---------------------------------- to_numpy ---------------------------------- */
