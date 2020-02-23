@@ -83,21 +83,6 @@ namespace carma {
         }
     } /* get_data */
 
-    template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-    inline typename armaT::elem_type * get_data(armaT & src, bool copy) {
-        using T = typename armaT::elem_type;
-        if (copy) {
-            size_t N = src.n_elem;
-            T * data = new T[N];
-            std::memcpy(data, src.memptr(), sizeof(T) * N);
-            return data;
-        } else {
-            T * data = src.memptr();
-            arma::access::rw(src.mem) = 0;
-            return data;
-        }
-    } /* get_data */
-
     template <typename T>
     inline py::capsule create_capsule(T * data) {
         /* Create a Python object that will free the allocated
@@ -107,7 +92,7 @@ namespace carma {
             T *data = reinterpret_cast<T *>(f);
             #ifndef NDEBUG
             // if in debug mode let us know what pointer is being freed
-            std::cerr << "freeing memory @ " << f << "\n";
+            std::cerr << "freeing memory @ " << f << std::endl;
             #endif
             delete[] data;
         });
