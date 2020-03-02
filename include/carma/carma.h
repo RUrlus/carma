@@ -425,12 +425,20 @@ namespace carma {
     } /* update_array */
 
     /* ---------------------------------- to_numpy ---------------------------------- */
+    template <typename T> inline py::array_t<T> to_numpy(arma::Row<T> * src, bool copy) {
+        return _row_to_arr<T>(std::forward<arma::Row<T>>(* src), copy);
+    }
+
     template <typename T> inline py::array_t<T> to_numpy(arma::Row<T> && src, bool copy) {
         return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Row<T> & src, bool copy) {
         return _row_to_arr<T>(std::forward<arma::Row<T>>(src), copy);
+    }
+
+    template <typename T> inline py::array_t<T> to_numpy(arma::Col<T> * src, bool copy) {
+        return _col_to_arr<T>(std::forward<arma::Col<T>>(* src), copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Col<T> & src, bool copy) {
@@ -441,12 +449,20 @@ namespace carma {
         return _col_to_arr<T>(std::forward<arma::Col<T>>(src), copy);
     }
 
+    template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> * src, bool copy) {
+        return _mat_to_arr<T>(std::forward<arma::Mat<T>>(* src), copy);
+    }
+
     template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> & src, bool copy) {
         return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Mat<T> && src, bool copy) {
         return _mat_to_arr<T>(std::forward<arma::Mat<T>>(src), copy);
+    }
+
+    template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> * src, bool copy) {
+        return _cube_to_arr<T>(std::forward<arma::Cube<T>>(* src), copy);
     }
 
     template <typename T> inline py::array_t<T> to_numpy(arma::Cube<T> & src, bool copy) {
@@ -459,7 +475,8 @@ namespace carma {
 
 } /* carma */
 
-namespace pybind11 { namespace detail {
+NAMESPACE_BEGIN(pybind11)
+NAMESPACE_BEGIN(detail)
 
 template<typename armaT>
 struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
@@ -496,7 +513,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
             return false;
         }
 
-        value = carma::_to_arma<armaT>::from(info, copy, strict);
+        value = carma::_to_arma<armaT>::from(buffer, copy, strict);
         return true;
     }
 
@@ -504,16 +521,16 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
 
         // Cast implementation
         template <typename CType>
-        static handle cast_impl(CType && src, return_value_policy policy, handle) {
+        static handle cast_impl(CType * src, return_value_policy policy, handle) {
             switch (policy) {
                 case return_value_policy::move:
-                    return to_numpy(src, false).release();
+                    return carma::to_numpy<T>(*src, false).release();
                 case return_value_policy::automatic:
-                    return to_numpy(src, false).release();
+                    return carma::to_numpy<T>(*src, false).release();
                 case return_value_policy::take_ownership:
-                    return to_numpy(src, false).release();
+                    return carma::to_numpy<T>(*src, false).release();
                 case return_value_policy::copy:
-                    return to_numpy(src, true).release();
+                    return carma::to_numpy<T>(*src, true).release();
                 default:
                     throw cast_error("unhandled return_value_policy");
             };
@@ -528,28 +545,29 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         // If you return a non-reference const; we copy
         static handle cast(const armaT &&src, return_value_policy policy /* policy */, handle parent) {
             policy = return_value_policy::copy;
-            return cast_impl(std::forward<armaT>(* src), policy, parent);
+            return cast_impl(&src, policy, parent);
         }
         // lvalue reference return; default (automatic) becomes steal
         static handle cast(armaT &src, return_value_policy policy, handle parent) {
-            return cast_impl(std::forward<armaT>(src), policy, parent);
+            return cast_impl(&src, policy, parent);
         }
         // const lvalue reference return; default (automatic) becomes copy
         static handle cast(const armaT &src, return_value_policy policy, handle parent) {
             policy = return_value_policy::copy;
-            return cast_impl(std::forward<armaT>(src), policy, parent);
+            return cast_impl(&src, policy, parent);
         }
         // non-const pointer return; we steal
         static handle cast(armaT *src, return_value_policy policy, handle parent) {
-            return cast_impl(std::forward<armaT>(* src), policy, parent);
+            return cast_impl(src, policy, parent);
         }
         // const pointer return; we copy
         static handle cast(const armaT *src, return_value_policy policy, handle parent) {
             policy = return_value_policy::copy;
-            return cast_impl(std::forward<armaT>(* src), policy, parent);
+            return cast_impl(* src, policy, parent);
         }
 
-    PYBIND11_TYPE_CASTER(arma::Mat<T>, _("Numpy.ndarray[") + npy_format_descriptor<T>::name() + _("]"));
+    PYBIND11_TYPE_CASTER(armaT, _("Numpy.ndarray[") + npy_format_descriptor<T>::name + _("]"));
 };
-}} /* namespace pybind11::detail */
+NAMESPACE_END(detail)
+NAMESPACE_END(pybind11)
 #endif /* ARMA_CONVERTERS */
