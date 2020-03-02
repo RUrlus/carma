@@ -13,6 +13,7 @@ pybind11_add_module(${MODNAME}
         ${SUBPATH}/test_nparray.cpp
         ${SUBPATH}/test_arr_to_mat.cpp
         ${SUBPATH}/test_mat_to_arr.cpp
+        ${SUBPATH}/test_type_caster.cpp
 )
 
 TARGET_INCLUDE_DIRECTORIES(${MODNAME}
