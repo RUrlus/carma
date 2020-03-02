@@ -7,6 +7,7 @@ namespace py = pybind11;
 #include "test_nparray.h"
 #include "test_arr_to_mat.h"
 #include "test_mat_to_arr.h"
+#include "test_type_caster.h"
 
 PYBIND11_MODULE(test_carma, m) {
     // arr_to_mat
@@ -53,4 +54,12 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_is_c_contiguous(m);
     bind_test_flat_reference(m);
     bind_test_mutable_flat_reference(m);
+    // type caster
+    bind_test_tc_in_mat(m);
+    bind_test_tc_in_row(m);
+    bind_test_tc_in_col(m);
+    bind_test_tc_in_cube(m);
+    bind_test_tc_out_mat(m);
+    bind_test_tc_out_mat_rvalue(m);
+    bind_test_tc_out_row(m);
 }

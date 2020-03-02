@@ -11,7 +11,7 @@ PROJECT(
 #                                   SETTINGS                                   #
 # ##############################################################################
 SET(CMAKE_CXX_STANDARD 14)
-SET(CMAKE_BUILD_TYPE RELEASE)
+SET(CMAKE_BUILD_TYPE DEBUG)
 OPTION(BUILD_TESTS "Build tests for carma" ON)
 
 SET(INCLUDE_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
