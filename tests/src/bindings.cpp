@@ -27,6 +27,13 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_col_to_arr(m);
     bind_test_cube_to_arr(m);
     bind_test_mat_to_arr_return(m);
+    bind_test_row_to_arr_return(m);
+    bind_test_col_to_arr_return(m);
+    bind_test_cube_to_arr_return(m);
+    bind_test_mat_to_arr_plus_one(m);
+    bind_test_row_to_arr_plus_one(m);
+    bind_test_col_to_arr_plus_one(m);
+    bind_test_cube_to_arr_plus_one(m);
     // to_numpy
     bind_test_to_numpy_mat(m);
     bind_test_to_numpy_row(m);

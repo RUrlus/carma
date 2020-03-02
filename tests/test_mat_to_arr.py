@@ -12,9 +12,65 @@ test_flags = {
 }
 
 
+def test_mat_to_arr_return_copy():
+    """Test mat_to_arr."""
+    arr = carma.mat_to_arr_return(True)
+
+    nan_cnt = np.isnan(arr).sum()
+    assert nan_cnt == 0, 'Conversion introduced NaNs'
+
+    zero_cnt = (arr == 0.0).sum()
+    assert zero_cnt == 0, 'Conversion introduced zeros'
+
+    inf_cnt = (arr == np.inf).sum()
+    assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
+
+
 def test_mat_to_arr_return():
     """Test mat_to_arr."""
-    arr = carma.mat_to_arr_return()
+    arr = carma.mat_to_arr_return(False)
+
+    nan_cnt = np.isnan(arr).sum()
+    assert nan_cnt == 0, 'Conversion introduced NaNs'
+
+    zero_cnt = (arr == 0.0).sum()
+    assert zero_cnt == 0, 'Conversion introduced zeros'
+
+    inf_cnt = (arr == np.inf).sum()
+    assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
+
+
+def test_mat_to_arr_plus_one():
+    """Test mat_to_arr with c++ addition."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 2)),
+        dtype=np.float,
+        order='F'
+    )
+    mat = carma.mat_to_arr_plus_one(sample, False)
+    assert np.allclose(mat, sample + 1)
+
+
+def test_mat_to_arr_plus_one_copy():
+    """Test mat_to_arr with c++ addition."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 2)),
+        dtype=np.float,
+        order='F'
+    )
+    mat = carma.mat_to_arr_plus_one(sample, True)
+    assert np.allclose(mat, sample + 1)
+
+
+def test_row_to_arr_return_copy():
+    """Test row_to_arr."""
+    arr = carma.row_to_arr_return(True)
 
     nan_cnt = np.isnan(arr).sum()
     assert nan_cnt == 0, 'Conversion introduced NaNs'
@@ -31,7 +87,35 @@ def test_mat_to_arr_return():
 
 def test_row_to_arr_return():
     """Test row_to_arr."""
-    arr = carma.row_to_arr_return()
+    arr = carma.row_to_arr_return(False)
+
+    nan_cnt = np.isnan(arr).sum()
+    assert nan_cnt == 0, 'Conversion introduced NaNs'
+
+    zero_cnt = (arr == 0.0).sum()
+    assert zero_cnt == 0, 'Conversion introduced zeros'
+
+    inf_cnt = (arr == np.inf).sum()
+    assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
+
+
+def test_row_to_arr_plus_one_copy():
+    """Test row_to_arr with c++ addition."""
+    sample = np.asarray(
+        np.random.normal(size=(10)),
+        dtype=np.float,
+        order='F'
+    )
+    mat = carma.row_to_arr_plus_one(sample, True)
+    assert np.allclose(mat, sample + 1)
+
+
+def test_col_to_arr_return_copy():
+    """Test col_to_arr."""
+    arr = carma.col_to_arr_return(True)
 
     nan_cnt = np.isnan(arr).sum()
     assert nan_cnt == 0, 'Conversion introduced NaNs'
@@ -48,7 +132,37 @@ def test_row_to_arr_return():
 
 def test_col_to_arr_return():
     """Test col_to_arr."""
-    arr = carma.col_to_arr_return()
+    arr = carma.col_to_arr_return(False)
+
+    nan_cnt = np.isnan(arr).sum()
+    assert nan_cnt == 0, 'Conversion introduced NaNs'
+
+    zero_cnt = (arr == 0.0).sum()
+    assert zero_cnt == 0, 'Conversion introduced zeros'
+
+    inf_cnt = (arr == np.inf).sum()
+    assert inf_cnt == 0, 'Conversion introduced inf values'
+
+    near_null = (np.abs(arr) <= 1e-16).sum()
+    assert near_null == 0, 'Conversion introduced near zero values'
+
+
+def test_col_to_arr_plus_one_copy():
+    """Test col_to_arr with c++ addition."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 1)),
+        dtype=np.float,
+        order='F'
+    )
+    mat = carma.col_to_arr_plus_one(sample, True)
+    print(sample + 1)
+    print(mat)
+    assert np.allclose(mat, sample + 1)
+
+
+def test_cube_to_arr_return_copy():
+    """Test cube_to_arr."""
+    arr = carma.cube_to_arr_return(True)
 
     nan_cnt = np.isnan(arr).sum()
     assert nan_cnt == 0, 'Conversion introduced NaNs'
@@ -65,7 +179,7 @@ def test_col_to_arr_return():
 
 def test_cube_to_arr_return():
     """Test cube_to_arr."""
-    arr = carma.cube_to_arr_return()
+    arr = carma.cube_to_arr_return(False)
 
     nan_cnt = np.isnan(arr).sum()
     assert nan_cnt == 0, 'Conversion introduced NaNs'
@@ -78,6 +192,19 @@ def test_cube_to_arr_return():
 
     near_null = (np.abs(arr) <= 1e-16).sum()
     assert near_null == 0, 'Conversion introduced near zero values'
+
+
+def test_cube_to_arr_plus_one_copy():
+    """Test cube_to_arr with c++ addition."""
+    or_sample = np.random.normal(size=(10, 3, 2))
+    sample = np.asarray(
+        or_sample,
+        dtype=np.float,
+        order='F'
+    )
+    mat = carma.cube_to_arr_plus_one(sample, True)
+    sw_mat = np.moveaxis(mat, [0, 1, 2], [2, 0, 1])
+    assert np.allclose(sw_mat, 1 + sample)
 
 
 def test_mat_to_arr():
