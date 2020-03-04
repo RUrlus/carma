@@ -1,5 +1,4 @@
 """Test nparray.h."""
-import pytest
 import numpy as np
 
 import libs.test_carma as carma
@@ -59,76 +58,3 @@ def test_is_aligned():
     alt = np.frombuffer(sample.data, offset=2, count=100, dtype=np.float64)
     alt.shape = 10, 10
     assert carma.is_aligned(alt) == alt.flags['ALIGNED'], m
-
-
-def test_flat_reference():
-    """Test flat_reference construct."""
-    m = 'Incorrect sample value returned'
-    sample = np.random.normal(size=(10, 2))
-    assert carma.flat_reference(sample, 3) == sample[1, 1], sample
-
-    sample = np.random.randint(low=-10, high=10, size=(10, 2))
-    assert carma.flat_reference(sample, 3) == sample[1, 1], m
-
-
-def test_flat_reference_fortran():
-    """Test flat_reference construct with fortran layout."""
-    m = 'Incorrect sample value returned'
-    sample = np.asarray(
-        np.random.normal(size=(10, 2)), dtype=np.float64, order='F'
-    )
-    assert carma.flat_reference(sample, 9) == sample[9, 0], m
-
-    sample = np.asarray(
-        np.random.randint(low=-10, high=10, size=(10, 2)),
-        dtype=np.int64,
-        order='F'
-    )
-    assert carma.flat_reference(sample, 9) == sample[9, 0], m
-
-
-def test_flat_reference_non_writable():
-    """Test flat_reference construct with non-writable array."""
-    m = 'Array should not be writable'
-    sample = np.ones((10, 2), dtype=np.float64, order='F')
-    sample.setflags(write=0)
-    assert carma.flat_reference(sample, 9) == sample[9, 0], m
-
-
-def test_mutable_flat_reference():
-    """Test flat_reference construct."""
-    m = 'Incorrect sample value returned'
-    sample = np.random.normal(size=(10, 2))
-    assert abs(carma.mutable_flat_reference(sample, 3, 9.56) - 9.56) < 1e-12, m
-    assert abs(sample[1, 1] - 9.56) < 1e-12, sample
-
-    sample = np.random.randint(low=-10, high=10, size=(10, 2))
-    assert carma.mutable_flat_reference(sample, 3, 9) == 9, m
-    assert sample[1, 1] == 9
-
-
-def test_mutable_flat_reference_fortran():
-    """Test flat_reference construct with fortran layout."""
-    m = 'Incorrect sample value returned'
-    sample = np.asarray(
-        np.random.normal(size=(10, 2)), dtype=np.float64, order='F'
-    )
-    assert abs(carma.mutable_flat_reference(sample, 9, 9.56) - 9.56) < 1e-12, m
-    assert abs(sample[9, 0] - 9.56) < 1e-12, sample
-
-    sample = np.asarray(
-        np.random.randint(low=-10, high=10, size=(10, 2)),
-        dtype=np.int64,
-        order='F'
-    )
-    assert carma.mutable_flat_reference(sample, 9, 9) == 9, m
-    assert sample[9, 0] == 9
-
-
-def test_mutable_flat_reference_non_writable():
-    """Test flat_reference construct with non-writable array."""
-    m = 'Array should not be writable'
-    sample = np.ones((10, 2), dtype=np.float64, order='F')
-    sample.setflags(write=0)
-    with pytest.raises(ValueError):
-        assert carma.mutable_flat_reference(sample, 9, 9) == sample[9, 0], m
