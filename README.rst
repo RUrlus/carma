@@ -1,24 +1,13 @@
-CARMA - Armadillo converters
-============================
+CARMA — Header only library enabling conversions between Numpy arrays and Armadillo matrices.
+=============================================================================================
+
 *CARMA is a header only library providing conversions between Numpy arrays and Armadillo matrices.*
-
-Table of contents
-#################
-.. only: not latex
-
-    Contents:
-
-.. toctree::
-   :maxdepth: 2
-
-   carma
-   versions
 
 Introduction
 ############
 
 The primary purpose of carma is to provide fast conversions between Numpy_ arrays and Armadillo_ matrices, much like RcppArmadillo_ does for R and Armadillo.
-The library relies heavily on the impressive pybind11_ library for the automatic conversion and follows their Eigen conversion implementation.
+The library relies heavily on the impressive `pybind11 <https://github.com/pybind/pybind11>`__ library for the automatic conversion and follows their Eigen conversion implementation.
 
 The following functionality is available:
 
