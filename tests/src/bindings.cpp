@@ -49,11 +49,8 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_is_owndata(m);
     bind_test_is_aligned(m);
     bind_test_is_writable(m);
-    bind_test_flat_reference(m);
     bind_test_is_f_contiguous(m);
     bind_test_is_c_contiguous(m);
-    bind_test_flat_reference(m);
-    bind_test_mutable_flat_reference(m);
     // type caster
     bind_test_tc_in_mat(m);
     bind_test_tc_in_row(m);
@@ -62,4 +59,9 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_tc_out_mat(m);
     bind_test_tc_out_mat_rvalue(m);
     bind_test_tc_out_row(m);
+    bind_test_tc_out_row_rvalue(m);
+    bind_test_tc_out_col(m);
+    bind_test_tc_out_col_rvalue(m);
+    bind_test_tc_out_cube(m);
+    bind_test_tc_out_cube_rvalue(m);
 }
