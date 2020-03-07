@@ -35,7 +35,7 @@ This  can be remedied with:
 
 .. code-block:: python
     
-   np.moveaxis(mat, [0, 1, 2], [2, 0, 1])
+   np.moveaxis(mat, (0, 1, 2), (2, 0, 1))
 
 
 Memory safety
