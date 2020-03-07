@@ -169,3 +169,5 @@ articles
 
 # Pyenv config
 pyenv.cfg
+
+*.pdf
