@@ -12,6 +12,10 @@
 */
 
 /* External headers */
+#include <memory>
+#include <utility>
+#include <type_traits>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 namespace py = pybind11;
@@ -46,7 +50,11 @@ namespace carma {
     }
 
     template <typename T> inline bool requires_copy(const py::array_t<T> & arr) {
+        #ifdef CARMA_DONT_REQUIRE_OWNDATA
+        return (!is_writable(arr) || !is_aligned(arr));
+        #else
         return (!is_writable(arr) || !is_owndata(arr) || !is_aligned(arr));
+        #endif
     }
 
 } /* carma */
