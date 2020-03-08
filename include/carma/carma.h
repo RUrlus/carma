@@ -74,6 +74,13 @@ namespace carma {
             }
             return arma::Mat<T>(static_cast<T *>(info.ptr), buffer.size(), 1, copy, strict);
         }
+
+        #ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
+        if (requires_copy(buffer)) {
+            copy = false;
+            strict = false;
+        }
+        #else
         if (requires_copy(buffer) || !is_f_contiguous(buffer)) {
             // If not F-contiguous or writable or numpy's data let pybind handle the copy
             buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
@@ -81,6 +88,7 @@ namespace carma {
             copy = false;
             strict = false;
         }
+        #endif
         return arma::Mat<T>(static_cast<T *>(info.ptr), info.shape[0], info.shape[1], copy, strict);
     } /* arr_to_mat */
 
@@ -178,6 +186,12 @@ namespace carma {
             throw std::runtime_error("armadillo matrix conversion failed, nullptr");
         }
 
+        #ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
+        if (requires_copy(buffer)) {
+            copy = false;
+            strict = false;
+        }
+        #else
         if (requires_copy(buffer) || !is_f_contiguous(buffer)) {
             // If not F-contiguous or writable or numpy's data let pybind handle the copy
             buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
@@ -185,6 +199,8 @@ namespace carma {
             copy = false;
             strict = false;
         }
+        #endif
+
         return arma::Cube<T>(
             static_cast<T *>(info.ptr),
             info.shape[0],
