@@ -26,6 +26,12 @@ SET(PROJECT_RELEASEE_DEFINITIONS ARMA_NO_DEBUG)
 # ##############################################################################
 ADD_DEFINITIONS(-DARMA_DONT_USE_WRAPPER)
 
+# Don't copy arrays if the data is not owned by Numpy
+# ADD_DEFINITIONS(-DCARMA_DONT_REQUIRE_OWNDATA)
+
+# Don't copy c-style arrays definition
+# ADD_DEFINITIONS(-DCARMA_DONT_REQUIRE_F_CONTIGUOUS)
+
 # ##############################################################################
 #                                   INCLUDE                                    #
 # ##############################################################################
