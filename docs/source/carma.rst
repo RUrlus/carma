@@ -1,23 +1,9 @@
-################
-Conversion Logic
-################
-
-During the conversion from Numpy to Armadillo the default behaviour is to avoid copying.
-The memory is copied if:
-
-* array has `ndim >= 2` and array's memory is not F contiguous
-* array's memory is not aligned
-* array's memory is not writable
-* array does not own the memory
-
-.. note:: Note that the user set value for copy is overridden if one of the above conditions is true
-
 #################
 Manual conversion
 #################
 
 CARMA provides a set of functions for manual conversion of Numpy arrays and Armadillo matrices.
-Manual conversion should be used when fine grained control is required about memory management.
+Manual conversion should be used when fine grained control of memory is required.
 
 Numpy to Armadillo
 ******************
@@ -80,13 +66,9 @@ Armadillo to Numpy
 
 This section documents the functions to convert Armadillo matrices, vectors or cubes to Numpy arrays. 
 
-**Note that:**
+.. warning:: default for copy is `false` for matrices and `true` for all other armadillo types. See :ref:`memsafe` for details.
 
-* All functions for conversion to Numpy arrays accept `pointer`, `lvalue` and `rvalue` armadillo objects.
-* `to_numpy` is overloaded for all supported armadillo types `[Mat, Col, Row, Cube]`.
-* **default for copy is `false` for matrices and `true` for all other armadillo types.**
-
-See :ref:`memsafe` for details.
+.. note:: All functions for conversion to Numpy arrays overloads for {pointer, lvalue, rvalue} Armadillo objects of type {Mat, Col, Row, Cube}.
 
 Matrix
 ------
@@ -215,7 +197,7 @@ CARMA provides a type caster which enables automatic conversion using pybind11.
 
 .. warning:: `carma.h` should included in every compilation unit where automated type casting occurs, otherwise undefined behaviour will occur.
 
-The underlying casting function has overloads for `pointer`, `lvalue`, `rvalue` Armadillo objects of type `Mat, Col, Row, Cube` and calls the respective `<arma Type>_to_arr` function.
+.. note:: The underlying casting function has overloads for `{pointer, lvalue, rvalue}` Armadillo objects of type `{Mat, Col, Row, Cube}`.
 
 Return policies
 ***************
