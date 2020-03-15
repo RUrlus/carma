@@ -1,34 +1,40 @@
 Introduction
 ############
 
-The primary purpose of carma is to provide fast conversions between Numpy_ arrays and Armadillo_ matrices, much like RcppArmadillo_ does for R and Armadillo.
-The library relies heavily on the impressive pybind11_ library for the automatic conversion and follows their Eigen conversion implementation.
+CARMA provides fast bidirectional conversions between Numpy_ arrays and Armadillo_ matrices, vectors and cubes, much like RcppArmadillo_ does for R and Armadillo.
 
-The following functionality is available:
+The library relies heavily on the impressive pybind11_ library and is largely inspired by their Eigen conversion albeit with a less conservative approach to memory management.
+For details on pybind11_ and Armadillo_ refer to their respective documentation.
 
-* Inplace mutability of Numpy memory from Armadillo
-* Bidirectional conversions of Numpy arrays and Armadillo matrices, vectors and cubes
+Installation
+++++++++++++
 
-For details on pybind11_ and Armadillo_ refer to there respective documentation:
+`carma` is a header only library that relies on two other header only libraries, Armadillo and Pybind11.
+A stripped version of both libraries is included in the `tests` directory.
 
 Considerations
 ++++++++++++++
 
-In order to achieve fast conversions the default behaviour is avoid copying both from and to Numpy whenever possible.
+In order to achieve fast conversions the default behaviour is avoid copying both from and to Numpy whenever possible and reasonable.
 This allows very low overhead conversions but it impacts memory safety and requires user vigilance.
 
 A second consideration is memory layout. Armadillo is optimised for column-major (Fortran order) memory whereas Numpy defaults to row-major (C order).
-The choice was made to automatically convert, read copy, C-order arrays to F-order arrays upon conversion to Armadillo.
-Users should note that the library will not convert back to C-order when returning, this has consequences for matrices and cubes.
-For details see the sections :ref:`memsafe` and :ref:`memorder`.
+The default behaviour is to automatically convert, read copy, C-order arrays to F-order arrays upon conversion to Armadillo. Users should note that the library will not convert back to C-order when returning, this has consequences for matrices and cubes.
+
+For details see the :doc:`Memory Management <memory_management>` section.
 
 Compatibility
 +++++++++++++
 
-carma has been tested with:
+`carma` has been tested with:
 
 * armadillo-9.800.1
 * pybind11-2.4.3
+
+The repository contains tests and CMake build instructions that can be used as an example.
+For manual compilation see the :doc:`Usage section <basic_usage>`.
+
+Note that the tests assume OpenBLAS is present on your system.
 
 **Compiler requirements through pybind11**
 
@@ -46,7 +52,7 @@ This project was created by Ralph Urlus.
 License
 +++++++
 
-carma is provided under a Apache 2.0 license that can be found in the LICENSE file. By using, distributing, or contributing to this project, you agree to the terms and conditions of this license.
+`carma` is provided under a Apache 2.0 license that can be found in the LICENSE file. By using, distributing, or contributing to this project, you agree to the terms and conditions of this license.
 
 .. _numpy: https://numpy.org
 .. _rcpparmadillo: https://github.com/RcppCore/RcppArmadillo
