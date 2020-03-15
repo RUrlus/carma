@@ -12,10 +12,6 @@ PROJECT(
 # ##############################################################################
 SET(CMAKE_CXX_STANDARD 14)
 SET(CMAKE_BUILD_TYPE RELEASE)
-OPTION(BUILD_TESTS "Build tests for carma" ON)
-
-SET(INCLUDE_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-SET(ARMA_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include/armadillo/include")
 
 SET(PROJECT_RELEASEE_FLAGS "-march=native" "-mtune=native" "-mfpmath=sse")
 SET(PROJECT_RELEASEE_DEFINITIONS ARMA_NO_DEBUG)
@@ -35,6 +31,5 @@ ADD_DEFINITIONS(-DARMA_DONT_USE_WRAPPER)
 # ##############################################################################
 #                                   INCLUDE                                    #
 # ##############################################################################
-ADD_SUBDIRECTORY("${INCLUDE_BASE}/pybind11")
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt)
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})

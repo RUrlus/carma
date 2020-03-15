@@ -4,6 +4,10 @@ SET(MODNAME "test_carma")
 SET(SUBPATH "${PROJECT_SOURCE_DIR}/tests/src")
 SET(TESTPATH "${PROJECT_SOURCE_DIR}/tests/libs")
 
+SET(INCLUDE_BASE "${PROJECT_SOURCE_DIR}/tests/include")
+SET(ARMA_INCLUDE "${PROJECT_SOURCE_DIR}/tests/include/armadillo/include")
+ADD_SUBDIRECTORY("${INCLUDE_BASE}/pybind11")
+
 # ##############################################################################
 #                                  EXECUTABLE                                  #
 # ##############################################################################
