@@ -1,22 +1,19 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.14.4)
 
 SET(MODNAME "test_carma")
-SET(SUBPATH "${PROJECT_SOURCE_DIR}/tests/src")
-SET(TESTPATH "${PROJECT_SOURCE_DIR}/tests/libs")
+SET(TPATH "${PROJECT_SOURCE_DIR}/examples")
 
 # ##############################################################################
 #                                  EXECUTABLE                                  #
 # ##############################################################################
-pybind11_add_module(${MODNAME}
+pybind11_add_module(carma_examples
     MODULE
-        ${SUBPATH}/bindings.cpp
-        ${SUBPATH}/test_nparray.cpp
-        ${SUBPATH}/test_arr_to_mat.cpp
-        ${SUBPATH}/test_mat_to_arr.cpp
-        ${SUBPATH}/test_type_caster.cpp
+        ${PROJECT_SOURCE_DIR}/examples/example_bindings.cpp
+        ${PROJECT_SOURCE_DIR}/examples/manual_conversion.cpp
+        ${PROJECT_SOURCE_DIR}/examples/automatic_conversion.cpp
 )
 
-TARGET_INCLUDE_DIRECTORIES(${MODNAME}
+TARGET_INCLUDE_DIRECTORIES(carma_examples
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -24,12 +21,12 @@ TARGET_INCLUDE_DIRECTORIES(${MODNAME}
         ${ARMA_INCLUDE}
 )
 
-TARGET_COMPILE_OPTIONS(${MODNAME}
+TARGET_COMPILE_OPTIONS(carma_examples
     PUBLIC
         "$<$<CONFIG:RELEASE>:${PROJECT_RELEASEE_FLAGS}>"
 )
 
-TARGET_COMPILE_DEFINITIONS(${MODNAME}
+TARGET_COMPILE_DEFINITIONS(carma_examples
     PUBLIC
         "$<$<CONFIG:RELEASE>:${PROJECT_RELEASE_DEFINITIONS}>"
 )
@@ -37,4 +34,4 @@ TARGET_COMPILE_DEFINITIONS(${MODNAME}
 # ##############################################################################
 #                                   INSTALL                                    #
 # ##############################################################################
-INSTALL(TARGETS ${MODNAME} DESTINATION ${TESTPATH})
+INSTALL(TARGETS carma_examples DESTINATION ${TPATH})
