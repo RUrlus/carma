@@ -34,8 +34,6 @@ Compatibility
 The repository contains tests and CMake build instructions that can be used as an example.
 For manual compilation see the :doc:`Usage section <basic_usage>`.
 
-Note that the tests assume OpenBLAS is present on your system.
-
 **Compiler requirements through pybind11**
 
 1. Clang/LLVM 3.3 or newer (for Apple Xcode's clang, this is 5.0.0 or newer)

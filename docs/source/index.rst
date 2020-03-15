@@ -15,11 +15,10 @@ CARMA - Armadillo converters
     introduction
 
 .. toctree::
-    :caption: Basic Usage
+    :caption: The basics
     :maxdepth: 2
 
     basic_usage
-    basic_examples
 
 .. toctree::
     :caption: Memory Management
