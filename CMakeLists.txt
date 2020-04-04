@@ -36,5 +36,5 @@ ADD_SUBDIRECTORY("${INCLUDE_BASE}/pybind11")
 #                                   INCLUDE                                    #
 # ##############################################################################
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt)
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/examples/CMakeLists.txt)
+# INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/examples/CMakeLists.txt)
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
