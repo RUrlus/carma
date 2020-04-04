@@ -1,0 +1,116 @@
+language: cpp
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+    env: PYTHON=3.7 CPP=14 GCC=7
+    name: Python 3.7, c++14, gcc 7
+    addons:
+      apt:
+        sources:
+          - deadsnakes
+          - ubuntu-toolchain-r-test
+        packages:
+          - g++-7
+          - python3.7-dev
+          - python3.7-venv
+  - os: linux
+    dist: xenial
+    env: PYTHON=3.7 CPP=14 GCC=7 DEBUG
+    name: Python 3.7, c++14, gcc 7, debug
+    addons:
+      apt:
+        sources:
+          - deadsnakes
+          - ubuntu-toolchain-r-test
+        packages:
+          - g++-7
+          - python3.7-dev
+          - python3.7-venv
+  - os: linux
+    dist: xenial
+    env: PYTHON=3.7 CPP=14 GCC=7 NOWN
+    name: Python 3.7, c++14, gcc 7, NOT_OWN_DATA
+    addons:
+      apt:
+        sources:
+          - deadsnakes
+          - ubuntu-toolchain-r-test
+        packages:
+          - g++-7
+          - python3.7-dev
+          - python3.7-venv
+  - os: linux
+    dist: xenial
+    env: PYTHON=3.7 CPP=14 CLANG=7
+    name: Python 3.7, c++14, Clang 7
+    addons:
+      apt:
+        sources:
+          - deadsnakes
+          - llvm-toolchain-xenial-7
+        packages:
+          - python3.7-dev
+          - python3.7-venv
+          - clang-7
+          - libclang-7-dev
+          - llvm-7-dev
+          - lld-7
+          - libc++-7-dev
+          - libc++abi-7-dev
+
+cache:
+  directories:
+  - $HOME/.local/bin
+  - $HOME/.local/lib
+  - $HOME/.local/include
+  - $HOME/Library/Python
+before_install:
+- |
+  # Configure build variables
+  set -ex
+  if [ -n "$CLANG" ]; then
+    export CXX=clang++-$CLANG CC=clang-$CLANG
+    EXTRA_PACKAGES+=" clang-$CLANG llvm-$CLANG-dev"
+  else
+    EXTRA_PACKAGES+=" g++-$GCC"
+    export CXX=g++-$GCC CC=gcc-$GCC
+  fi
+  if [ -n "$CPP" ]; then CPP=-std=c++$CPP; fi
+  if [ "${PYTHON:0:1}" = "3" ]; then PY=3; fi
+  if [ -n "$DEBUG" ]; then CMAKE_EXTRA_ARGS+=" -DCMAKE_BUILD_TYPE=Debug"; fi
+  if [ -n "$NOWND" ]; then CMAKE_EXTRA_ARGS+=" -DCARMA_DONT_REQUIRE_OWNDATA"; fi 
+  PY_CMD=python$PYTHON
+  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  ${PY_CMD} get-pip.py
+  set +ex
+install:
+- |
+  # Install dependencies
+  set -ex
+  if [ "$CLANG" = "7" ]; then
+    export CXXFLAGS="-stdlib=libc++"
+  fi
+  ${PY_CMD} -m pip install pip --upgrade
+  ${PY_CMD} -m pip install pytest numpy scipy cmake --upgrade 
+  set +ex
+- |
+  # CMake Configuration
+  set -ex
+  mkdir build
+  cd build
+  cmake ${CMAKE_EXTRA_ARGS} \
+  -DPYBIND11_PYTHON_VERSION=$PYTHON \
+  -DPYBIND11_CPP_STANDARD=$CPP \
+  ..
+  make install
+  cd ..
+  set +ex
+script:
+- |
+  # pytest
+  set -ex
+  cd tests
+  ${PY_CMD} -m pytest
+  set +ex
+after_failure: cat tests/test_cmake_build/*.log*
