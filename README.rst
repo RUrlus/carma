@@ -1,7 +1,13 @@
 CARMA — Header only library enabling conversions between Numpy arrays and Armadillo matrices.
 =============================================================================================
+.. image:: https://travis-ci.com/RUrlus/carma.svg?branch=master
+    :target: https://travis-ci.com/RUrlus/carma
 
-*CARMA is a header only library providing conversions between Numpy arrays and Armadillo matrices.*
+.. image:: https://readthedocs.org/projects/carma/badge/?version=latest
+:target: https://carma.readthedocs.io/en/latest/?badge=latest
+:alt: Documentation Status
+
+`CARMA <https://carma.readthedocs.io/en/latest/>`__ is a header only library providing conversions between Numpy arrays and Armadillo matrices.
 
 Introduction
 ############
