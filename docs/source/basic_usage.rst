@@ -30,7 +30,7 @@ Although using a build system is suggested, the :bash:`examples/example.cpp` can
 
 .. code-block:: bash
     
-    c++ -O3 -Wall -shared -std=c++11 -fPIC -larmadillo `python3 -m pybind11 --includes` example.cpp -o example`python3-config --extension-suffix`
+    c++ -O3 -Wall -shared -std=c++14 -fPIC -larmadillo `python3 -m pybind11 --includes` example.cpp -o example`python3-config --extension-suffix`
 
 **on MacOS**
 
@@ -38,7 +38,7 @@ Although using a build system is suggested, the :bash:`examples/example.cpp` can
     
     c++ -O3 -Wall -shared -std=c++14 -larmadillo -undefined dynamic_lookup `python3 -m pybind11 --includes` example.cpp -o example`python3-config --extension-suffix`
 
-Manual compilation requires that Pybind11 and Armadillo are discoverable by clang or gcc.
+Manual compilation requires that Pybind11 and Armadillo are discoverable.
 
 Build systems 
 *************
