@@ -1,12 +1,20 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.14.4)
 
 SET(MODNAME "test_carma")
+SET(INCLUDE_BASE "${PROJECT_SOURCE_DIR}/tests/include")
+SET(ARMA_INCLUDE "${PROJECT_SOURCE_DIR}/tests/include/armadillo/include")
+
 SET(SUBPATH "${PROJECT_SOURCE_DIR}/tests/src")
 SET(TESTPATH "${PROJECT_SOURCE_DIR}/tests/libs")
+
+SET(PROJECT_RELEASEE_FLAGS "-march=native" "-mtune=native")
+SET(PROJECT_RELEASEE_DEFINITIONS ARMA_NO_DEBUG)
+# see linkg for a more expensive approach https://github.com/VcDevel/Vc/blob/master/cmake/OptimizeForArchitecture.cmake
 
 # ##############################################################################
 #                                  EXECUTABLE                                  #
 # ##############################################################################
+ADD_SUBDIRECTORY("${INCLUDE_BASE}/pybind11")
 pybind11_add_module(${MODNAME}
     MODULE
         ${SUBPATH}/bindings.cpp
