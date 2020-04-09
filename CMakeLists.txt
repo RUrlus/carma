@@ -13,14 +13,8 @@ PROJECT(
 SET(CMAKE_CXX_STANDARD 14)
 SET(CMAKE_BUILD_TYPE RELEASE)
 
-SET(PROJECT_RELEASEE_FLAGS "-march=native" "-mtune=native" "-mfpmath=sse")
-SET(PROJECT_RELEASEE_DEFINITIONS ARMA_NO_DEBUG)
-# see linkg for a more expensive approach https://github.com/VcDevel/Vc/blob/master/cmake/OptimizeForArchitecture.cmake
-
-SET(INCLUDE_BASE "${PROJECT_SOURCE_DIR}/tests/include")
-SET(ARMA_INCLUDE "${PROJECT_SOURCE_DIR}/tests/include/armadillo/include")
-ADD_SUBDIRECTORY("${INCLUDE_BASE}/pybind11")
-
+OPTION(BUILD_TESTS "Build tests for carma" OFF)
+OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
 # ##############################################################################
 #                                 DEFINITIONS                                  #
 # ##############################################################################
@@ -33,8 +27,17 @@ ADD_SUBDIRECTORY("${INCLUDE_BASE}/pybind11")
 # ADD_DEFINITIONS(-DCARMA_DONT_REQUIRE_F_CONTIGUOUS)
 
 # ##############################################################################
-#                                   INCLUDE                                    #
+#                                   TARGET                                     #
 # ##############################################################################
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt)
-# INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/examples/CMakeLists.txt)
-MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+FIND_PACKAGE(Armadillo)
+ADD_LIBRARY(carma INTERFACE)
+TARGET_INCLUDE_DIRECTORIES(carma INTERFACE include/ ${ARMADILLO_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(carma ${ARMADILLO_LIBRARIES})
+
+IF(BUILD_TESTS)
+    INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt)
+    MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+ENDIF()
+IF(BUILD_EXAMPLES)
+    INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/examples/CMakeLists.txt)
+ENDIF()
