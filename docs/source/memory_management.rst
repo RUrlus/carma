@@ -77,12 +77,12 @@ CARMA offers two settings at compile time to disable automatic copies in the Num
 
 * Automatic copies of arrays with C-contiguous memory to F-contiguous memory layout can be disabled by setting:
 
-.. code-block::
+.. code-block:: bash
 
     -DCARMA_DONT_REQUIRE_F_CONTIGUOUS
 
 * Automatic copies of arrays that don't own their memory by setting:
 
-.. code-block::
+.. code-block:: bash
 
     -DCARMA_DONT_REQUIRE_OWNDATA
