@@ -11,7 +11,14 @@ PROJECT(
 #                                   SETTINGS                                   #
 # ##############################################################################
 SET(CMAKE_CXX_STANDARD 14)
-SET(CMAKE_BUILD_TYPE RELEASE)
+SET(DEFAULT_BUILD_TYPE "RELEASE")
+IF(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  MESSAGE(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
+  SET(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  SET_PROPERTY(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ENDIF()
 
 OPTION(BUILD_TESTS "Build tests for carma" OFF)
 OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
