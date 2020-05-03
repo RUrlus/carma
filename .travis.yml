@@ -16,7 +16,7 @@ matrix:
           - python3.7-venv
   - os: linux
     dist: xenial
-    env: PYTHON=3.7 CPP=14 GCC=7 DEBUG
+    env: PYTHON=3.7 CPP=14 GCC=7 DEBUG=true
     name: Python 3.7, c++14, gcc 7, debug
     addons:
       apt:
@@ -29,7 +29,7 @@ matrix:
           - python3.7-venv
   - os: linux
     dist: xenial
-    env: PYTHON=3.7 CPP=14 GCC=7 NOWN
+    env: PYTHON=3.7 CPP=14 GCC=7 NOWN=true
     name: Python 3.7, c++14, gcc 7, NOT_OWN_DATA
     addons:
       apt:
@@ -79,8 +79,8 @@ before_install:
   if [ -n "$CPP" ]; then CPP=-std=c++$CPP; fi
   if [ "${PYTHON:0:1}" = "3" ]; then PY=3; fi
   CMAKE_EXTRA_ARGS+=" -DBUILD_TESTS=ON"
-  if [ -n "$DEBUG" ]; then CMAKE_EXTRA_ARGS+=" -DCMAKE_BUILD_TYPE=Debug"; fi
-  if [ -n "$NOWND" ]; then CMAKE_EXTRA_ARGS+=" -DCARMA_DONT_REQUIRE_OWNDATA"; fi 
+  if [ "$DEBUG" = true ]; then CMAKE_EXTRA_ARGS+=" -DCMAKE_BUILD_TYPE=Debug"; fi
+  if [ "$NOWND" = true ]; then CMAKE_EXTRA_ARGS+=" -DCARMA_DONT_REQUIRE_OWNDATA"; fi 
   PY_CMD=python$PYTHON
   curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
   ${PY_CMD} get-pip.py
