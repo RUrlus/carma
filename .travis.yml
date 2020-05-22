@@ -58,6 +58,19 @@ matrix:
           - lld-7
           - libc++-7-dev
           - libc++abi-7-dev
+  - os: linux
+    dist: xenial
+    env: PYTHON=3.7 CPP=14 GCC=7 SONAR=true
+    name: Python 3.7, c++14, gcc 7 Sonar
+    addons:
+      apt:
+        sources:
+          - deadsnakes
+          - ubuntu-toolchain-r-test
+        packages:
+          - g++-7
+          - python3.7-dev
+          - python3.7-venv
 
 cache:
   directories:
@@ -81,6 +94,18 @@ before_install:
   CMAKE_EXTRA_ARGS+=" -DBUILD_TESTS=ON"
   if [ "$DEBUG" = true ]; then CMAKE_EXTRA_ARGS+=" -DCMAKE_BUILD_TYPE=Debug"; fi
   if [ "$NOWND" = true ]; then CMAKE_EXTRA_ARGS+=" -DCARMA_DONT_REQUIRE_OWNDATA"; fi 
+  if [ "$SONAR" = true ]; then
+    export SONAR_SCANNER_VERSION=4.2.0.1873
+    export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
+    curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip 
+    unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+    export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+    export SONAR_SCANNER_OPTS="-server"
+    
+    curl --create-dirs -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+    unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
+    export PATH=$HOME/.sonar/build-wrapper-linux-x86:$PATH
+  fi
   PY_CMD=python$PYTHON
   curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
   ${PY_CMD} get-pip.py
@@ -101,17 +126,31 @@ install:
   mkdir build
   cd build
   cmake ${CMAKE_EXTRA_ARGS} \
-  -DPYBIND11_PYTHON_VERSION=$PYTHON \
-  -DPYBIND11_CPP_STANDARD=$CPP \
-  ..
-  make install
-  cd ..
+    -DPYBIND11_PYTHON_VERSION=$PYTHON \
+    -DPYBIND11_CPP_STANDARD=$CPP \
+    ..
+  if [ "$SONAR" = true ]; then
+    cd ..
+    build-wrapper-linux-x86-64 --out-dir bw-output cmake --build build/ --config Release
+    sonar-scanner \
+      -Dsonar.organization=rurlus \
+      -Dsonar.projectKey=RUrlus_carma \
+      -Dsonar.sources=. \
+      -Dsonar.host.url=https://sonarcloud.io \
+      -Dsonar.cfamily.build-wrapper-output=bw-output \
+      -Dsonar.login=890640f8296b91c98ccfa8ec2545220d68a4edb6
+  else
+    make install
+    cd ..
+  fi
   set +ex
 script:
 - |
   # pytest
   set -ex
-  cd tests
-  ${PY_CMD} -m pytest
+  if [ "$SONAR" != true ]; then
+    cd tests
+    ${PY_CMD} -m pytest
+  fi
   set +ex
 after_failure: cat tests/test_cmake_build/*.log*
