@@ -135,7 +135,7 @@ install:
     sonar-scanner \
       -Dsonar.organization=rurlus \
       -Dsonar.projectKey=RUrlus_carma \
-      -Dsonar.sources=. \
+      -Dsonar.sources=include/.,tests/src/. \
       -Dsonar.host.url=https://sonarcloud.io \
       -Dsonar.cfamily.build-wrapper-output=bw-output \
       -Dsonar.login=890640f8296b91c98ccfa8ec2545220d68a4edb6
