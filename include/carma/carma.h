@@ -317,7 +317,7 @@ namespace carma {
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t nrows = static_cast<ssize_t>(src->n_rows);
 
-        T * data = get_data<arma::Col<double>>(src, copy);
+        T * data = get_data<arma::Col<T>>(src, copy);
         py::capsule base = create_capsule(data);
 
         return py::array_t<T>(
