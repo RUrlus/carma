@@ -34,7 +34,7 @@ namespace carma {
     }
 
     template <typename T> inline bool is_contiguous(const py::array_t<T> & arr) {
-        return is_f_contiguous(arr) || is_contiguous(arr);
+        return is_f_contiguous(arr) || is_c_contiguous(arr);
     }
 
     template <typename T> inline bool is_writable(const py::array_t<T> & arr) {
