@@ -39,3 +39,19 @@ void bind_test_is_aligned(py::module &m) {
         "Test is aligned"
     );
 }
+
+void bind_test_set_not_owndata(py::module &m) {
+    m.def(
+        "set_not_owndata",
+        [](py::array_t<double> & arr) {carma::set_not_owndata(arr);},
+        "Test is set_not_owndata"
+    );
+}
+
+void bind_test_set_not_writeable(py::module &m) {
+    m.def(
+        "set_not_writeable",
+        [](py::array_t<double> & arr) {carma::set_not_writeable(arr);},
+        "Test is set_not_writeable"
+    );
+}

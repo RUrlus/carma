@@ -58,3 +58,19 @@ def test_is_aligned():
     alt = np.frombuffer(sample.data, offset=2, count=100, dtype=np.float64)
     alt.shape = 10, 10
     assert carma.is_aligned(alt) == alt.flags['ALIGNED'], m
+
+
+def test_set_not_owndata():
+    """Test set_not_owndata."""
+    m = 'Array should have owndata is false'
+    sample = np.arange(100, dtype=np.float64)
+    carma.set_not_owndata(sample)
+    assert sample.flags['OWNDATA'] is False, m
+
+
+def test_set_not_writeable():
+    """Test set_not_writeable."""
+    m = 'Array should have writeable is false'
+    sample = np.arange(100, dtype=np.float64)
+    carma.set_not_writeable(sample)
+    assert sample.flags['WRITEABLE'] is False, m

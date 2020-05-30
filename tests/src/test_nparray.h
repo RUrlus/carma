@@ -9,3 +9,5 @@ void bind_test_is_c_contiguous(py::module &m);
 void bind_test_is_writable(py::module &m);
 void bind_test_is_owndata(py::module &m);
 void bind_test_is_aligned(py::module &m);
+void bind_test_set_not_owndata(py::module &m);
+void bind_test_set_not_writeable(py::module &m);
