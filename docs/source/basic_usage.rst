@@ -119,6 +119,42 @@ Update array
         carma::update_array(mat, arr);
     }
 
+Transfer ownership
+******************
+
+If you want to transfer ownership to the C++ side you can use:
+
+.. code-block:: c++
+
+    #include <armadillo>
+    #include <carma/carma.h>
+    #include <pybind11/pybind11.h>
+    #include <pybind11/numpy.h>
+    
+    arma::Mat<double> steal_array(py::array_t<double> & arr) {
+        // convert to armadillo matrix
+        arma::Mat<double> mat = carma::arr_to_mat<double>(arr);
+        // inform numpy it no longer owns the data
+        carma::set_not_owndata<double>(arr);
+        return mat;
+    }
+
+    py::array_t<double> numpy_view(arma::Mat<double> & mat) {
+        /* Return view on the buffer */
+        py::array_t<double> arr = carma::mat_to_arr<double>(mat);
+        // inform numpy it that it doesn't own the data
+        carma::set_not_owndata<double>(arr)
+        return arr;
+    }
+
+    py::array_t<double> numpy_view(const arma::Mat<double> & mat) {
+        /* Return read only view on the buffer */
+        py::array_t<double> arr = carma::mat_to_arr<double>(mat);
+        carma::set_not_owndata<double>(arr)
+        carma::test_set_not_writeable<double>(arr)
+        return arr;
+    }
+
 Automatic conversion
 ********************
 

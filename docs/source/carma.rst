@@ -274,3 +274,15 @@ Utility functions to check flags of numpy arrays.
    when either not writable, owndata or is not aligned.
 
    :param arr: numpy array to be checked
+
+.. function:: void set_not_owndata(py::array_t<T> & arr)
+
+   Set Numpy array's flag OWNDATA to false.
+
+   :param arr: numpy array to be changed
+
+.. function:: void set_not_writeable(py::array_t<T> & arr)
+
+   Set Numpy array's flag WRITEABLE to false.
+
+   :param arr: numpy array to be changed
