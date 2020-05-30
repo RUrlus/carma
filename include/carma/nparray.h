@@ -57,6 +57,14 @@ namespace carma {
         #endif
     }
 
+    template <typename T> inline void set_not_owndata(py::array_t<T> & arr) {
+        py::detail::array_proxy(arr.ptr())->flags &= ~py::detail::npy_api::NPY_ARRAY_OWNDATA_;
+    }
+
+    template <typename T> inline void set_not_writeable(py::array_t<T> & arr) {
+        py::detail::array_proxy(arr.ptr())->flags &= ~py::detail::npy_api::NPY_ARRAY_WRITEABLE_;
+    }
+
 } /* carma */
 
 #endif /* NPARRAY */
