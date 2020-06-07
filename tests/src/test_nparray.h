@@ -2,7 +2,7 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-#include <carma/nparray.h>
+#include <carma/carma/nparray.h>
 
 void bind_test_is_f_contiguous(py::module &m);
 void bind_test_is_c_contiguous(py::module &m);

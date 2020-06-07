@@ -61,7 +61,7 @@ namespace carma {
     }
 
     template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-    inline typename std::decay_t<typename armaT::elem_type> * steal_mem(armaT & src) {
+    inline typename std::decay_t<typename armaT::elem_type> * steal_mem(armaT * src) {
         using T = typename armaT::elem_type;
         T * data = src->memptr();
         arma::access::rw(src->mem) = 0;
