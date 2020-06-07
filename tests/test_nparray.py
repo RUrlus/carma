@@ -27,14 +27,14 @@ def test_is_c_contiguous():
 
 
 def test_is_writeable():
-    """Test is_writable."""
-    m = 'Array should be writable'
+    """Test is_writeable."""
+    m = 'Array should be writeable'
     sample = np.ones((10, 2), dtype=np.float64, order='F')
-    assert carma.is_writable(sample) is True, m
+    assert carma.is_writeable(sample) is True, m
 
-    m = 'Array should not be writable'
+    m = 'Array should not be writeable'
     sample.setflags(write=0)
-    assert carma.is_writable(sample) is False, m
+    assert carma.is_writeable(sample) is False, m
 
 
 def test_is_owndata():

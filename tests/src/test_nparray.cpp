@@ -16,11 +16,11 @@ void bind_test_is_c_contiguous(py::module &m) {
     );
 }
 
-void bind_test_is_writable(py::module &m) {
+void bind_test_is_writeable(py::module &m) {
     m.def(
-        "is_writable",
-        [](py::array_t<double> & arr) {return carma::is_writable(arr);},
-        "Test is writable"
+        "is_writeable",
+        [](py::array_t<double> & arr) {return carma::is_writeable(arr);},
+        "Test is writeable"
     );
 }
 

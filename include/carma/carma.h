@@ -43,7 +43,7 @@ namespace carma {
          *
          * The default behaviour is to avoid copying, we copy if:
          * - ndim == 2 && not F contiguous memory
-         * - writable is false
+         * - writeable is false
          * - owndata is false
          * - memory is not aligned
          * Note that the user set behaviour is overridden is one of the above conditions
@@ -82,7 +82,7 @@ namespace carma {
         }
         #else
         if (requires_copy(buffer) || !is_f_contiguous(buffer)) {
-            // If not F-contiguous or writable or numpy's data let pybind handle the copy
+            // If not F-contiguous or writeable or numpy's data let pybind handle the copy
             buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
 			info = buffer.request();
             copy = false;
@@ -96,7 +96,7 @@ namespace carma {
         /* Convert numpy array to Armadillo Column
          *
          * The default behaviour is to avoid copying, we copy if:
-         * - writable is false
+         * - writeable is false
          * - owndata is false
          * - memory is not aligned
          * Note that the user set behaviour is overridden is one of the above conditions
@@ -129,7 +129,7 @@ namespace carma {
         /* Convert numpy array to Armadillo Row
          *
          * The default behaviour is to avoid copying, we copy if:
-         * - writable is false
+         * - writeable is false
          * - owndata is false
          * - memory is not aligned
          * Note that the user set behaviour is overridden is one of the above conditions
@@ -163,7 +163,7 @@ namespace carma {
          *
          * The default behaviour is to avoid copying, we copy if:
          * - ndim == 2 && not F contiguous memory
-         * - writable is false
+         * - writeable is false
          * - owndata is false
          * - memory is not aligned
          * Note that the user set behaviour is overridden is one of the above conditions
@@ -193,7 +193,7 @@ namespace carma {
         }
         #else
         if (requires_copy(buffer) || !is_f_contiguous(buffer)) {
-            // If not F-contiguous or writable or numpy's data let pybind handle the copy
+            // If not F-contiguous or writeable or numpy's data let pybind handle the copy
             buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
 			info = buffer.request();
             copy = false;
@@ -544,7 +544,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
      *
      * The default behaviour is to avoid copying, we copy if:
      * - ndim == 2 && not F contiguous memory
-     * - writable is false
+     * - writeable is false
      * - owndata is false
      * - memory is not aligned
      * Note that the user set behaviour is overridden is one of the above conditions

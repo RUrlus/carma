@@ -48,7 +48,7 @@ PYBIND11_MODULE(test_carma, m) {
     // nparray
     bind_test_is_owndata(m);
     bind_test_is_aligned(m);
-    bind_test_is_writable(m);
+    bind_test_is_writeable(m);
     bind_test_is_f_contiguous(m);
     bind_test_is_c_contiguous(m);
     bind_test_set_not_owndata(m);

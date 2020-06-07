@@ -37,7 +37,7 @@ namespace carma {
         return is_f_contiguous(arr) || is_c_contiguous(arr);
     }
 
-    template <typename T> inline bool is_writable(const py::array_t<T> & arr) {
+    template <typename T> inline bool is_writeable(const py::array_t<T> & arr) {
         return py::detail::check_flags(arr.ptr(), py::detail::npy_api::NPY_ARRAY_WRITEABLE_);
     }
 
@@ -51,9 +51,9 @@ namespace carma {
 
     template <typename T> inline bool requires_copy(const py::array_t<T> & arr) {
         #ifdef CARMA_DONT_REQUIRE_OWNDATA
-        return (!is_writable(arr) || !is_aligned(arr));
+        return (!is_writeable(arr) || !is_aligned(arr));
         #else
-        return (!is_writable(arr) || !is_owndata(arr) || !is_aligned(arr));
+        return (!is_writeable(arr) || !is_owndata(arr) || !is_aligned(arr));
         #endif
     }
 
