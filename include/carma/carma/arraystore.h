@@ -1,3 +1,4 @@
+#include <iostream>
 #include  <pybind11/pybind11.h>
 #include  <pybind11/numpy.h>
 #include  <carma/carma/converters.h>
@@ -17,12 +18,14 @@ template <typename T> class ArrayStore {
         arma::Mat<T> _mat;
         T * _ptr;
         py::capsule _base;
-    public:
-        ArrayStore(py::array_t<T> & arr, bool steal, bool writeable) :
-        _steal{steal}, _writeable{writeable}
-        {
-            if (steal) {
+
+        void _convert_to_arma(py::array_t<T> & arr) {
+            if (_steal) {
                 _mat = arr_to_mat<T>(arr, false);
+
+                _ptr = _mat.memptr();
+                _base = create_capsule(_ptr);
+
                 // inform numpy it no longer owns the data
                 set_not_owndata(arr);
                 if (!_writeable) {
@@ -30,20 +33,42 @@ template <typename T> class ArrayStore {
                 }
             } else {
                 _mat = arr_to_mat<T>(arr, true);
+                _ptr = _mat.memptr();
+                // create a dummy capsule as armadillo will be repsonsible
+                // for descruction of the memory
+                // We need a capsule to prevent a copy on the way out.
+                _base = py::capsule(_ptr, [](void *f) {
+                    #ifndef NDEBUG
+                    // if in debug mode let us know what pointer is being freed
+                    std::cerr << "freeing memory @ " << f << std::endl;
+                    #endif
+
+                });
             }
-            _ptr = _mat.memptr();
-            // create object to return
-            _base = create_capsule(_ptr);
         }
 
-        inline void _update() {
-            _ptr = _mat.memptr();
-            _base = create_capsule(_ptr);
+    public:
+
+        ArrayStore(py::array_t<T> & arr, bool steal, bool writeable) :
+        _steal{steal}, _writeable{writeable}
+        {
+            /* Constructor
+             *
+             * Takes numpy array and converterts to Armadillo matrix.
+             * If the array should be stolen we set owndata false for
+             * numpy array.
+             *
+             * We store a capsule to serve as a reference for the
+             * views on the data
+             *
+             */
+            _convert_to_arma(arr);
         }
 
-        void set_data(py::array_t<T> & arr) {
-            _mat = arr_to_mat<T>(arr, false);
-            _update();
+        void set_data(py::array_t<T> & arr, bool steal, bool writeable) {
+            _steal = steal;
+            _writeable = writeable;
+            _convert_to_arma(arr);
         }
 
         py::array_t<T> get_view(bool writeable) {
@@ -60,6 +85,7 @@ template <typename T> class ArrayStore {
 
             // inform numpy it does not own the buffer
             set_not_owndata(arr);
+
             if (!writeable) {
                 set_not_writeable(arr);
             } else if (!_writeable) {
