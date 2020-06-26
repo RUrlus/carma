@@ -15,15 +15,14 @@ template <typename T> class ArrayStore {
         constexpr static ssize_t tsize = sizeof(T);
         bool _steal;
         bool _writeable;
-        arma::Mat<T> _mat;
         T * _ptr;
         py::capsule _base;
 
         void _convert_to_arma(py::array_t<T> & arr) {
             if (_steal) {
-                _mat = arr_to_mat<T>(arr, false);
+                mat = arr_to_mat<T>(arr, false);
 
-                _ptr = _mat.memptr();
+                _ptr = mat.memptr();
                 _base = create_capsule(_ptr);
 
                 // inform numpy it no longer owns the data
@@ -32,8 +31,8 @@ template <typename T> class ArrayStore {
                     set_not_writeable(arr);
                 }
             } else {
-                _mat = arr_to_mat<T>(arr, true);
-                _ptr = _mat.memptr();
+                mat = arr_to_mat<T>(arr, true);
+                _ptr = mat.memptr();
                 // create a dummy capsule as armadillo will be repsonsible
                 // for descruction of the memory
                 // We need a capsule to prevent a copy on the way out.
@@ -48,6 +47,7 @@ template <typename T> class ArrayStore {
         }
 
     public:
+        arma::Mat<T> mat;
 
         ArrayStore(py::array_t<T> & arr, bool steal, bool writeable) :
         _steal{steal}, _writeable{writeable}
@@ -72,8 +72,8 @@ template <typename T> class ArrayStore {
         }
 
         py::array_t<T> get_view(bool writeable) {
-            ssize_t nrows = static_cast<ssize_t>(_mat.n_rows);
-            ssize_t ncols = static_cast<ssize_t>(_mat.n_cols);
+            ssize_t nrows = static_cast<ssize_t>(mat.n_rows);
+            ssize_t ncols = static_cast<ssize_t>(mat.n_cols);
 
             // create the array
             py::array_t<T> arr = py::array_t<T>(
