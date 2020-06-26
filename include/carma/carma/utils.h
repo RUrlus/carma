@@ -88,7 +88,7 @@ namespace carma {
         /* Create a Python object that will free the allocated
          * memory when destroyed:
          */
-        py::capsule base(data, [](void *f) {
+        return py::capsule(data, [](void *f) {
             T *data = reinterpret_cast<T *>(f);
             #ifndef NDEBUG
             // if in debug mode let us know what pointer is being freed
@@ -96,7 +96,6 @@ namespace carma {
             #endif
             delete[] data;
         });
-        return base;
     } /* create_capsule */
 
 } /* carma */
