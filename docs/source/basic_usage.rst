@@ -69,7 +69,7 @@ and run:
 Examples
 ########
 
-On a high level `carma` provides three ways to work Numpy arrays in Armadillo:
+On a high level `carma` provides four ways to work with Numpy arrays and Armadillo:
 See the :doc:`Function specifications <carma>` section for details about the available functions and the examples directory for runnable examples.
 
 Manual conversion
@@ -184,3 +184,63 @@ When calling the function from Python, Pybind11 will call `carma`'s type caster 
     The automatic conversion will **not** copy the Numpy array's memory when converting to Armadillo objects.
     When converting back to Numpy arrays the memory will **not** be copied when converting back from matrices but **will be** copied from a vector or cube.
     See :doc:`Memory Management <memory_management>` for details.
+
+ArrayStore
+**********
+
+There are use-cases where you would want to keep the data in C++ and only return when requested.
+For example, you write an Ordinary Least Squares (OLS) class and you want to store the residuals, covariance matrix, ... in C++ for when additional tests need to be run on the values without converting back and forth.
+
+ArrayStore is a convenience class that provides conversion methods back and forth.
+It is intended to used as an attribute such as below:
+
+.. code-block:: c++
+
+    #include <armadillo>
+    #include <carma/carma.h>
+    #include <pybind11/pybind11.h>
+    #include <pybind11/numpy.h>
+    
+    class ExampleClass {
+        private:
+            carma::ArrayStore<double> _x;
+            carma::ArrayStore<double> _y;
+
+        public:
+            ExampleClass(py::array_t<double> & x, py::array_t<double> & y) :
+            // steal the array, mark it mutable and store it as an
+            // Armadillo array
+            _x{carma::ArrayStore<double>(x, true, true)},
+            // copy the array, mark it read-only and store it as an
+            // Armadillo array
+            _y{carma::ArrayStore<double>(y, false, false)} {}
+
+            py::array_t<double> member_func() {
+                // normallly you would something useful here
+                _x.mat += _y.mat;
+                // return mutable view off arma matrix
+                return _x.get_view(true);
+            }
+    };
+
+    void bind_exampleclass(py::module &m) {
+        py::class_<ExampleClass>(m, "ExampleClass")
+            .def(py::init<py::array_t<double> &, py::array_t<double> &>(), R"pbdoc(
+                Initialise ExampleClass.
+    
+                Parameters
+                ----------
+                arr1: np.ndarray
+                    array to be stored in armadillo matrix
+                arr2: np.ndarray
+                    array to be stored in armadillo matrix
+            )pbdoc")
+            .def("member_func", &ExampleClass::member_func, R"pbdoc(
+                Compute ....
+            )pbdoc");
+    }
+
+.. warning::
+    
+    The ArrayStore owns the data, the returned numpy arrays are views that
+    are tied to the lifetime of ArrayStore.
