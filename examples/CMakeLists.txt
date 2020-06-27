@@ -8,6 +8,7 @@ SET(TPATH "${PROJECT_SOURCE_DIR}/examples")
 # ##############################################################################
 pybind11_add_module(carma_examples
     MODULE
+        ${PROJECT_SOURCE_DIR}/examples/arraystore.cpp
         ${PROJECT_SOURCE_DIR}/examples/example_bindings.cpp
         ${PROJECT_SOURCE_DIR}/examples/manual_conversion.cpp
         ${PROJECT_SOURCE_DIR}/examples/automatic_conversion.cpp
