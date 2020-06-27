@@ -9,6 +9,17 @@ sample = np.asarray(
     order='F'
 )
 
-carma.manual_example(sample)
+print(carma.manual_example(sample))
 carma.update_example(sample)
-carma.automatic_example(sample)
+print(carma.automatic_example(sample))
+
+
+sample2 = np.asarray(
+    np.random.random(size=(10, 2)),
+    dtype=np.float64,
+    order='F'
+)
+
+example_class = carma.ExampleClass(sample, sample2)
+arr = example_class.member_func()
+print(arr)
