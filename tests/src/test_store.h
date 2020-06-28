@@ -4,12 +4,16 @@ namespace py = pybind11;
 
 #include <carma/carma/arraystore.h>
 
+void bind_test_ArrayStore_get_mat(py::module &m);
+void bind_test_ArrayStore_get_mat_rvalue(py::module &m);
+void bind_test_ArrayStore_get_view(py::module &m);
+
 template<typename T>
 void bind_ArrayStore(py::module &m, std::string && typestr) {
     using Class = carma::ArrayStore<T>;
     std::string pyclass_name =  typestr + std::string("ArrayStore");
     py::class_<Class>(m, pyclass_name.c_str())
-        .def( py::init<py::array_t<T> &, bool, bool>(), R"pbdoc(
+        .def( py::init<py::array_t<T> &, bool>(), R"pbdoc(
             Initialise ArrayStore class.
 
             The class store Numpy arrays as Armadillo matrices.
