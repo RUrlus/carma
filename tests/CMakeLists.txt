@@ -18,6 +18,7 @@ ADD_SUBDIRECTORY("${INCLUDE_BASE}/pybind11")
 pybind11_add_module(${MODNAME}
     MODULE
         ${SUBPATH}/bindings.cpp
+        ${SUBPATH}/test_store.cpp
         ${SUBPATH}/test_nparray.cpp
         ${SUBPATH}/test_arr_to_mat.cpp
         ${SUBPATH}/test_mat_to_arr.cpp

@@ -7,7 +7,7 @@ import libs.test_carma as carma
 def test_ArrayStore_get_view():
     """Tests for ArrayStore class.get_view()."""
     sample = np.random.uniform(-1, 1, size=100)
-    arraystore = carma.dArrayStore(sample, False, False)
+    arraystore = carma.dArrayStore(sample, False)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
@@ -18,7 +18,7 @@ def test_ArrayStore_copy():
     og_sample = np.random.uniform(-1, 1, size=100)
     sample = og_sample.copy()
 
-    arraystore = carma.dArrayStore(sample, False, False)
+    arraystore = carma.dArrayStore(sample, False)
     arr = arraystore.get_view(False)
     np.testing.assert_allclose(arr.flatten(), og_sample)
 
@@ -34,7 +34,7 @@ def test_ArrayStore_copy():
 def test_ArrayStore_non_writeable():
     """Test ArrayStore class when marked as non-readable."""
     sample = np.random.uniform(-1, 1, size=100)
-    arraystore = carma.dArrayStore(sample, False, False)
+    arraystore = carma.dArrayStore(sample, False)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is False
@@ -45,19 +45,11 @@ def test_ArrayStore_non_writeable():
 def test_ArrayStore_writeable():
     """Test ArrayStore class when marked as writeable."""
     sample = np.random.uniform(-1, 1, size=100)
-    arraystore = carma.dArrayStore(sample, False, True)
+    arraystore = carma.dArrayStore(sample, False)
     arr = arraystore.get_view(True)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is True
     arr[0, 0] = 1.0
-
-
-def test_ArrayStore_writeable_exception():
-    """Test ArrayStore class when marked as writeable."""
-    sample = np.random.uniform(-1, 1, size=100)
-    arraystore = carma.dArrayStore(sample, False, False)
-    with pytest.raises(RuntimeError):
-        arraystore.get_view(True)
 
 
 def test_ArrayStore_steal():
@@ -65,7 +57,7 @@ def test_ArrayStore_steal():
     og_sample = np.random.uniform(-1, 1, size=100)
     sample = og_sample.copy()
 
-    arraystore = carma.dArrayStore(sample, True, True)
+    arraystore = carma.dArrayStore(sample, True)
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample)
 
@@ -83,11 +75,11 @@ def test_ArrayStore_set_data():
     sample1 = np.random.uniform(-1, 1, size=100)
     sample2 = np.random.uniform(-1, 1, size=100)
 
-    arraystore = carma.dArrayStore(sample1, True, True)
+    arraystore = carma.dArrayStore(sample1, True)
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample1)
 
-    arraystore.set_data(sample2, True, True)
+    arraystore.set_data(sample2, True)
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample2)
     assert arr.flags['OWNDATA'] is False
@@ -99,36 +91,21 @@ def test_ArrayStore_set_data_flags():
     sample1 = np.random.uniform(-1, 1, size=100)
     sample2 = np.random.uniform(-1, 1, size=100)
 
-    arraystore = carma.dArrayStore(sample1, True, True)
+    arraystore = carma.dArrayStore(sample1, True)
     arr = arraystore.get_view(True)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is True
 
-    arraystore.set_data(sample2, True, False)
+    arraystore.set_data(sample2, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is False
 
 
-def test_ArrayStore_get_data_exception():
-    """Test ArrayStore class function set_data."""
-    sample1 = np.random.uniform(-1, 1, size=100)
-    sample2 = np.random.uniform(-1, 1, size=100)
-
-    arraystore = carma.dArrayStore(sample1, True, True)
-    arr = arraystore.get_view(True)
-    assert arr.flags['OWNDATA'] is False
-    assert arr.flags['WRITEABLE'] is True
-
-    arraystore.set_data(sample2, True, False)
-    with pytest.raises(RuntimeError):
-        arraystore.get_view(True)
-
-
 def test_ArrayStore_get_view_float():
     """Tests for ArrayStore class.get_view()."""
     sample = np.random.uniform(-1, 1, size=100).astype(np.float32)
-    arraystore = carma.fArrayStore(sample, False, False)
+    arraystore = carma.fArrayStore(sample, False)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
@@ -137,7 +114,7 @@ def test_ArrayStore_get_view_float():
 def test_ArrayStore_get_view_long():
     """Tests for ArrayStore class.get_view()."""
     sample = np.random.randint(-10, 10, size=100).astype(np.int)
-    arraystore = carma.lArrayStore(sample, False, False)
+    arraystore = carma.lArrayStore(sample, False)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
@@ -146,7 +123,30 @@ def test_ArrayStore_get_view_long():
 def test_ArrayStore_get_view_int():
     """Tests for ArrayStore class.get_view()."""
     sample = np.random.randint(-10, 10, size=100).astype(np.int32)
-    arraystore = carma.iArrayStore(sample, False, False)
+    arraystore = carma.iArrayStore(sample, False)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
+
+
+def test_ArrayStore_get_mat():
+    """Tests for ArrayStore C++ api."""
+    delta = carma.test_ArrayStore_get_mat()
+    assert delta < 1e-6
+
+
+def test_ArrayStore_get_mat_rvalue():
+    """Tests for ArrayStore C++ api."""
+    delta = carma.test_ArrayStore_get_mat()
+    assert delta < 1e-6
+
+
+def test_ArrayStore_get_view_cpp():
+    """Tests for ArrayStore get_view."""
+    arr = carma.test_ArrayStore_get_view(True)
+    assert arr.flags['OWNDATA'] is False
+    assert arr.flags['WRITEABLE'] is True
+
+    arr = carma.test_ArrayStore_get_view(False)
+    assert arr.flags['OWNDATA'] is False
+    assert arr.flags['WRITEABLE'] is False

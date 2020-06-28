@@ -3,6 +3,9 @@
 /* This is an example of a class where the data is stored
  * in C++. An example use-cae would be a regression where
  * you only return the underlying arrays when requested.
+ *
+ * Additional functionality exists for setting data directly
+ * from a arma::Mat or retrieving the matrix.
  */
 
 class ExampleClass {
@@ -14,10 +17,10 @@ class ExampleClass {
         ExampleClass(py::array_t<double> & x, py::array_t<double> & y) :
         // steal the array, mark it mutable and store it as an
         // Armadillo array
-        _x{carma::ArrayStore<double>(x, true, true)},
+        _x{carma::ArrayStore<double>(x, true)},
         // copy the array, mark it read-only and store it as an
         // Armadillo array
-        _y{carma::ArrayStore<double>(y, false, false)} {}
+        _y{carma::ArrayStore<double>(y, false)} {}
 
         py::array_t<double> member_func() {
             // normallly you would something useful here
