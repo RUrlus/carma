@@ -98,5 +98,18 @@ namespace carma {
         });
     } /* create_capsule */
 
+    template <typename T>
+    inline py::capsule create_dummy_capsule(T * data) {
+        /* Create a Python object that will free the allocated
+         * memory when destroyed:
+         */
+        return py::capsule(data, [](void *f) {
+            #ifndef NDEBUG
+            // if in debug mode let us know what pointer is being freed
+            std::cerr << "freeing memory @ " << f << std::endl;
+            #endif
+        });
+    } /* create_dummy_capsule */
+
 } /* carma */
 #endif /* ARMA_UTILS */
