@@ -14,43 +14,30 @@ template <typename T> class ArrayStore {
     protected:
         constexpr static ssize_t tsize = sizeof(T);
         bool _steal;
-        bool _writeable;
         T * _ptr;
         py::capsule _base;
 
         void _convert_to_arma(py::array_t<T> & arr) {
             if (_steal) {
                 mat = arr_to_mat<T>(arr, false);
-
                 _ptr = mat.memptr();
                 _base = create_capsule(_ptr);
-
                 // inform numpy it no longer owns the data
                 set_not_owndata(arr);
-                if (!_writeable) {
-                    set_not_writeable(arr);
-                }
             } else {
                 mat = arr_to_mat<T>(arr, true);
                 _ptr = mat.memptr();
                 // create a dummy capsule as armadillo will be repsonsible
                 // for descruction of the memory
                 // We need a capsule to prevent a copy on the way out.
-                _base = py::capsule(_ptr, [](void *f) {
-                    #ifndef NDEBUG
-                    // if in debug mode let us know what pointer is being freed
-                    std::cerr << "freeing memory @ " << f << std::endl;
-                    #endif
-
-                });
+                _base = create_dummy_capsule(_ptr);
             }
         }
 
     public:
         arma::Mat<T> mat;
 
-        ArrayStore(py::array_t<T> & arr, bool steal, bool writeable) :
-        _steal{steal}, _writeable{writeable}
+        ArrayStore(py::array_t<T> & arr, bool steal) : _steal{steal}
         {
             /* Constructor
              *
@@ -65,10 +52,37 @@ template <typename T> class ArrayStore {
             _convert_to_arma(arr);
         }
 
-        void set_data(py::array_t<T> & arr, bool steal, bool writeable) {
+        ArrayStore(arma::Mat<T> & mat) :
+            _steal{false},
+            _ptr{mat.memptr()},
+            _base{create_dummy_capsule(_ptr)},
+            mat{mat}
+        {}
+
+        ArrayStore(arma::Mat<T> && mat) :
+            _steal{true},
+            _ptr{mat.memptr()},
+            _base{create_dummy_capsule(_ptr)},
+            mat{std::move(mat)}
+        {}
+
+        void set_data(py::array_t<T> & arr, bool steal) {
             _steal = steal;
-            _writeable = writeable;
             _convert_to_arma(arr);
+        }
+
+        void set_mat(arma::Mat<T> & src) {
+            _steal = false;
+            _ptr = mat.memptr();
+            _base = create_dummy_capsule(_ptr);
+            mat = src;
+        }
+
+        void set_mat(arma::Mat<T> && src) {
+            _steal = true;
+            _ptr = mat.memptr();
+            _base = create_dummy_capsule(_ptr);
+            mat = std::move(src);
         }
 
         py::array_t<T> get_view(bool writeable) {
@@ -86,11 +100,7 @@ template <typename T> class ArrayStore {
             // inform numpy it does not own the buffer
             set_not_owndata(arr);
 
-            if (!writeable) {
-                set_not_writeable(arr);
-            } else if (!_writeable) {
-                throw std::runtime_error("store is marked non-writeable");
-            }
+            if (!writeable) set_not_writeable(arr);
             return arr;
         }
 };
