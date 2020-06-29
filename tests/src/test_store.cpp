@@ -12,11 +12,12 @@ double test_ArrayStore_get_mat() {
 
 double test_ArrayStore_get_mat_rvalue() {
     arma::Mat<double> mat_in = arma::ones(100, 1);
+    arma::Mat<double> ref_mat = arma::mat(mat_in.memptr(), 100, 1);
     ArrayStore<double> store = (
         ArrayStore<double>(std::forward<arma::mat>(mat_in))
     );
     arma::Mat<double> mat_out = store.mat;
-    return std::fabs(arma::accu(mat_out) - arma::accu(mat_in));
+    return std::fabs(arma::accu(mat_out) - arma::accu(ref_mat));
 } /* test_ArrayStore_get_mat */
 
 py::array_t<double> test_ArrayStore_get_view(bool writeable) {
