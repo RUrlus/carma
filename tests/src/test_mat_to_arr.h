@@ -18,10 +18,10 @@ namespace carma { namespace tests {
     py::array_t<double> test_row_to_arr_return(bool copy);
     py::array_t<double> test_col_to_arr_return(bool copy);
     py::array_t<double> test_cube_to_arr_return(bool copy);
-    int test_update_array_mat(py::array_t<double> & arr, int rows);
-    int test_update_array_row(py::array_t<double> & arr, int rows);
-    int test_update_array_col(py::array_t<double> & arr, int rows);
-    int test_update_array_cube(py::array_t<double> & arr, int rows);
+    int test_update_array_mat(py::array_t<double> & arr, int cols);
+    int test_update_array_row(py::array_t<double> & arr, int cols);
+    int test_update_array_col(py::array_t<double> & arr, int cols);
+    int test_update_array_cube(py::array_t<double> & arr, int cols);
     py::array_t<double> test_mat_to_arr_plus_one(py::array_t<double> & arr, bool copy);
     py::array_t<double> test_row_to_arr_plus_one(py::array_t<double> & arr, bool copy);
     py::array_t<double> test_col_to_arr_plus_one(py::array_t<double> & arr, bool copy);
