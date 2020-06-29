@@ -57,7 +57,7 @@ int test_arr_to_mat_long(py::array_t<long> & arr, bool copy, bool strict) {
     arma::Mat<long> M = carma::arr_to_mat<long>(arr, copy, strict);
 
     // ---------------------------------------------------------------
-    double mat_sum = arma::accu(M);
+    long mat_sum = arma::accu(M);
 
     // variable for test status
     if (arr_N != M.n_elem) return 1;
@@ -117,7 +117,7 @@ int test_arr_to_mat_1d(py::array_t<long> & arr, bool copy, bool strict) {
     arma::Mat<long> M = carma::arr_to_mat<long>(arr, copy, strict);
 
     // ---------------------------------------------------------------
-    double mat_sum = arma::accu(M);
+    long mat_sum = arma::accu(M);
 
     // variable for test status
     if (arr_N != M.n_elem) return 1;
