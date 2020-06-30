@@ -36,7 +36,15 @@ OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
 # ##############################################################################
 #                                   TARGET                                     #
 # ##############################################################################
-SET(PROJECT_RELEASE_FLAGS "-march=native" "-mtune=native")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" 
+        OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" 
+        OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    SET(PROJECT_RELEASE_FLAGS "-march=native" "-mtune=native")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    # workaround like https://github.com/nlohmann/json/issues/1408
+    # to avoid error like: carma\third_party\armadillo-code\include\armadillo_bits/arma_str.hpp(194): error C2039: '_snprintf': is not a member of 'std' (compiling source file carma\tests\src\bindings.cpp) 
+    ADD_DEFINITIONS(-DHAVE_SNPRINTF)
+endif ()
 SET(PROJECT_RELEASE_DEFINITIONS ARMA_NO_DEBUG)
 # see linkg for a more expensive approach https://github.com/VcDevel/Vc/blob/master/cmake/OptimizeForArchitecture.cmake
 
@@ -67,7 +75,7 @@ IF (BUILD_TESTS OR BUILD_EXAMPLES)
     SET(ARMADILLO_INCLUDE_DIR third_party/armadillo-code/include)
     ADD_LIBRARY(armadillo INTERFACE)
     target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
-
+    
     add_subdirectory(third_party/pybind11)
 
 
