@@ -149,8 +149,8 @@ script:
   # pytest
   set -ex
   if [ "$SONAR" != true ]; then
-    cd tests
-    PYTHONPATH=../build/tests ${PY_CMD} -m pytest
+    cd build
+    ctest -V
   fi
   set +ex
 after_failure: cat tests/test_cmake_build/*.log*
