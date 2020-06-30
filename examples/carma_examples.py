@@ -1,7 +1,7 @@
 """Conversion examples python side."""
 import numpy as np
 
-import carma_examples as carma
+import example_carma as carma
 
 sample = np.asarray(
     np.random.random(size=(10, 2)),

@@ -1,7 +1,7 @@
 """Test armadillo matrix to numpy array type caster."""
 import numpy as np
 
-import libs.test_carma as carma
+import test_carma as carma
 
 
 def test_type_caster_in_mat():

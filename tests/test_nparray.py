@@ -1,7 +1,7 @@
 """Test nparray.h."""
 import numpy as np
 
-import libs.test_carma as carma
+import test_carma as carma
 
 
 def test_is_f_contiguous():

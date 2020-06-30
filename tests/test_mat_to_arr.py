@@ -1,7 +1,7 @@
 """Test armadillo matrix to  numpy array functions."""
 import numpy as np
 
-import libs.test_carma as carma
+import test_carma as carma
 
 test_flags = {
     1: 'Number of elements between array and matrix are not the same',
