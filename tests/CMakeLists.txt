@@ -7,8 +7,8 @@ SET(ARMA_INCLUDE "${PROJECT_SOURCE_DIR}/tests/include/armadillo/include")
 SET(SUBPATH "${PROJECT_SOURCE_DIR}/tests/src")
 SET(TESTPATH "${PROJECT_SOURCE_DIR}/tests/libs")
 
-SET(PROJECT_RELEASEE_FLAGS "-march=native" "-mtune=native")
-SET(PROJECT_RELEASEE_DEFINITIONS ARMA_NO_DEBUG)
+SET(PROJECT_RELEASE_FLAGS "-march=native" "-mtune=native")
+SET(PROJECT_RELEASE_DEFINITIONS ARMA_NO_DEBUG)
 # see linkg for a more expensive approach https://github.com/VcDevel/Vc/blob/master/cmake/OptimizeForArchitecture.cmake
 
 # ##############################################################################
@@ -35,7 +35,7 @@ TARGET_INCLUDE_DIRECTORIES(${MODNAME}
 
 TARGET_COMPILE_OPTIONS(${MODNAME}
     PUBLIC
-        "$<$<CONFIG:RELEASE>:${PROJECT_RELEASEE_FLAGS}>"
+        "$<$<CONFIG:RELEASE>:${PROJECT_RELEASE_FLAGS}>"
 )
 
 TARGET_COMPILE_DEFINITIONS(${MODNAME}
