@@ -1,0 +1,8 @@
+[submodule "third_party/armadillo-code"]
+	path = third_party/armadillo-code
+	url = https://gitlab.com/conradsnicta/armadillo-code.git
+	branch = 9.800.x
+[submodule "third_party/pybind11"]
+	path = third_party/pybind11
+	url = https://github.com/pybind/pybind11.git
+	branch = v2.4
