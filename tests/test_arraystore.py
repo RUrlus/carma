@@ -1,7 +1,7 @@
 """Tests for ArrayStore class."""
 import pytest
 import numpy as np
-import libs.test_carma as carma
+import test_carma as carma
 
 
 def test_ArrayStore_get_view():

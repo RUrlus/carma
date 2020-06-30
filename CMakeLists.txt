@@ -36,15 +36,44 @@ OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
 # ##############################################################################
 #                                   TARGET                                     #
 # ##############################################################################
-FIND_PACKAGE(Armadillo)
+SET(PROJECT_RELEASE_FLAGS "-march=native" "-mtune=native")
+SET(PROJECT_RELEASE_DEFINITIONS ARMA_NO_DEBUG)
+# see linkg for a more expensive approach https://github.com/VcDevel/Vc/blob/master/cmake/OptimizeForArchitecture.cmake
+
+
 ADD_LIBRARY(carma INTERFACE)
-TARGET_INCLUDE_DIRECTORIES(carma INTERFACE include/ ${ARMADILLO_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(carma INTERFACE ${ARMADILLO_LIBRARIES})
+TARGET_LINK_LIBRARIES(carma INTERFACE pybind11 armadillo)
+TARGET_INCLUDE_DIRECTORIES(carma
+        INTERFACE
+        # path of the headers after installation
+        $<INSTALL_INTERFACE:include> # <prefix>/include/carma
+        # path of the headers before installation
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        )
+INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/include" 
+        DESTINATION .
+        FILES_MATCHING PATTERN "*.h")
+
+
+IF (BUILD_TESTS OR BUILD_EXAMPLES)
+    MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+
+    # ##############################################################################
+    #                             THIRD PARTY LIBS                                 #
+    # ##############################################################################
+    # Use a header only version of armadillo; default CMake project is not header only
+    # That's why we use a custom 'armadillo' target with only include directory
+    #add_subdirectory(third_party/armadillo-code)
+    SET(ARMADILLO_INCLUDE_DIR third_party/armadillo-code/include)
+    ADD_LIBRARY(armadillo INTERFACE)
+    target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
+
+    add_subdirectory(third_party/pybind11)
+ENDIF()
 
 IF(BUILD_TESTS)
-    INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt)
-    MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+    add_subdirectory(tests)
 ENDIF()
 IF(BUILD_EXAMPLES)
-    INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/examples/CMakeLists.txt)
+    add_subdirectory(examples)
 ENDIF()

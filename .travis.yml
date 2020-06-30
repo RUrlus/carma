@@ -140,7 +140,7 @@ install:
       -Dsonar.cfamily.build-wrapper-output=bw-output \
       -Dsonar.login=890640f8296b91c98ccfa8ec2545220d68a4edb6
   else
-    make install
+    make
     cd ..
   fi
   set +ex
@@ -150,7 +150,7 @@ script:
   set -ex
   if [ "$SONAR" != true ]; then
     cd tests
-    ${PY_CMD} -m pytest
+    PYTHONPATH=../build/tests ${PY_CMD} -m pytest
   fi
   set +ex
 after_failure: cat tests/test_cmake_build/*.log*
