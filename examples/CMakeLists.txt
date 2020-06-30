@@ -36,3 +36,12 @@ TARGET_COMPILE_DEFINITIONS(${MODNAME}
 INSTALL(TARGETS ${MODNAME} DESTINATION examples)
 FILE(GLOB PY_TEST_FILES "${PROJECT_SOURCE_DIR}/examples/*.py")
 INSTALL(FILES ${PY_TEST_FILES} DESTINATION examples)
+
+# ##############################################################################
+#                                  EXAMPLES                                    #
+# ##############################################################################
+ADD_TEST(NAME example
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} carma_examples.py)
+SET_PROPERTY(TEST example
+        PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")

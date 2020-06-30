@@ -69,6 +69,10 @@ IF (BUILD_TESTS OR BUILD_EXAMPLES)
     target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
 
     add_subdirectory(third_party/pybind11)
+
+
+    ENABLE_TESTING()
+    FIND_PACKAGE(Python3)
 ENDIF()
 
 IF(BUILD_TESTS)

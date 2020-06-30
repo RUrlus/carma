@@ -38,3 +38,12 @@ TARGET_COMPILE_DEFINITIONS(${MODNAME}
 INSTALL(TARGETS ${MODNAME} DESTINATION tests)
 FILE(GLOB PY_TEST_FILES "${PROJECT_SOURCE_DIR}/tests/*.py")
 INSTALL(FILES ${PY_TEST_FILES} DESTINATION tests)
+
+# ##############################################################################
+#                                    TESTS                                     #
+# ##############################################################################
+ADD_TEST(NAME pytest
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+         COMMAND ${Python3_EXECUTABLE} -m pytest)
+SET_PROPERTY(TEST pytest 
+             PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")
