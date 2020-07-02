@@ -76,9 +76,9 @@ matrix:
     env: PYTHON=3.7 CPP=14 COMPILER=clang
     name: MacOS Python 3.7, c++14, Apple Clang
 
-  - os: windows
-    name: Windows Python 3.7, c++14, Visual Studio
-    env: PYTHON=3.7 CPP=14 COMPILER=msvc
+#  - os: windows
+#    name: Windows Python 3.7, c++14, Visual Studio
+#    env: PYTHON=3.7 CPP=14 COMPILER=msvc
 
 env:
   - DEBUG_CI=true
