@@ -51,51 +51,94 @@ namespace carma {
     template<typename T> struct is_cube : std::false_type {};
     template<typename T> struct is_cube<arma::Cube<T>> : std::true_type {};
 
+    enum class Deallocator { Undefined, Arma, Free, Delete, None };
+
+    // Not a struct to force all fields initialization
+    template<typename armaT>
+    class Data {
+    public:
+      Data(armaT * data, Deallocator deallocator) : data(data), deallocator(deallocator) {}
+      armaT * data;
+      Deallocator deallocator;
+    };
+    
     template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-    inline typename std::decay_t<typename armaT::elem_type> * copy_mem (armaT & src) {
+    inline Data<typename std::decay_t<typename armaT::elem_type>> copy_mem (armaT & src) {
         using T = typename armaT::elem_type;
         size_t N = src.n_elem;
         T * data = new T[N];
         std::memcpy(data, src.memptr(), sizeof(T) * N);
-        return data;
+        return {data, Deallocator::Delete};
     }
 
     template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-    inline typename std::decay_t<typename armaT::elem_type> * steal_mem(armaT * src) {
+    inline Data<typename std::decay_t<typename armaT::elem_type>> steal_mem(armaT * src) {
         using T = typename armaT::elem_type;
         T * data = src->memptr();
         arma::access::rw(src->mem) = 0;
-        return data;
+        return {data, Deallocator::Arma};
     }
 
     template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-    inline typename armaT::elem_type * get_data(armaT * src, bool copy) {
+    inline Data<typename armaT::elem_type> get_data(armaT * src, bool copy) {
         using T = typename armaT::elem_type;
         if (copy) {
             size_t N = src->n_elem;
             T * data = new T[N];
             std::memcpy(data, src->memptr(), sizeof(T) * N);
-            return data;
+            return {data, Deallocator::Delete};
         } else {
             T * data = src->memptr();
             arma::access::rw(src->mem) = 0;
-            return data;
+            return {data, Deallocator::Arma};
         }
     } /* get_data */
 
     template <typename T>
-    inline py::capsule create_capsule(T * data) {
+    inline py::capsule create_capsule(Data<T> & data) {
         /* Create a Python object that will free the allocated
          * memory when destroyed:
          */
-        return py::capsule(data, [](void *f) {
-            T *data = reinterpret_cast<T *>(f);
-            #ifndef NDEBUG
-            // if in debug mode let us know what pointer is being freed
-            std::cerr << "freeing memory @ " << f << std::endl;
-            #endif
-            delete[] data;
-        });
+        switch (data.deallocator) {
+          case Deallocator::Arma:
+            return py::capsule(data.data, [](void *f) {
+              T *data = reinterpret_cast<T *>(f);
+#ifndef NDEBUG
+              // if in debug mode let us know what pointer is being freed
+              std::cerr << "freeing copy memory @ " << f << std::endl;
+#endif
+              arma::memory::release(data);
+            });
+          case Deallocator::Free:
+            return py::capsule(data.data, [](void *f) {
+              T *data = reinterpret_cast<T *>(f);
+#ifndef NDEBUG
+              // if in debug mode let us know what pointer is being freed
+              std::cerr << "freeing copy memory @ " << f << std::endl;
+#endif
+              free(data);
+            });
+          case Deallocator::Delete:
+            return py::capsule(data.data, [](void *f) {
+              T *data = reinterpret_cast<T *>(f);
+#ifndef NDEBUG
+              // if in debug mode let us know what pointer is being freed
+              std::cerr << "freeing copy memory @ " << f << std::endl;
+#endif
+              delete[] data;
+            });
+          case Deallocator::Undefined:
+            assert(false);
+          case Deallocator::None:
+          default:
+            return py::capsule(data.data, [](void *f) {
+              T *data = reinterpret_cast<T *>(f);
+#ifndef NDEBUG
+              // if in debug mode let us know what pointer is being freed
+              std::cerr << "freeing copy memory @ " << f << std::endl;
+#endif
+            });
+        }
     } /* create_capsule */
 
     template <typename T>

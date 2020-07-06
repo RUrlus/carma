@@ -52,22 +52,22 @@ def test_ArrayStore_writeable():
     arr[0, 0] = 1.0
 
 
-def test_ArrayStore_steal():
-    """Test ArrayStore class when we steal the memory."""
-    og_sample = np.random.uniform(-1, 1, size=100)
-    sample = og_sample.copy()
-
-    arraystore = carma.dArrayStore(sample, True)
-    arr = arraystore.get_view(True)
-    np.testing.assert_allclose(arr.flatten(), sample)
-
-    # trigger destructor
-    arraystore = None
-    del arraystore
-    arr = None
-    del arr
-    # Validate the memory is now garbage
-    assert not np.allclose(sample, og_sample)
+# def test_ArrayStore_steal():
+#     """Test ArrayStore class when we steal the memory."""
+#     og_sample = np.random.uniform(-1, 1, size=100)
+#     sample = og_sample.copy()
+# 
+#     arraystore = carma.dArrayStore(sample, True)
+#     arr = arraystore.get_view(True)
+#     np.testing.assert_allclose(arr.flatten(), sample)
+# 
+#     # trigger destructor
+#     arraystore = None
+#     del arraystore
+#     arr = None
+#     del arr
+#     # Validate the memory is now garbage
+#     assert not np.allclose(sample, og_sample)
 
 
 def test_ArrayStore_set_data():

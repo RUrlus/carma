@@ -264,13 +264,13 @@ namespace carma {
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t ncols = static_cast<ssize_t>(src->n_cols);
 
-        T * data = get_data<arma::Row<T>>(src, copy);
+        auto data = get_data<arma::Row<T>>(src, copy);
         py::capsule base = create_capsule<T>(data);
 
         return py::array_t<T>(
             {static_cast<ssize_t>(1), ncols}, // shape
             {ncols * tsize, tsize}, // F-style contiguous strides
-            data, // the data pointer
+            data.data, // the data pointer
             base // numpy array references this parent
         );
     } /* row_to_arr */
@@ -317,13 +317,13 @@ namespace carma {
         ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
         ssize_t nrows = static_cast<ssize_t>(src->n_rows);
 
-        T * data = get_data<arma::Col<T>>(src, copy);
+        auto data = get_data<arma::Col<T>>(src, copy);
         py::capsule base = create_capsule(data);
 
         return py::array_t<T>(
             {nrows, static_cast<ssize_t>(1)}, // shape
             {tsize, nrows * tsize}, // F-style contiguous strides
-            data, // the data pointer
+            data.data, // the data pointer
             base // numpy array references this parent
         );
     } /* _col_to_arr */
@@ -371,13 +371,13 @@ namespace carma {
         ssize_t nrows = static_cast<ssize_t>(src->n_rows);
         ssize_t ncols = static_cast<ssize_t>(src->n_cols);
 
-        T * data = get_data<arma::Mat<T>>(src, copy);
+        auto data = get_data<arma::Mat<T>>(src, copy);
         py::capsule base = create_capsule(data);
 
         return py::array_t<T>(
             {nrows, ncols}, // shape
             {tsize, nrows * tsize}, // F-style contiguous strides
-            data, // the data pointer
+            data.data, // the data pointer
             base // numpy array references this parent
         );
     } /* _mat_to_arr */
@@ -426,13 +426,13 @@ namespace carma {
         ssize_t ncols = static_cast<ssize_t>(src->n_cols);
         ssize_t nslices = static_cast<ssize_t>(src->n_slices);
 
-        T * data = get_data<arma::Cube<T>>(src, copy);
+        auto data = get_data<arma::Cube<T>>(src, copy);
         py::capsule base = create_capsule(data);
 
         return py::array_t<T>(
             {nslices, nrows, ncols}, // shape
             {tsize * nrows * ncols, tsize, nrows * tsize}, // F-style contiguous strides
-            data, // the data pointer
+            data.data, // the data pointer
             base // numpy array references this parent
         );
     } /* _cube_to_arr */
