@@ -61,7 +61,7 @@ def test_ArrayStore_steal():
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample)
 
-    # trigger descructor
+    # trigger destructor
     arraystore = None
     del arraystore
     arr = None
