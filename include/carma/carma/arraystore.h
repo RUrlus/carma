@@ -27,8 +27,8 @@ template <typename T> class ArrayStore {
             } else {
                 mat = arr_to_mat<T>(arr, true);
                 _ptr = mat.memptr();
-                // create a dummy capsule as armadillo will be repsonsible
-                // for descruction of the memory
+                // create a dummy capsule as armadillo will be responsible
+                // for destruction of the memory
                 // We need a capsule to prevent a copy on the way out.
                 _base = create_dummy_capsule(_ptr);
             }
@@ -41,7 +41,7 @@ template <typename T> class ArrayStore {
         {
             /* Constructor
              *
-             * Takes numpy array and converterts to Armadillo matrix.
+             * Takes numpy array and converters to Armadillo matrix.
              * If the array should be stolen we set owndata false for
              * numpy array.
              *
