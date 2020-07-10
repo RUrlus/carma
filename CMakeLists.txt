@@ -62,6 +62,16 @@ INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/include"
         DESTINATION .
         FILES_MATCHING PATTERN "*.h")
 
+if (VALGRIND_TEST_WRAPPER)
+    if (WIN32)
+        MESSAGE(FATAL_ERROR "VALGRIND_TEST_WRAPPER is not supported in WIN32 environment")
+    endif()
+    find_program(VALGRIND_EXECUTABLE valgrind)
+    if (NOT VALGRIND_EXECUTABLE)
+        MESSAGE(FATAL_ERROR "VALGRIND_TEST_WRAPPER is requested but valgrind executable cannot be found")
+    endif()
+    MESSAGE(STATUS "Valgrind test mode enabled")
+endif()
 
 IF (BUILD_TESTS OR BUILD_EXAMPLES)
     MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
@@ -77,10 +87,8 @@ IF (BUILD_TESTS OR BUILD_EXAMPLES)
     target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
     
     add_subdirectory(third_party/pybind11)
-
-
+    
     ENABLE_TESTING()
-    FIND_PACKAGE(Python3)
 ENDIF()
 
 IF(BUILD_TESTS)
