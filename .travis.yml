@@ -59,6 +59,18 @@ matrix:
           - libc++-7-dev
           - libc++abi-7-dev
   - os: linux
+    dist: bionic
+    env: PYTHON=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true VALGRIND=true
+    name: Python 3.7, c++14, gcc 7 Valgrind
+    addons:
+      apt:
+        packages:
+          - g++-7
+          - python3.7-dev
+          - python3.7-venv
+          - valgrind
+          # also required in the standard ubuntu:bionic: gcc, make
+  - os: linux
     dist: xenial
     env: PYTHON=3.7 CPP=14 COMPILER=gcc-7 SONAR=true
     name: Python 3.7, c++14, gcc 7 Sonar
@@ -91,7 +103,7 @@ cache:
   - $HOME/Library/Python
 
 before_install:
-  # Add reequirement for installation (Python)
+  # Add requirement for installation (Python)
   - ${TRAVIS_BUILD_DIR}/.travis-ci/before_install.sh
 
 install:

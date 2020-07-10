@@ -39,6 +39,7 @@ export CXX CC CXXFLAGS CMAKE_BUILD_TYPE
 case $TRAVIS_OS_NAME in
   linux|osx)
     export PY_CMD=python$PYTHON
+    export PATH=/usr/bin:$PATH
     ;;
   windows)
     export PATH=/c/Python37:$PATH

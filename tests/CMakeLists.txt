@@ -42,15 +42,23 @@ INSTALL(FILES ${PY_TEST_FILES} DESTINATION tests)
 # ##############################################################################
 #                                    TESTS                                     #
 # ##############################################################################
-ADD_TEST(NAME pytest
-         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-         COMMAND ${Python3_EXECUTABLE} -m pytest)
+if (VALGRIND_TEST_WRAPPER)
+    SET(VALGRIND_LOG_FILE /tmp/valgrind-output)
+    ADD_TEST(NAME pytest
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMAND ${VALGRIND_EXECUTABLE} --show-leak-kinds=definite --log-file=${VALGRIND_LOG_FILE} ${PYTHON_EXECUTABLE} -m pytest -vv --valgrind --valgrind-log=${VALGRIND_LOG_FILE})
+    SET_PROPERTY(TEST pytest APPEND PROPERTY ENVIRONMENT "PYTHONMALLOC=malloc")
+else()
+    ADD_TEST(NAME pytest
+             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+             COMMAND ${PYTHON_EXECUTABLE} -m pytest)
+endif()
 
 if (WIN32)
     SET_PROPERTY(TEST pytest
-            PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+            APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 else()
     SET_PROPERTY(TEST pytest
-            PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")
+            APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")
 endif()
     
