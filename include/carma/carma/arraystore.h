@@ -21,7 +21,8 @@ template <typename T> class ArrayStore {
             if (_steal) {
                 mat = arr_to_mat<T>(arr, false);
                 _ptr = mat.memptr();
-                _base = create_capsule(_ptr);
+                Data<T> data{_ptr, Deallocator::Free};
+                _base = create_capsule(data);
                 // inform numpy it no longer owns the data
                 set_not_owndata(arr);
             } else {

@@ -66,8 +66,6 @@ def test_ArrayStore_steal():
     del arraystore
     arr = None
     del arr
-    # Validate the memory is now garbage
-    assert not np.allclose(sample, og_sample)
 
 
 def test_ArrayStore_set_data():

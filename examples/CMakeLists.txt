@@ -42,6 +42,6 @@ INSTALL(FILES ${PY_TEST_FILES} DESTINATION examples)
 # ##############################################################################
 ADD_TEST(NAME example
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND ${Python3_EXECUTABLE} carma_examples.py)
+        COMMAND ${PYTHON_EXECUTABLE} carma_examples.py)
 SET_PROPERTY(TEST example
         PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")
