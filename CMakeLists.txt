@@ -85,8 +85,16 @@ IF (BUILD_TESTS OR BUILD_EXAMPLES)
     SET(ARMADILLO_INCLUDE_DIR third_party/armadillo-code/include)
     ADD_LIBRARY(armadillo INTERFACE)
     target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
-    
+
+    if (PYTHON_PREFIX_PATH)
+        set(CMAKE_PREFIX_PATH_SAVED ${CMAKE_PREFIX_PATH})
+        list(APPEND CMAKE_PREFIX_PATH ${PYTHON_PREFIX_PATH})
+    endif()
     add_subdirectory(third_party/pybind11)
+    if (CMAKE_PREFIX_PATH_SAVED)
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH_SAVED})
+        unset(CMAKE_PREFIX_PATH_SAVED)
+    endif()
     
     ENABLE_TESTING()
 ENDIF()

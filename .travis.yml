@@ -3,7 +3,7 @@ matrix:
   include:
   - os: linux
     dist: xenial
-    env: PYTHON=3.7 CPP=14 COMPILER=gcc-7
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7
     name: Python 3.7, c++14, gcc 7
     addons:
       apt:
@@ -16,7 +16,7 @@ matrix:
           - python3.7-venv
   - os: linux
     dist: xenial
-    env: PYTHON=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true
     name: Python 3.7, c++14, gcc 7, debug
     addons:
       apt:
@@ -29,7 +29,7 @@ matrix:
           - python3.7-venv
   - os: linux
     dist: xenial
-    env: PYTHON=3.7 CPP=14 COMPILER=gcc-7 NOWN=true
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 NOWN=true
     name: Python 3.7, c++14, gcc 7, NOT_OWN_DATA
     addons:
       apt:
@@ -42,7 +42,7 @@ matrix:
           - python3.7-venv
   - os: linux
     dist: xenial
-    env: PYTHON=3.7 CPP=14 COMPILER=clang-7
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=clang-7
     name: Python 3.7, c++14, Clang 7
     addons:
       apt:
@@ -60,7 +60,7 @@ matrix:
           - libc++abi-7-dev
   - os: linux
     dist: bionic
-    env: PYTHON=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true VALGRIND=true
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true VALGRIND=true PYTHON_PREFIX_PATH=/usr/bin
     name: Python 3.7, c++14, gcc 7 Valgrind
     addons:
       apt:
@@ -72,7 +72,7 @@ matrix:
           # also required in the standard ubuntu:bionic: gcc, make
   - os: linux
     dist: xenial
-    env: PYTHON=3.7 CPP=14 COMPILER=gcc-7 SONAR=true
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 SONAR=true
     name: Python 3.7, c++14, gcc 7 Sonar
     addons:
       apt:
@@ -85,15 +85,16 @@ matrix:
           - python3.7-venv
   - os: osx
     osx_image: xcode11.5
-    env: PYTHON=3.7 CPP=14 COMPILER=clang
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=clang
     name: MacOS Python 3.7, c++14, Apple Clang
 
   - os: windows
     name: Windows Python 3.7, c++14, Visual Studio
-    env: PYTHON=3.7 CPP=14 COMPILER=msvc
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=msvc PYTHON_PREFIX_PATH=/c/Python37 PYTHON_SUFFIX=
 
 env:
-  - DEBUG_CI=true
+  global:
+    - DEBUG_CI=true
     
 cache:
   directories:
