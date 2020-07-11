@@ -1,5 +1,3 @@
-[[ "$DEBUG_CI" == true ]] && set -x
-
 case "$COMPILER" in 
   gcc*)
     CXX=g++${COMPILER#gcc} 
@@ -36,17 +34,13 @@ esac
 
 export CXX CC CXXFLAGS CMAKE_BUILD_TYPE
 
-case $TRAVIS_OS_NAME in
-  linux|osx)
-    export PY_CMD=python$PYTHON
-    export PATH=/usr/bin:$PATH
-    ;;
-  windows)
-    export PATH=/c/Python37:$PATH
-    export PY_CMD=python
-    ;;
-  *)
-    echo "Unknown OS [$TRAVIS_OS_NAME]"
-    exit 1
-    ;;
-esac
+if [ -z ${PYTHON_SUFFIX+x} ]; then
+  # variable not set, use PYTHON_VERSION
+  export PYTHON_SUFFIX=${PYTHON_VERSION}
+fi
+
+if [ -n "$PYTHON_PREFIX_PATH" ]; then
+  export PY_CMD=${PYTHON_PREFIX_PATH}/python$PYTHON_SUFFIX
+else
+  export PY_CMD=python$PYTHON_SUFFIX
+fi
