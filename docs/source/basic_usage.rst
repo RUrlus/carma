@@ -19,7 +19,7 @@ Carma has two requirements:
 
 Carma provides both tests and examples that can be compiled without any additional libraries, although you will need additional libraries to use Armadillo in practice.
 
-.. note:: The Pybind11 and Armadillo headers are shipped with `carma` in the test directory for convenience.
+.. note:: The Pybind11 and Armadillo libraries are linked with `carma` as submodule in `third_party` directory. To get them using :bash:`git clone`, don't forget to use :bash:`--recursive` option.
 
 Manual compilation
 ******************
@@ -30,13 +30,13 @@ Although using a build system is suggested, the :bash:`examples/example.cpp` can
 
 .. code-block:: bash
     
-    c++ -O3 -Wall -shared -std=c++14 -fPIC -larmadillo `python3 -m pybind11 --includes` example.cpp -o example`python3-config --extension-suffix`
+    c++ -O3 -Wall -shared -std=c++14 -fPIC -larmadillo `python3 -m pybind11 --includes` example.cpp -o example `python3-config --extension-suffix`
 
 **on MacOS**
 
 .. code-block:: bash
     
-    c++ -O3 -Wall -shared -std=c++14 -larmadillo -undefined dynamic_lookup `python3 -m pybind11 --includes` example.cpp -o example`python3-config --extension-suffix`
+    c++ -O3 -Wall -shared -std=c++14 -larmadillo -undefined dynamic_lookup `python3 -m pybind11 --includes` example.cpp -o example `python3-config --extension-suffix`
 
 Manual compilation requires that Pybind11 and Armadillo are discoverable.
 
@@ -50,7 +50,7 @@ CMake can be installed with :bash:`pip install cmake`, your package manager or d
 
    mkdir build
    cd build
-   cmake .. && make install
+   cmake ..
 
 To run the tests you need to install `pytest`:
 
@@ -62,9 +62,77 @@ and run:
 
 .. code-block:: bash
 
-   cd tests
-   pytest
+   ctest
 
+To installation `carma`, you have to define 
+
+.. code-block:: bash
+    
+    -DCMAKE_INSTALL_PREFIX=/installation/path/directory
+
+(default value is ``/usr/local``)
+
+Installation directory contains
+
+.. code-block::
+
+    include   # carma headers
+    tests     # carma python tests with python module (if enabled using -DBUILD_TESTS=on)
+    examples  # carma python examples with python module (if enabled using -DBUILD_EXAMPLES=on)
+
+Advanced build system configuration
+***********************************
+
+`Carma` requirements can be provided out of :bash:`third_party` directory.
+
+To do so, you have to define locations of `armadillo` or/and `pybind11` by setting:
+
+.. code-block:: bash
+    
+    -DARMADILLO_ROOT_DIR=/path/to/armadillo-code/root/directory
+
+.. code-block:: bash
+    
+    -DPYBIND11_ROOT_DIR=/path/to/pybind11/root/directory
+
+Sometimes, if you have multiple python interpret available in your system, 
+you may want to specify the one you want. Python detection is delegated to `pybind11 dependency 
+and you can drive it using   
+
+.. code-block:: bash
+
+    -DPYTHON_PREFIX_PATH=/path/to/directory/containing/your/favorite/python/interpret
+    -DPYBIND11_PYTHON_VERSION=/version/of/your/favorite/python/interpret
+
+e.g.:
+
+.. code-block:: bash
+
+    -DPYTHON_PREFIX_PATH=/usr/bin
+    -DPYBIND11_PYTHON_VERSION=3.7
+
+Carma as an embedded CMake project 
+++++++++++++++++++++++++++++++++++
+
+You can embed `Carma` using CMake command
+
+.. code-block::
+
+    add_subdirectory(/path/to/carma/root/directory)
+
+If you do so, you can use :code:`ARMADILLO_ROOT_DIR` and :code:`PYBIND11_ROOT_DIR` to define requirements 
+(as CMake variables in main project).
+
+Nevertheless, if :code:`armadillo` or/and :code:`pybind11` CMake targets already exist, `carma` will use them 
+(to avoid conflict with already existing targets in your main project).       
+
+Moreover, it could be useful to define 
+
+.. code-block::
+
+    set(CARMA_DEV_TARGET false)
+
+to disable carma development targets (e.g. ``clang-format``).
 
 Examples
 ########
