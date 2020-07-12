@@ -74,35 +74,37 @@ if (VALGRIND_TEST_WRAPPER)
 endif()
 
 IF (BUILD_TESTS OR BUILD_EXAMPLES)
-    MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
-
     # ##############################################################################
     #                             THIRD PARTY LIBS                                 #
     # ##############################################################################
     # Use a header only version of armadillo; default CMake project is not header only
     # That's why we use a custom 'armadillo' target with only include directory
-    if (ARMADILLO_ROOT_DIR)
-        #add_subdirectory(${ARMADILLO_ROOT_DIR} armadillo-code)
-        SET(ARMADILLO_INCLUDE_DIR ${ARMADILLO_ROOT_DIR}/include)
-    else()
-        #add_subdirectory(third_party/armadillo-code)
-        SET(ARMADILLO_INCLUDE_DIR third_party/armadillo-code/include)
+    if(NOT TARGET armadillo)
+        if (ARMADILLO_ROOT_DIR)
+            #add_subdirectory(${ARMADILLO_ROOT_DIR} armadillo-code)
+            SET(ARMADILLO_INCLUDE_DIR ${ARMADILLO_ROOT_DIR}/include)
+        else()
+            #add_subdirectory(third_party/armadillo-code)
+            SET(ARMADILLO_INCLUDE_DIR third_party/armadillo-code/include)
+        endif()
+        ADD_LIBRARY(armadillo INTERFACE)
+        target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
     endif()
-    ADD_LIBRARY(armadillo INTERFACE)
-    target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
 
-    if (PYTHON_PREFIX_PATH)
-        set(CMAKE_PREFIX_PATH_SAVED ${CMAKE_PREFIX_PATH})
-        list(APPEND CMAKE_PREFIX_PATH ${PYTHON_PREFIX_PATH})
-    endif()
-    if (PYBIND11_ROOT_DIR)
-        add_subdirectory(${PYBIND11_ROOT_DIR} pybind11)
-    else()
-        add_subdirectory(third_party/pybind11)
-    endif()
-    if (CMAKE_PREFIX_PATH_SAVED)
-        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH_SAVED})
-        unset(CMAKE_PREFIX_PATH_SAVED)
+    if(NOT TARGET pybind11)
+        if (PYTHON_PREFIX_PATH)
+            set(CMAKE_PREFIX_PATH_SAVED ${CMAKE_PREFIX_PATH})
+            list(APPEND CMAKE_PREFIX_PATH ${PYTHON_PREFIX_PATH})
+        endif()
+        if (PYBIND11_ROOT_DIR)
+            add_subdirectory(${PYBIND11_ROOT_DIR} pybind11)
+        else()
+            add_subdirectory(third_party/pybind11)
+        endif()
+        if (CMAKE_PREFIX_PATH_SAVED)
+            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH_SAVED})
+            unset(CMAKE_PREFIX_PATH_SAVED)
+        endif()
     endif()
     
     ENABLE_TESTING()
@@ -117,36 +119,38 @@ ENDIF()
 
 #------------------------------------------------------
 
-# search for clang-format and add target
-find_program(CLANG_FORMAT clang-format)
-if (CLANG_FORMAT)
-    exec_program(${CLANG_FORMAT} ARGS -version
-            OUTPUT_VARIABLE CLANG_FORMAT_RAW_VERSION)
-    string(REGEX MATCH "[1-9][0-9]*\.[0-9]+\.[0-9]+"
-            CLANG_FORMAT_VERSION ${CLANG_FORMAT_RAW_VERSION})
-    if (CLANG_FORMAT_VERSION VERSION_GREATER_EQUAL "6.0.0") 
-        add_custom_target(clang-format
-                COMMAND echo "running ${CLANG_FORMAT} ..."
-                COMMAND ${CMAKE_COMMAND}
-                -DPROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}"
-                -DCLANG_FORMAT="${CLANG_FORMAT}"
-                -P ${PROJECT_SOURCE_DIR}/cmake/ClangFormatProcess.cmake)
-        message(STATUS "clang-format target for updating code format is available")
-    else()
-        message(WARNING "incompatible clang-format found (<6.0.0); clang-format target is not available.")
+## search for clang-format and add target
+if(NOT DEFINED CARMA_DEV_TARGET OR CARMA_DEV_TARGET)
+    find_program(CLANG_FORMAT clang-format)
+    if (CLANG_FORMAT)
+        exec_program(${CLANG_FORMAT} ARGS -version
+                OUTPUT_VARIABLE CLANG_FORMAT_RAW_VERSION)
+        string(REGEX MATCH "[1-9][0-9]*\\.[0-9]+\\.[0-9]+"
+                CLANG_FORMAT_VERSION ${CLANG_FORMAT_RAW_VERSION})
+        if (CLANG_FORMAT_VERSION VERSION_GREATER_EQUAL "6.0.0") 
+            add_custom_target(clang-format
+                    COMMAND echo "running ${CLANG_FORMAT} ..."
+                    COMMAND ${CMAKE_COMMAND}
+                    -DPROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}"
+                    -DCLANG_FORMAT="${CLANG_FORMAT}"
+                    -P ${PROJECT_SOURCE_DIR}/cmake/ClangFormatProcess.cmake)
+            message(STATUS "clang-format target for updating code format is available")
+        else()
+            message(WARNING "incompatible clang-format found (<6.0.0); clang-format target is not available.")
+            add_custom_target(clang-format
+                    COMMAND ${CMAKE_COMMAND} -E echo ""
+                    COMMAND ${CMAKE_COMMAND} -E echo "*** code formatting not available since clang-format version is incompatible ***"
+                    COMMAND ${CMAKE_COMMAND} -E echo ""
+                    COMMENT "Inform about not available code format."
+                    )
+        endif()
+    else ()
+        message(WARNING "clang-format no found; clang-format target is not available.")
         add_custom_target(clang-format
                 COMMAND ${CMAKE_COMMAND} -E echo ""
-                COMMAND ${CMAKE_COMMAND} -E echo "*** code formatting not available since clang-format version is incompatible ***"
+                COMMAND ${CMAKE_COMMAND} -E echo "*** code formatting not available since clang-format has not been found ***"
                 COMMAND ${CMAKE_COMMAND} -E echo ""
                 COMMENT "Inform about not available code format."
                 )
-    endif()
-else ()
-    message(WARNING "clang-format no found; clang-format target is not available.")
-    add_custom_target(clang-format
-            COMMAND ${CMAKE_COMMAND} -E echo ""
-            COMMAND ${CMAKE_COMMAND} -E echo "*** code formatting not available since clang-format has not been found ***"
-            COMMAND ${CMAKE_COMMAND} -E echo ""
-            COMMENT "Inform about not available code format."
-            )
-endif ()
+    endif ()
+endif()
