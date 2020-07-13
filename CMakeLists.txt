@@ -1,9 +1,8 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 
 PROJECT(
     carma
-    VERSION 0.1.0
-    DESCRIPTION "Header only library for conversion between numpy arrays and armadillo matrices based on pybind11"
+    VERSION 0.3.0
     LANGUAGES CXX
 )
 
