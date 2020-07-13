@@ -142,7 +142,7 @@ For manual compilation see the documentation section Usage.
 
 ### About
 
-This project was created by Ralph Urlus.
+This project was created by Ralph Urlus. Significant improvements to the project have been contributed by [Pascal H.](https://github.com/hpwxf)
 
 ### License
 
