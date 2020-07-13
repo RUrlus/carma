@@ -4,12 +4,11 @@
 // include numpy header for usage of array_t
 #include <pybind11/numpy.h>
 
-#include "test_nparray.h"
 #include "test_arr_to_mat.h"
 #include "test_mat_to_arr.h"
-#include "test_type_caster.h"
+#include "test_nparray.h"
 #include "test_store.h"
-
+#include "test_type_caster.h"
 
 namespace py = pybind11;
 
