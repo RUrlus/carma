@@ -37,7 +37,7 @@ For details on pybind11 and Armadillo refer to their respective documentation.
 ### Installation
 
 Carma is a header only library that relies on two other header only libraries, Armadillo and Pybind11.
-A stripped version of both libraries is included in the `tests` directory.
+Both libraries are linked as submodule in the `third_party` directory.
 
 ### Considerations
 
