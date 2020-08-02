@@ -6,3 +6,6 @@
 	path = third_party/pybind11
 	url = https://github.com/pybind/pybind11.git
 	branch = v2.4
+[submodule "third_party/Catch2"]
+	path = third_party/Catch2
+	url = https://github.com/catchorg/Catch2.git
