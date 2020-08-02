@@ -8,13 +8,14 @@ SET(MODNAME "test_carma")
 pybind11_add_module(${MODNAME}
     MODULE
         src/bindings.cpp
+        src/test_main.cpp
         src/test_store.cpp
         src/test_nparray.cpp
         src/test_arr_to_mat.cpp
         src/test_mat_to_arr.cpp
         src/test_type_caster.cpp
 )
-TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma)
+TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma Catch2::Catch2)
 
 TARGET_INCLUDE_DIRECTORIES(${MODNAME}
     PUBLIC
@@ -62,3 +63,6 @@ else()
             APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")
 endif()
     
+INCLUDE(CTest)
+INCLUDE(${PROJECT_SOURCE_DIR}/third_party/Catch2/contrib/Catch.cmake)
+catch_discover_tests(${MODNAME})

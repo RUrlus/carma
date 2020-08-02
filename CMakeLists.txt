@@ -111,6 +111,7 @@ ENDIF()
 
 IF(BUILD_TESTS)
     add_subdirectory(tests)
+    ADD_SUBDIRECTORY(third_party/Catch2)
 ENDIF()
 IF(BUILD_EXAMPLES)
     add_subdirectory(examples)
