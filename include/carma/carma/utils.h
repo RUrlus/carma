@@ -29,19 +29,26 @@ namespace py = pybind11;
 
 namespace carma {
 
-// Base template:
-template <typename T>
-struct is_convertible : std::false_type {};
+// Mat catches Row and Col as well
+template<typename T>
+struct is_convertible {
+    static const bool value = (arma::is_Mat<T>::value || arma::is_Cube<T>::value);
+};
 
-// Specialisations:
-template <typename T>
-struct is_convertible<arma::Mat<T>> : std::true_type {};
-template <typename T>
-struct is_convertible<arma::Col<T>> : std::true_type {};
-template <typename T>
-struct is_convertible<arma::Row<T>> : std::true_type {};
-template <typename T>
-struct is_convertible<arma::Cube<T>> : std::true_type {};
+template<typename T>
+struct _is_Vec {
+    static const bool value = (arma::is_Row<T>::value || arma::is_Col<T>::value);
+};
+
+// for reference see: https://www.fluentcpp.com/2019/08/23/how-to-make-sfinae-pretty-and-robust/
+template <typename armaT>
+using is_Cube = std::enable_if_t<arma::is_Cube<armaT>::value, int>;
+template <typename armaT>
+using is_Vec = std::enable_if_t<_is_Vec<armaT>::value, int>;
+template <typename armaT>
+using is_Mat = std::enable_if_t<arma::is_Mat<armaT>::value, int>;
+template <typename armaT>
+using is_Mat_only = std::enable_if_t<arma::is_Mat_only<armaT>::value, int>;
 
 template <typename T>
 struct is_mat : std::false_type {};
@@ -63,108 +70,63 @@ struct is_cube : std::false_type {};
 template <typename T>
 struct is_cube<arma::Cube<T>> : std::true_type {};
 
-enum class Deallocator { Undefined, Arma, Free, Delete, None };
-
-// Not a struct to force all fields initialization
-template <typename armaT>
-class Data {
-   public:
-    Data(armaT* data, Deallocator deallocator) : data(data), deallocator(deallocator) {}
-    armaT* data;
-    Deallocator deallocator;
-};
-
-template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-inline Data<typename std::decay_t<typename armaT::elem_type>> copy_mem(armaT& src) {
-    using T = typename armaT::elem_type;
-    size_t N = src.n_elem;
-    T* data = new T[N];
-    std::memcpy(data, src.memptr(), sizeof(T) * N);
-    return {data, Deallocator::Delete};
-}
-
-template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-inline Data<typename std::decay_t<typename armaT::elem_type>> steal_mem(armaT* src) {
-    using T = typename armaT::elem_type;
-    T* data = src->memptr();
-    arma::access::rw(src->mem) = 0;
-    return {data, Deallocator::Arma};
-}
-
-template <typename armaT, typename = std::enable_if_t<is_convertible<armaT>::value>>
-inline Data<typename armaT::elem_type> get_data(armaT* src, bool copy) {
-    using T = typename armaT::elem_type;
-    if (copy) {
-        size_t N = src->n_elem;
-        T* data = new T[N];
-        std::memcpy(data, src->memptr(), sizeof(T) * N);
-        return {data, Deallocator::Delete};
-    } else {
-        T* data = src->memptr();
-        arma::access::rw(src->mem) = 0;
-        return {data, Deallocator::Arma};
-    }
-} /* get_data */
-
 template <typename T>
-inline py::capsule create_capsule(Data<T>& data) {
-    /* Create a Python object that will free the allocated
-     * memory when destroyed:
-     */
-    switch (data.deallocator) {
-        case Deallocator::Arma:
-            return py::capsule(data.data, [](void* f) {
-                T* data = reinterpret_cast<T*>(f);
+inline py::capsule create_capsule(arma::Mat<T> * data) {
+    return py::capsule(data, [](void *f){
+        arma::Mat<T> * mat = reinterpret_cast<arma::Mat<T> *>(f);
 #ifndef NDEBUG
-                // if in debug mode let us know what pointer is being freed
-                std::cerr << "freeing copy memory @ " << f << std::endl;
+        // if in debug mode let us know what pointer is being freed
+        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
 #endif
-                arma::memory::release(data);
-            });
-        case Deallocator::Free:
-            return py::capsule(data.data, [](void* f) {
-                T* data = reinterpret_cast<T*>(f);
-#ifndef NDEBUG
-                // if in debug mode let us know what pointer is being freed
-                std::cerr << "freeing copy memory @ " << f << std::endl;
-#endif
-                free(data);
-            });
-        case Deallocator::Delete:
-            return py::capsule(data.data, [](void* f) {
-                T* data = reinterpret_cast<T*>(f);
-#ifndef NDEBUG
-                // if in debug mode let us know what pointer is being freed
-                std::cerr << "freeing copy memory @ " << f << std::endl;
-#endif
-                delete[] data;
-            });
-        case Deallocator::Undefined:
-            assert(false);
-        case Deallocator::None:
-        default:
-            return py::capsule(data.data, [](void* f) {
-                T* data = reinterpret_cast<T*>(f);
-#ifndef NDEBUG
-                // if in debug mode let us know what pointer is being freed
-                std::cerr << "freeing copy memory @ " << f << std::endl;
-#endif
-            });
-    }
+        mat->~Mat();
+    });
 } /* create_capsule */
 
 template <typename T>
-inline py::capsule create_dummy_capsule(T* data) {
-    /* Create a Python object that will free the allocated
-     * memory when destroyed:
-     */
-    return py::capsule(data, [](void* f) {
+inline py::capsule create_capsule(arma::Row<T> * data) {
+    return py::capsule(data, [](void *f){
+        arma::Row<T> * mat = reinterpret_cast<arma::Row<T> *>(f);
 #ifndef NDEBUG
         // if in debug mode let us know what pointer is being freed
-        std::cerr << "freeing memory @ " << f << std::endl;
+        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
+#endif
+        mat->~Row();
+    });
+} /* create_capsule */
+
+template <typename T>
+inline py::capsule create_capsule(arma::Col<T> * data) {
+    return py::capsule(data, [](void *f){
+        arma::Col<T> * mat = reinterpret_cast<arma::Col<T> *>(f);
+#ifndef NDEBUG
+        // if in debug mode let us know what pointer is being freed
+        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
+#endif
+        mat->~Col();
+    });
+} /* create_capsule */
+
+template <typename T>
+inline py::capsule create_capsule(arma::Cube<T> * data) {
+    return py::capsule(data, [](void *f){
+        arma::Cube<T> * mat = reinterpret_cast<arma::Cube<T> *>(f);
+#ifndef NDEBUG
+        // if in debug mode let us know what pointer is being freed
+        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
+#endif
+        mat->~Cube();
+    });
+} /* create_capsule */
+
+template <typename armaT>
+inline py::capsule create_dummy_capsule(armaT * data) {
+    return py::capsule(data->memptr(), [](void *f){
+#ifndef NDEBUG
+        // if in debug mode let us know what pointer is being freed
+        std::cerr << "dummy capsule for memory @ " << f << std::endl;
 #endif
     });
-} /* create_dummy_capsule */
+} /* create_capsule */
 
 }  // namespace carma
 #endif /* ARMA_UTILS */
