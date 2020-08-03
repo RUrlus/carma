@@ -1,21 +1,47 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 
-SET(MODNAME "test_carma")
+SET(NATIVE_MODNAME "test_carma_native")
 
 # ##############################################################################
-#                                  EXECUTABLE                                  #
+#                                   C++ TESTS                                  #
 # ##############################################################################
+ADD_EXECUTABLE(${NATIVE_MODNAME}
+    src/test_main.cpp
+    src/test_mat_to_arr_native.cpp
+)
+
+TARGET_LINK_LIBRARIES(${NATIVE_MODNAME} PUBLIC carma Catch2::Catch2 pybind11::embed)
+    
+TARGET_INCLUDE_DIRECTORIES(${NATIVE_MODNAME}
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/python/include>
+)
+
+INCLUDE(CTest)
+INCLUDE(${PROJECT_SOURCE_DIR}/third_party/Catch2/contrib/Catch.cmake)
+catch_discover_tests(${NATIVE_MODNAME})
+
+INSTALL(TARGETS ${NAIVE_MODNAME} RUNTIME DESTINATION tests)
+
+# ##############################################################################
+#                                 PYTHON TESTS                                 #
+# ##############################################################################
+SET(MODNAME "test_carma")
+
+# ******************************************************************************
+#                                  EXECUTABLE                                  *
+# ******************************************************************************
 pybind11_add_module(${MODNAME}
     MODULE
         src/bindings.cpp
-        src/test_main.cpp
-        src/test_store.cpp
+        # src/test_store.cpp
         src/test_nparray.cpp
         src/test_arr_to_mat.cpp
         src/test_mat_to_arr.cpp
         src/test_type_caster.cpp
 )
-TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma Catch2::Catch2)
+TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma)
 
 TARGET_INCLUDE_DIRECTORIES(${MODNAME}
     PUBLIC
@@ -33,16 +59,16 @@ TARGET_COMPILE_DEFINITIONS(${MODNAME}
         "$<$<CONFIG:RELEASE>:${PROJECT_RELEASE_DEFINITIONS}>"
 )
 
-# ##############################################################################
-#                                   INSTALL                                    #
-# ##############################################################################
+# ******************************************************************************
+#                                   INSTALL                                    *
+# ******************************************************************************
 INSTALL(TARGETS ${MODNAME} DESTINATION tests)
 FILE(GLOB PY_TEST_FILES "${PROJECT_SOURCE_DIR}/tests/*.py")
 INSTALL(FILES ${PY_TEST_FILES} DESTINATION tests)
 
-# ##############################################################################
-#                                    TESTS                                     #
-# ##############################################################################
+# ******************************************************************************
+#                                    TESTS                                     *
+# ******************************************************************************
 if (VALGRIND_TEST_WRAPPER)
     SET(VALGRIND_LOG_FILE /tmp/valgrind-output)
     ADD_TEST(NAME pytest
@@ -62,7 +88,3 @@ else()
     SET_PROPERTY(TEST pytest
             APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}")
 endif()
-    
-INCLUDE(CTest)
-INCLUDE(${PROJECT_SOURCE_DIR}/third_party/Catch2/contrib/Catch.cmake)
-catch_discover_tests(${MODNAME})
