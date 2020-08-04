@@ -18,7 +18,7 @@ def test_ArrayStore_copy():
     og_sample = np.random.uniform(-1, 1, size=100)
     sample = og_sample.copy()
 
-    arraystore = carma.dArrayStore(sample, False)
+    arraystore = carma.dArrayStore(sample, True)
     arr = arraystore.get_view(False)
     np.testing.assert_allclose(arr.flatten(), og_sample)
 
@@ -34,7 +34,7 @@ def test_ArrayStore_copy():
 def test_ArrayStore_non_writeable():
     """Test ArrayStore class when marked as non-readable."""
     sample = np.random.uniform(-1, 1, size=100)
-    arraystore = carma.dArrayStore(sample, False)
+    arraystore = carma.dArrayStore(sample, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is False
@@ -45,7 +45,7 @@ def test_ArrayStore_non_writeable():
 def test_ArrayStore_writeable():
     """Test ArrayStore class when marked as writeable."""
     sample = np.random.uniform(-1, 1, size=100)
-    arraystore = carma.dArrayStore(sample, False)
+    arraystore = carma.dArrayStore(sample, True)
     arr = arraystore.get_view(True)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is True
@@ -57,7 +57,7 @@ def test_ArrayStore_steal():
     og_sample = np.random.uniform(-1, 1, size=100)
     sample = og_sample.copy()
 
-    arraystore = carma.dArrayStore(sample, True)
+    arraystore = carma.dArrayStore(sample, False)
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample)
 
@@ -73,11 +73,11 @@ def test_ArrayStore_set_data():
     sample1 = np.random.uniform(-1, 1, size=100)
     sample2 = np.random.uniform(-1, 1, size=100)
 
-    arraystore = carma.dArrayStore(sample1, True)
+    arraystore = carma.dArrayStore(sample1, False)
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample1)
 
-    arraystore.set_data(sample2, True)
+    arraystore.set_array(sample2, False)
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample2)
     assert arr.flags['OWNDATA'] is False
@@ -89,12 +89,12 @@ def test_ArrayStore_set_data_flags():
     sample1 = np.random.uniform(-1, 1, size=100)
     sample2 = np.random.uniform(-1, 1, size=100)
 
-    arraystore = carma.dArrayStore(sample1, True)
+    arraystore = carma.dArrayStore(sample1, False)
     arr = arraystore.get_view(True)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is True
 
-    arraystore.set_data(sample2, True)
+    arraystore.set_array(sample2, False)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is False
