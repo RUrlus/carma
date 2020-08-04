@@ -56,17 +56,17 @@ arma::Mat<T> arr_to_mat(py::handle src, bool copy = false, bool strict = false) 
     // set as array buffer
     py::array_t<T> buffer = py::array_t<T>::ensure(src);
     if (!buffer) {
-        throw std::runtime_error("armadillo matrix conversion failed");
+        throw conversion_error("invalid object passed");
     }
 
     auto dims = buffer.ndim();
     if (dims < 1 || dims > 2) {
-        throw std::runtime_error("Number of dimensions must be 1 <= ndim <= 2");
+        throw conversion_error("Number of dimensions must be 1 <= ndim <= 2");
     }
 
     py::buffer_info info = buffer.request();
     if (info.ptr == nullptr) {
-        throw std::runtime_error("armadillo matrix conversion failed, nullptr");
+        throw conversion_error("armadillo matrix conversion failed, nullptr");
     }
 
     if (dims == 1) {
@@ -108,17 +108,17 @@ arma::Col<T> arr_to_col(py::handle src, bool copy = false, bool strict = false) 
     // set as array buffer
     py::array_t<T> buffer = py::array_t<T>::ensure(src);
     if (!buffer) {
-        throw std::runtime_error("armadillo matrix conversion failed");
+        throw conversion_error("invalid object passed");
     }
 
     auto dims = buffer.ndim();
-    if ((dims != 1) && (buffer.shape(1) != 1)) {
-        throw std::runtime_error("Number of columns must <= 1");
+    if ( (dims >= 2) && (buffer.shape(1) != 1)) {
+        throw conversion_error("Number of columns must <= 1");
     }
 
     py::buffer_info info = buffer.request();
     if (info.ptr == nullptr) {
-        throw std::runtime_error("armadillo matrix conversion failed, nullptr");
+        throw conversion_error("armadillo matrix conversion failed, nullptr");
     }
 
     if (requires_copy(buffer)) {
@@ -142,17 +142,17 @@ arma::Row<T> arr_to_row(py::handle src, bool copy = false, bool strict = false) 
     // set as array buffer
     py::array_t<T> buffer = py::array_t<T>::ensure(src);
     if (!buffer) {
-        throw std::runtime_error("armadillo matrix conversion failed");
+        throw conversion_error("invalid object passed");
     }
 
     auto dims = buffer.ndim();
-    if ((dims != 1) && (buffer.shape(0) != 1)) {
-        throw std::runtime_error("Number of rows must <= 1");
+    if ((dims >= 2) && (buffer.shape(0) != 1)) {
+        throw conversion_error("Number of rows must <= 1");
     }
 
     py::buffer_info info = buffer.request();
     if (info.ptr == nullptr) {
-        throw std::runtime_error("armadillo matrix conversion failed, nullptr");
+        throw conversion_error("armadillo matrix conversion failed, nullptr");
     }
 
     if (requires_copy(buffer)) {
@@ -178,17 +178,17 @@ arma::Cube<T> arr_to_cube(py::handle src, bool copy = false, bool strict = false
     // set as array buffer
     py::array_t<T> buffer = py::array_t<T>::ensure(src);
     if (!buffer) {
-        throw std::runtime_error("armadillo matrix conversion failed");
+        throw conversion_error("invalid object passed");
     }
 
     auto dims = buffer.ndim();
     if (dims != 3) {
-        throw std::runtime_error("Number of dimensions must be 3");
+        throw conversion_error("Number of dimensions must be 3");
     }
 
     py::buffer_info info = buffer.request();
     if (info.ptr == nullptr) {
-        throw std::runtime_error("armadillo matrix conversion failed, nullptr");
+        throw conversion_error("armadillo matrix conversion failed, nullptr");
     }
 
 #ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
