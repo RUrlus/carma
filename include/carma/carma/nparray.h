@@ -64,7 +64,6 @@ inline bool requires_copy(const py::array_t<T>& arr) {
 #endif
 }
 
-
 template <typename T>
 inline void set_owndata(py::array_t<T>& arr) {
     py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_OWNDATA_;

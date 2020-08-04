@@ -186,10 +186,11 @@ int test_arr_to_row(py::array_t<double>& arr, bool copy, bool strict) {
     // compute sum of array
     double arr_sum = 0;
     if (arr.ndim() == 1) {
-        for (size_t i = 0; i < arr_N; i++) arr_sum += arr_p[i];
-    }
-    else {
-        for (size_t i = 0; i < arr_N; i++) arr_sum += arr_p(0, i);
+        for (size_t i = 0; i < arr_N; i++)
+            arr_sum += arr_p[i];
+    } else {
+        for (size_t i = 0; i < arr_N; i++)
+            arr_sum += arr_p(0, i);
     }
 
     // call function to be tested

@@ -112,7 +112,7 @@ arma::Col<T> arr_to_col(py::handle src, bool copy = false, bool strict = false) 
     }
 
     auto dims = buffer.ndim();
-    if ( (dims >= 2) && (buffer.shape(1) != 1)) {
+    if ((dims >= 2) && (buffer.shape(1) != 1)) {
         throw conversion_error("Number of columns must <= 1");
     }
 
@@ -259,62 +259,58 @@ struct _to_arma<returnT, typename is_cube<returnT>::type> {
 }; /* to_arma */
 
 /*****************************************************************************************
-*                                   Armadillo to Numpy                                   *
-*****************************************************************************************/
+ *                                   Armadillo to Numpy                                   *
+ *****************************************************************************************/
 /* ---------------------------------- array_constr ---------------------------------- */
 template <typename T>
-inline py::array_t<T>
-_construct_array(arma::Row<T> * data) {
-    constexpr ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
+inline py::array_t<T> _construct_array(arma::Row<T>* data) {
+    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
 
     py::capsule base = create_capsule<T>(data);
 
     return py::array_t<T>(
-        {static_cast<ssize_t>(1), ncols}, // shape
-        {tsize, tsize}, // F-style contiguous strides
-        data->memptr(), // the data pointer
-        base // numpy array references this parent
+        {static_cast<ssize_t>(1), ncols},  // shape
+        {tsize, tsize},                    // F-style contiguous strides
+        data->memptr(),                    // the data pointer
+        base                               // numpy array references this parent
     );
 } /* _construct_array */
 
 template <typename T>
-inline py::array_t<T>
-_construct_array(arma::Col<T> * data) {
-    constexpr ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
+inline py::array_t<T> _construct_array(arma::Col<T>* data) {
+    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
 
     py::capsule base = create_capsule<T>(data);
 
     return py::array_t<T>(
-        {nrows, static_cast<ssize_t>(1)}, // shape
-        {tsize, nrows * tsize}, // F-style contiguous strides
-        data->memptr(), // the data pointer
-        base // numpy array references this parent
+        {nrows, static_cast<ssize_t>(1)},  // shape
+        {tsize, nrows * tsize},            // F-style contiguous strides
+        data->memptr(),                    // the data pointer
+        base                               // numpy array references this parent
     );
 } /* _construct_array */
 
 template <typename T>
-inline py::array_t<T>
-_construct_array(arma::Mat<T> * data) {
-    constexpr ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
+inline py::array_t<T> _construct_array(arma::Mat<T>* data) {
+    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
 
     py::capsule base = create_capsule<T>(data);
 
     return py::array_t<T>(
-        {nrows, ncols}, // shape
-        {tsize, nrows * tsize}, // F-style contiguous strides
-        data->memptr(), // the data pointer
-        base // numpy array references this parent
+        {nrows, ncols},          // shape
+        {tsize, nrows * tsize},  // F-style contiguous strides
+        data->memptr(),          // the data pointer
+        base                     // numpy array references this parent
     );
 } /* _construct_array */
 
 template <typename T>
-inline py::array_t<T>
-_construct_array(arma::Cube<T> * data) {
-    constexpr ssize_t tsize =  static_cast<ssize_t>(sizeof(T));
+inline py::array_t<T> _construct_array(arma::Cube<T>* data) {
+    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
     ssize_t nslices = static_cast<ssize_t>(data->n_slices);
@@ -322,33 +318,33 @@ _construct_array(arma::Cube<T> * data) {
     py::capsule base = create_capsule<T>(data);
 
     return py::array_t<T>(
-        {nslices, nrows, ncols}, // shape
-        {tsize * nrows * ncols, tsize, nrows * tsize}, // F-style contiguous strides
-        data->memptr(), // the data pointer
-        base // numpy array references this parent
+        {nslices, nrows, ncols},                        // shape
+        {tsize * nrows * ncols, tsize, nrows * tsize},  // F-style contiguous strides
+        data->memptr(),                                 // the data pointer
+        base                                            // numpy array references this parent
     );
 } /* _construct_array */
 
 /* -------------------------------- Type specific funcs -------------------------------- */
 /* ######################################## Row ######################################## */
 template <typename T>
-inline py::array_t<T> row_to_arr(const arma::Row<T> & src) {
+inline py::array_t<T> row_to_arr(const arma::Row<T>& src) {
     /* Convert armadillo row to numpy array */
-    arma::Row<T> * data = new arma::Row<T>(src);
+    arma::Row<T>* data = new arma::Row<T>(src);
     return _construct_array<T>(data);
 } /* row_to_arr */
 
 template <typename T>
-inline py::array_t<T> row_to_arr(arma::Row<T> && src) {
+inline py::array_t<T> row_to_arr(arma::Row<T>&& src) {
     /* Convert armadillo row to numpy array */
-    arma::Row<T> * data = new arma::Row<T>(std::forward<arma::Row<T>>(src));
+    arma::Row<T>* data = new arma::Row<T>(std::forward<arma::Row<T>>(src));
     return _construct_array<T>(data);
 } /* row_to_arr */
 
 template <typename T>
-inline py::array_t<T> row_to_arr(arma::Row<T> & src, bool copy=false) {
+inline py::array_t<T> row_to_arr(arma::Row<T>& src, bool copy = false) {
     /* Convert armadillo row to numpy array */
-    arma::Row<T> * data;
+    arma::Row<T>* data;
     if (!copy) {
         data = new arma::Row<T>(std::move(src));
     } else {
@@ -358,9 +354,9 @@ inline py::array_t<T> row_to_arr(arma::Row<T> & src, bool copy=false) {
 } /* row_to_arr */
 
 template <typename T>
-inline py::array_t<T> row_to_arr(arma::Row<T> * src, bool copy=false) {
+inline py::array_t<T> row_to_arr(arma::Row<T>* src, bool copy = false) {
     /* Convert armadillo row to numpy array */
-    arma::Row<T> * data;
+    arma::Row<T>* data;
     if (!copy) {
         data = new arma::Row<T>(std::move(*src));
     } else {
@@ -369,43 +365,43 @@ inline py::array_t<T> row_to_arr(arma::Row<T> * src, bool copy=false) {
     return _construct_array<T>(data);
 } /* row_to_arr */
 
-template <typename T> inline
-void update_array(arma::Row<T> & src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Row<T>& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_elem)}, false);
 } /* update_array */
 
-template <typename T> inline
-void update_array(arma::Row<T> && src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Row<T>&& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_elem)}, false);
 } /* update_array */
 
-template <typename T> inline
-void update_array(arma::Row<T> * src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Row<T>* src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src->n_elem)}, false);
 } /* update_array */
 
 /* ######################################## Col ######################################## */
 template <typename T>
-inline py::array_t<T> col_to_arr(const arma::Col<T> & src) {
+inline py::array_t<T> col_to_arr(const arma::Col<T>& src) {
     /* Convert armadillo col to numpy array */
-    arma::Col<T> * data = new arma::Col<T>(src);
+    arma::Col<T>* data = new arma::Col<T>(src);
     return _construct_array<T>(data);
 } /* col_to_arr */
 
 template <typename T>
-inline py::array_t<T> col_to_arr(arma::Col<T> && src) {
+inline py::array_t<T> col_to_arr(arma::Col<T>&& src) {
     /* Convert armadillo col to numpy array */
-    arma::Col<T> * data = new arma::Col<T>(std::forward<arma::Col<T>>(src));
+    arma::Col<T>* data = new arma::Col<T>(std::forward<arma::Col<T>>(src));
     return _construct_array<T>(data);
 } /* col_to_arr */
 
 template <typename T>
-inline py::array_t<T> col_to_arr(arma::Col<T> & src, bool copy=false) {
+inline py::array_t<T> col_to_arr(arma::Col<T>& src, bool copy = false) {
     /* Convert armadillo col to numpy array */
-    arma::Col<T> * data;
+    arma::Col<T>* data;
     if (!copy) {
         data = new arma::Col<T>(std::move(src));
     } else {
@@ -415,51 +411,51 @@ inline py::array_t<T> col_to_arr(arma::Col<T> & src, bool copy=false) {
 } /* col_to_arr */
 
 template <typename T>
-inline py::array_t<T> col_to_arr(arma::Col<T> * src, bool copy=false) {
+inline py::array_t<T> col_to_arr(arma::Col<T>* src, bool copy = false) {
     /* Convert armadillo col to numpy array */
-    arma::Col<T> * data;
+    arma::Col<T>* data;
     if (!copy) {
-        data = new arma::Col<T>(std::move(* src));
+        data = new arma::Col<T>(std::move(*src));
     } else {
         data = new arma::Col<T>(src->memptr(), src->n_elem, true);
     }
     return _construct_array<T>(data);
 } /* col_to_arr */
 
-template <typename T> inline
-void update_array(arma::Col<T> & src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Col<T>& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(src.n_elem), static_cast<ssize_t>(1)}, false);
 } /* update_array */
 
-template <typename T> inline
-void update_array(arma::Col<T> && src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Col<T>&& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(src.n_elem), static_cast<ssize_t>(1)}, false);
 } /* update_array */
 
-template <typename T> inline
-void update_array(arma::Col<T> * src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Col<T>* src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(src->n_elem), static_cast<ssize_t>(1)}, false);
 } /* update_array */
 
 /* ######################################## Mat ######################################## */
 template <typename T>
-inline py::array_t<T> mat_to_arr(const arma::Mat<T> & src) {
-    arma::Mat<T> * data = new arma::Mat<T>(src);
+inline py::array_t<T> mat_to_arr(const arma::Mat<T>& src) {
+    arma::Mat<T>* data = new arma::Mat<T>(src);
     return _construct_array<T>(data);
 } /* mat_to_arr */
 
 template <typename T>
-inline py::array_t<T> mat_to_arr(arma::Mat<T> && src) {
-    arma::Mat<T> * data = new arma::Mat<T>(std::forward<arma::Mat<T>>(src));
+inline py::array_t<T> mat_to_arr(arma::Mat<T>&& src) {
+    arma::Mat<T>* data = new arma::Mat<T>(std::forward<arma::Mat<T>>(src));
     return _construct_array<T>(data);
 } /* mat_to_arr */
 
 template <typename T>
-inline py::array_t<T> mat_to_arr(arma::Mat<T> & src, bool copy=false) {
-    arma::Mat<T> * data;
+inline py::array_t<T> mat_to_arr(arma::Mat<T>& src, bool copy = false) {
+    arma::Mat<T>* data;
     if (!copy) {
         data = new arma::Mat<T>(std::move(src));
     } else {
@@ -468,9 +464,9 @@ inline py::array_t<T> mat_to_arr(arma::Mat<T> & src, bool copy=false) {
     return _construct_array<T>(data);
 } /* mat_to_arr */
 
-template <typename T> inline
-py::array_t<T> mat_to_arr(arma::Mat<T> * src, bool copy=false) {
-    arma::Mat<T> * data;
+template <typename T>
+inline py::array_t<T> mat_to_arr(arma::Mat<T>* src, bool copy = false) {
+    arma::Mat<T>* data;
     if (!copy) {
         data = new arma::Mat<T>(std::move(*src));
     } else {
@@ -479,43 +475,40 @@ py::array_t<T> mat_to_arr(arma::Mat<T> * src, bool copy=false) {
     return _construct_array<T>(data);
 } /* mat_to_arr */
 
-template <typename T> inline
-void update_array(arma::Mat<T> && src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Mat<T>&& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols)}, false);
 } /* update_array */
 
-template <typename T> inline
-void update_array(arma::Mat<T> & src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Mat<T>& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
     arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols)}, false);
 } /* update_array */
 
-template <typename T> inline
-void update_array(arma::Mat<T> * src, py::array_t<T> & arr) {
+template <typename T>
+inline void update_array(arma::Mat<T>* src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
-    arr.resize(
-        {static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols)},
-        false
-    );
+    arr.resize({static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols)}, false);
 } /* update_array */
 
 /* ######################################## Cube ######################################## */
 template <typename T>
-inline py::array_t<T> cube_to_arr(const arma::Cube<T> & src) {
-    arma::Cube<T> * data = new arma::Cube<T>(src);
+inline py::array_t<T> cube_to_arr(const arma::Cube<T>& src) {
+    arma::Cube<T>* data = new arma::Cube<T>(src);
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename T>
-inline py::array_t<T> cube_to_arr(arma::Cube<T> && src) {
-    arma::Cube<T> * data = new arma::Cube<T>(std::forward<arma::Cube<T>>(src));
+inline py::array_t<T> cube_to_arr(arma::Cube<T>&& src) {
+    arma::Cube<T>* data = new arma::Cube<T>(std::forward<arma::Cube<T>>(src));
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename T>
-inline py::array_t<T> cube_to_arr(arma::Cube<T> & src, bool copy=false) {
-    arma::Cube<T> * data;
+inline py::array_t<T> cube_to_arr(arma::Cube<T>& src, bool copy = false) {
+    arma::Cube<T>* data;
     if (!copy) {
         data = new arma::Cube<T>(std::move(src));
     } else {
@@ -525,8 +518,8 @@ inline py::array_t<T> cube_to_arr(arma::Cube<T> & src, bool copy=false) {
 } /* cube_to_arr */
 
 template <typename T>
-inline py::array_t<T> cube_to_arr(arma::Cube<T> * src, bool copy=false) {
-    arma::Cube<T> * data;
+inline py::array_t<T> cube_to_arr(arma::Cube<T>* src, bool copy = false) {
+    arma::Cube<T>* data;
     if (!copy) {
         data = new arma::Cube<T>(std::move(*src));
     } else {
@@ -536,63 +529,42 @@ inline py::array_t<T> cube_to_arr(arma::Cube<T> * src, bool copy=false) {
 } /* cube_to_arr */
 
 template <typename T>
-inline void update_array(arma::Cube<T> && src, py::array_t<T> & arr) {
+inline void update_array(arma::Cube<T>&& src, py::array_t<T>& arr) {
     arr.resize(
-        {static_cast<ssize_t>(src.n_rows),
-        static_cast<ssize_t>(src.n_cols),
-        static_cast<ssize_t>(src.n_slices)},
-        false
-    );
+        {static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols), static_cast<ssize_t>(src.n_slices)},
+        false);
 } /* update_array */
 
 template <typename T>
-inline void update_array(arma::Cube<T> & src, py::array_t<T> & arr) {
+inline void update_array(arma::Cube<T>& src, py::array_t<T>& arr) {
     arr.resize(
-        {static_cast<ssize_t>(src.n_rows),
-        static_cast<ssize_t>(src.n_cols),
-        static_cast<ssize_t>(src.n_slices)},
-        false
-    );
+        {static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols), static_cast<ssize_t>(src.n_slices)},
+        false);
 } /* update_array */
 
 template <typename T>
-inline void update_array(arma::Cube<T> * src, py::array_t<T> & arr) {
+inline void update_array(arma::Cube<T>* src, py::array_t<T>& arr) {
     arr.resize(
-        {static_cast<ssize_t>(src->n_rows),
-        static_cast<ssize_t>(src->n_cols),
-        static_cast<ssize_t>(src->n_slices)},
-        false
-    );
+        {static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols), static_cast<ssize_t>(src->n_slices)},
+        false);
 } /* update_array */
 
 /* ---------------------------------- to_numpy ---------------------------------- */
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Cube<armaT> = 0
->
-inline py::array_t<T> to_numpy(const armaT & src) {
-    arma::Cube<T> * data = new arma::Cube<T>(src);
+template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
+inline py::array_t<T> to_numpy(const armaT& src) {
+    arma::Cube<T>* data = new arma::Cube<T>(src);
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Cube<armaT> = 0
->
-inline py::array_t<T> to_numpy(armaT && src) {
-    arma::Cube<T> * data = new arma::Cube<T>(std::move(src));
+template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
+inline py::array_t<T> to_numpy(armaT&& src) {
+    arma::Cube<T>* data = new arma::Cube<T>(std::move(src));
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Cube<armaT> = 0
->
-inline py::array_t<T> to_numpy(armaT & src, bool copy=false) {
-    arma::Cube<T> * data;
+template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
+inline py::array_t<T> to_numpy(armaT& src, bool copy = false) {
+    arma::Cube<T>* data;
     if (!copy) {
         data = new arma::Cube<T>(std::move(src));
     } else {
@@ -601,13 +573,9 @@ inline py::array_t<T> to_numpy(armaT & src, bool copy=false) {
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Cube<armaT> = 0
->
-inline py::array_t<T> to_numpy(armaT * src, bool copy=false) {
-    arma::Cube<T> * data;
+template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
+inline py::array_t<T> to_numpy(armaT* src, bool copy = false) {
+    arma::Cube<T>* data;
     if (!copy) {
         data = new arma::Cube<T>(std::move(*src));
     } else {
@@ -616,36 +584,24 @@ inline py::array_t<T> to_numpy(armaT * src, bool copy=false) {
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Mat<armaT> = 1
->
-inline py::array_t<T> to_numpy(const armaT & src) {
+template <typename armaT, typename T = typename armaT::elem_type, is_Mat<armaT> = 1>
+inline py::array_t<T> to_numpy(const armaT& src) {
     // use armadillo copy constructor
-    armaT * data = new armaT(src);
+    armaT* data = new armaT(src);
     return _construct_array<T>(data);
 } /* to_numpy */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Mat<armaT> = 1
->
-inline py::array_t<T> to_numpy(armaT && src) {
+template <typename armaT, typename T = typename armaT::elem_type, is_Mat<armaT> = 1>
+inline py::array_t<T> to_numpy(armaT&& src) {
     // steal mem
-    armaT * data = new armaT(std::forward<armaT>(src));
+    armaT* data = new armaT(std::forward<armaT>(src));
     return _construct_array<T>(data);
 } /* to_numpy */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Mat_only<armaT> = 2
->
-inline py::array_t<T> to_numpy(armaT & src, bool copy=false) {
+template <typename armaT, typename T = typename armaT::elem_type, is_Mat_only<armaT> = 2>
+inline py::array_t<T> to_numpy(armaT& src, bool copy = false) {
     // if not copy we steal
-    armaT * data;
+    armaT* data;
     if (!copy) {
         data = new armaT(std::move(src));
     } else {
@@ -654,14 +610,11 @@ inline py::array_t<T> to_numpy(armaT & src, bool copy=false) {
     return _construct_array<T>(data);
 } /* to_numpy */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Mat_only<armaT> = 2
->
-inline py::array_t<T> to_numpy(armaT * src, bool copy=false) {
+template <typename armaT, typename T = typename armaT::elem_type, is_Mat_only<armaT> = 2>
+inline py::array_t<T> to_numpy(armaT* src, bool copy = false) {
     // if not copy we steal
-    armaT * data;;
+    armaT* data;
+    ;
     if (!copy) {
         data = new armaT(std::move(*src));
     } else {
@@ -670,14 +623,10 @@ inline py::array_t<T> to_numpy(armaT * src, bool copy=false) {
     return _construct_array<T>(data);
 } /* to_numpy */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Vec<armaT> = 3
->
-inline py::array_t<T> to_numpy(armaT & src, bool copy=false) {
+template <typename armaT, typename T = typename armaT::elem_type, is_Vec<armaT> = 3>
+inline py::array_t<T> to_numpy(armaT& src, bool copy = false) {
     // if not copy we steal
-    armaT * data;
+    armaT* data;
     if (!copy) {
         data = new armaT(std::move(src));
     } else {
@@ -686,14 +635,11 @@ inline py::array_t<T> to_numpy(armaT & src, bool copy=false) {
     return _construct_array<T>(data);
 } /* to_numpy */
 
-template <
-    typename armaT,
-    typename T = typename armaT::elem_type,
-    is_Vec<armaT> = 3
->
-inline py::array_t<T> to_numpy(armaT * src, bool copy=false) {
+template <typename armaT, typename T = typename armaT::elem_type, is_Vec<armaT> = 3>
+inline py::array_t<T> to_numpy(armaT* src, bool copy = false) {
     // if not copy we steal
-    armaT * data;;
+    armaT* data;
+    ;
     if (!copy) {
         data = new armaT(std::move(*src));
     } else {
@@ -702,12 +648,12 @@ inline py::array_t<T> to_numpy(armaT * src, bool copy=false) {
     return _construct_array<T>(data);
 } /* to_numpy */
 
-} /* carma */
+}  // namespace carma
 
 namespace pybind11 {
 namespace detail {
 
-template<typename armaT>
+template <typename armaT>
 struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
     using T = typename armaT::elem_type;
 
@@ -738,7 +684,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         }
 
         py::buffer_info info = buffer.request();
-        if(info.ptr == nullptr) {
+        if (info.ptr == nullptr) {
             return false;
         }
 
@@ -746,68 +692,64 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         return true;
     }
 
-    private:
+   private:
+    // Cast implementation
+    static handle cast_impl(armaT&& src, return_value_policy policy, handle) {
+        switch (policy) {
+            case return_value_policy::move:
+                return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
+            case return_value_policy::automatic:
+                return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
+            case return_value_policy::take_ownership:
+                return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
+            case return_value_policy::copy:
+                return carma::to_numpy<armaT>(src, true).release();
+            default:
+                throw cast_error("unhandled return_value_policy");
+        };
+    }
 
-        // Cast implementation
-        static handle cast_impl(armaT && src, return_value_policy policy, handle) {
-            switch (policy) {
-                case return_value_policy::move:
-                    return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
-                case return_value_policy::automatic:
-                    return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
-                case return_value_policy::take_ownership:
-                    return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
-                case return_value_policy::copy:
-                    return carma::to_numpy<armaT>(src, true).release();
-                default:
-                    throw cast_error("unhandled return_value_policy");
-            };
-        }
+    static handle cast_impl(armaT* src, return_value_policy policy, handle) {
+        switch (policy) {
+            case return_value_policy::move:
+                return carma::to_numpy<armaT>(src).release();
+            case return_value_policy::automatic:
+                return carma::to_numpy<armaT>(src).release();
+            case return_value_policy::take_ownership:
+                return carma::to_numpy<armaT>(src).release();
+            case return_value_policy::copy:
+                return carma::to_numpy<armaT>(src, true).release();
+            default:
+                throw cast_error("unhandled return_value_policy");
+        };
+    }
 
-        static handle cast_impl(armaT * src, return_value_policy policy, handle) {
-            switch (policy) {
-                case return_value_policy::move:
-                    return carma::to_numpy<armaT>(src).release();
-                case return_value_policy::automatic:
-                    return carma::to_numpy<armaT>(src).release();
-                case return_value_policy::take_ownership:
-                    return carma::to_numpy<armaT>(src).release();
-                case return_value_policy::copy:
-                    return carma::to_numpy<armaT>(src, true).release();
-                default:
-                    throw cast_error("unhandled return_value_policy");
-            };
-        }
-
-    public:
-
-        // Normal returned non-reference, non-const value: we steal
-        static handle cast(armaT &&src, return_value_policy policy , handle parent) {
-            return cast_impl(std::forward<armaT>(src), policy, parent);
-        }
-        // If you return a non-reference const; we copy
-        static handle cast(const armaT &&src, return_value_policy policy, handle parent) {
-            policy = return_value_policy::copy;
-            return cast_impl(&src, policy, parent);
-        }
-        // lvalue reference return; default (automatic) becomes steal
-        static handle cast(armaT &src, return_value_policy policy, handle parent) {
-            return cast_impl(&src, policy, parent);
-        }
-        // const lvalue reference return; default (automatic) becomes copy
-        static handle cast(const armaT &src, return_value_policy policy, handle parent) {
-            policy = return_value_policy::copy;
-            return cast_impl(&src, policy, parent);
-        }
-        // non-const pointer return; we steal
-        static handle cast(armaT *src, return_value_policy policy, handle parent) {
-            return cast_impl(src, policy, parent);
-        }
-        // const pointer return; we copy
-        static handle cast(const armaT *src, return_value_policy policy, handle parent) {
-            policy = return_value_policy::copy;
-            return cast_impl(src, policy, parent);
-        }
+   public:
+    // Normal returned non-reference, non-const value: we steal
+    static handle cast(armaT&& src, return_value_policy policy, handle parent) {
+        return cast_impl(std::forward<armaT>(src), policy, parent);
+    }
+    // If you return a non-reference const; we copy
+    static handle cast(const armaT&& src, return_value_policy policy, handle parent) {
+        policy = return_value_policy::copy;
+        return cast_impl(&src, policy, parent);
+    }
+    // lvalue reference return; default (automatic) becomes steal
+    static handle cast(armaT& src, return_value_policy policy, handle parent) {
+        return cast_impl(&src, policy, parent);
+    }
+    // const lvalue reference return; default (automatic) becomes copy
+    static handle cast(const armaT& src, return_value_policy policy, handle parent) {
+        policy = return_value_policy::copy;
+        return cast_impl(&src, policy, parent);
+    }
+    // non-const pointer return; we steal
+    static handle cast(armaT* src, return_value_policy policy, handle parent) { return cast_impl(src, policy, parent); }
+    // const pointer return; we copy
+    static handle cast(const armaT* src, return_value_policy policy, handle parent) {
+        policy = return_value_policy::copy;
+        return cast_impl(src, policy, parent);
+    }
 
     PYBIND11_TYPE_CASTER(armaT, _("Numpy.ndarray[") + npy_format_descriptor<T>::name + _("]"));
 };
