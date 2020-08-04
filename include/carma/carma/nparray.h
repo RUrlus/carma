@@ -64,14 +64,35 @@ inline bool requires_copy(const py::array_t<T>& arr) {
 #endif
 }
 
+
+template <typename T>
+inline void set_owndata(py::array_t<T>& arr) {
+    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_OWNDATA_;
+}
+
 template <typename T>
 inline void set_not_owndata(py::array_t<T>& arr) {
     py::detail::array_proxy(arr.ptr())->flags &= ~py::detail::npy_api::NPY_ARRAY_OWNDATA_;
 }
 
 template <typename T>
+inline void set_writeable(py::array_t<T>& arr) {
+    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_WRITEABLE_;
+}
+
+template <typename T>
 inline void set_not_writeable(py::array_t<T>& arr) {
     py::detail::array_proxy(arr.ptr())->flags &= ~py::detail::npy_api::NPY_ARRAY_WRITEABLE_;
+}
+
+template <typename T>
+inline void set_f_contiguous(py::array_t<T>& arr) {
+    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
+}
+
+template <typename T>
+inline void set_c_contiguous(py::array_t<T>& arr) {
+    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
 }
 
 }  // namespace carma
