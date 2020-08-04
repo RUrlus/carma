@@ -29,6 +29,15 @@ namespace py = pybind11;
 
 namespace carma {
 
+struct conversion_error : public std::exception {
+    const char * _message;
+    conversion_error(const char * message) : _message(message) {}
+	const char * what () const throw () {
+    	return _message;
+    }
+};
+
+
 // Mat catches Row and Col as well
 template<typename T>
 struct is_convertible {
