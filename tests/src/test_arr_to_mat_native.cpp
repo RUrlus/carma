@@ -1,15 +1,14 @@
-#include <armadillo>
-#include <catch2/catch.hpp>
+#include <carma/carma.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
-#include <carma/carma.h>
+#include <armadillo>
+#include <catch2/catch.hpp>
 
 namespace py = pybind11;
 
 typedef py::array_t<double, py::array::f_style | py::array::forcecast> fArr;
 
 TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
-
     py::module np = py::module::import("numpy");
     py::module np_rand = py::module::import("numpy.random");
 
@@ -26,11 +25,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
@@ -58,11 +58,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
@@ -90,11 +91,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
@@ -122,11 +124,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
@@ -154,11 +157,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
@@ -185,11 +189,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
@@ -199,7 +204,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         double mat_sum = arma::accu(M);
 
         // variable for test status
-        CHECK((arr_N  + 200) == M.n_elem);
+        CHECK((arr_N + 200) == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK((arr_S1 + 2) == M.n_cols);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
@@ -229,7 +234,6 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 } /* TEST_CASE ARR_TO_MAT */
 
 TEST_CASE("Test arr_to_row", "[arr_to_row]") {
-
     py::module np = py::module::import("numpy");
     py::module np_rand = py::module::import("numpy.random");
 
@@ -245,11 +249,12 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -276,11 +281,12 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -308,11 +314,12 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -339,11 +346,12 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -369,11 +377,12 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -399,11 +408,12 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -428,11 +438,12 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -471,7 +482,6 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 } /* TEST_CASE ARR_TO_ROW */
 
 TEST_CASE("Test arr_to_col", "[arr_to_col]") {
-
     py::module np = py::module::import("numpy");
     py::module np_rand = py::module::import("numpy.random");
 
@@ -487,11 +497,12 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
@@ -518,11 +529,12 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
@@ -550,11 +562,12 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
@@ -581,11 +594,12 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
@@ -611,11 +625,12 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
@@ -641,11 +656,12 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
@@ -670,11 +686,12 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
@@ -713,7 +730,6 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 } /* TEST_CASE ARR_TO_COL */
 
 TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
-
     py::module np = py::module::import("numpy");
     py::module np_rand = py::module::import("numpy.random");
 
@@ -731,11 +747,12 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
@@ -765,11 +782,12 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
@@ -799,11 +817,12 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
@@ -833,11 +852,12 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
@@ -867,11 +887,12 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
@@ -898,11 +919,12 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double * ptr = reinterpret_cast<double *>(info.ptr);
+        double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
-        double arr_sum  = 0.0;
-        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++) arr_sum += ptr[i];
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
 
         // // call function to be tested
         arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);

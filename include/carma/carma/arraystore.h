@@ -12,21 +12,23 @@ namespace carma {
 
 template <typename armaT>
 class ArrayStore {
-   using T = typename armaT::elem_type;
+    using T = typename armaT::elem_type;
+
    protected:
     constexpr static ssize_t tsize = sizeof(T);
     bool _steal;
     py::capsule _base;
+
    public:
     armaT mat;
 
    protected:
-
     inline void _convert_to_arma(py::array_t<T>& arr) {
         mat = _to_arma<armaT>::from(arr, !_steal, false);
         _base = create_dummy_capsule(&mat);
         // inform numpy it no longer owns the data
-        if (_steal) set_not_owndata(arr);
+        if (_steal)
+            set_not_owndata(arr);
     }
 
    public:
@@ -80,9 +82,7 @@ class ArrayStore {
         _base = create_dummy_capsule(&mat);
     }
 
-    ArrayStore(armaT&& src) : _steal{true}, mat{std::move(src)} {
-        _base = create_dummy_capsule(&mat);
-    }
+    ArrayStore(armaT&& src) : _steal{true}, mat{std::move(src)} { _base = create_dummy_capsule(&mat); }
 
     // Function requires different name than set_data
     // as overload could not be resolved without
@@ -148,17 +148,17 @@ class ArrayStore {
         if (rc_elem != nelem) {
             nslices = nelem / rc_elem;
             arr = py::array_t<T>(
-                {nslices, nrows, ncols}, // shape
-                {tsize * nrows * ncols, tsize, nrows * tsize}, // F-style contiguous strides
-                mat.memptr(), // the data pointer
-                _base // numpy array references this parent
+                {nslices, nrows, ncols},                        // shape
+                {tsize * nrows * ncols, tsize, nrows * tsize},  // F-style contiguous strides
+                mat.memptr(),                                   // the data pointer
+                _base                                           // numpy array references this parent
             );
         } else {
-            arr =  py::array_t<T>(
-                {nrows, ncols}, // shape
-                {tsize, nrows * tsize}, // F-style contiguous strides
-                mat.memptr(), // the data pointer
-                _base // numpy array references this parent
+            arr = py::array_t<T>(
+                {nrows, ncols},          // shape
+                {tsize, nrows * tsize},  // F-style contiguous strides
+                mat.memptr(),            // the data pointer
+                _base                    // numpy array references this parent
             );
         }
 
