@@ -10,36 +10,27 @@ namespace py = pybind11;
 
 namespace carma {
 
-template <typename T>
+template <typename armaT>
 class ArrayStore {
+   using T = typename armaT::elem_type;
    protected:
     constexpr static ssize_t tsize = sizeof(T);
     bool _steal;
-    T* _ptr;
     py::capsule _base;
+   public:
+    armaT mat;
 
-    void _convert_to_arma(py::array_t<T>& arr) {
-        if (_steal) {
-            mat = arr_to_mat<T>(arr, false);
-            _ptr = mat.memptr();
-            Data<T> data{_ptr, Deallocator::Free};
-            _base = create_capsule(data);
-            // inform numpy it no longer owns the data
-            set_not_owndata(arr);
-        } else {
-            mat = arr_to_mat<T>(arr, true);
-            _ptr = mat.memptr();
-            // create a dummy capsule as armadillo will be responsible
-            // for destruction of the memory
-            // We need a capsule to prevent a copy on the way out.
-            _base = create_dummy_capsule(_ptr);
-        }
+   protected:
+
+    inline void _convert_to_arma(py::array_t<T>& arr) {
+        mat = _to_arma<armaT>::from(arr, !_steal, false);
+        _base = create_dummy_capsule(&mat);
+        // inform numpy it no longer owns the data
+        if (_steal) set_not_owndata(arr);
     }
 
    public:
-    arma::Mat<T> mat;
-
-    ArrayStore(py::array_t<T>& arr, bool steal) : _steal{steal} {
+    ArrayStore(py::array_t<T>& arr, bool copy) : _steal{!copy} {
         /* Constructor
          *
          * Takes numpy array and converters to Armadillo matrix.
@@ -53,41 +44,123 @@ class ArrayStore {
         _convert_to_arma(arr);
     }
 
-    ArrayStore(arma::Mat<T>& mat) : _steal{false}, _ptr{mat.memptr()}, _base{create_dummy_capsule(_ptr)}, mat{mat} {}
+    ArrayStore(const armaT& src) {
+        _steal = false;
+        mat = armaT(src);
+        _base = create_dummy_capsule(&mat);
+    }
 
-    ArrayStore(arma::Mat<T>&& mat)
-        : _steal{true}, _ptr{mat.memptr()}, _base{create_dummy_capsule(_ptr)}, mat{std::move(mat)} {}
+    ArrayStore(arma::Mat<T>& src, bool copy) : _steal{!copy} {
+        if (copy) {
+            mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
+        } else {
+            mat = std::move(src);
+        }
+        _base = create_dummy_capsule(&mat);
+    }
 
-    void set_data(py::array_t<T>& arr, bool steal) {
-        _steal = steal;
+    ArrayStore(arma::Cube<T>& src, bool copy) : _steal{!copy} {
+        if (copy) {
+            mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
+        } else {
+            mat = std::move(src);
+        }
+        _base = create_dummy_capsule(&mat);
+    }
+
+    // SFINAE by adding additional parameter as
+    // to avoid shadowing the class template
+    template <typename U = armaT>
+    ArrayStore(armaT& src, bool copy, is_Vec<U>) : _steal{!copy} {
+        if (copy) {
+            mat = armaT(src.memptr(), src.n_elem, true);
+        } else {
+            mat = std::move(src);
+        }
+        _base = create_dummy_capsule(&mat);
+    }
+
+    ArrayStore(armaT&& src) : _steal{true}, mat{std::move(src)} {
+        _base = create_dummy_capsule(&mat);
+    }
+
+    // Function requires different name than set_data
+    // as overload could not be resolved without
+    void set_array(py::array_t<T>& arr, bool copy) {
+        _steal = !copy;
         _convert_to_arma(arr);
     }
 
-    void set_mat(arma::Mat<T>& src) {
+    void set_data(const armaT& src) {
         _steal = false;
-        _ptr = mat.memptr();
-        _base = create_dummy_capsule(_ptr);
-        mat = src;
+        mat = armaT(src);
+        _base = create_dummy_capsule(&mat);
     }
 
-    void set_mat(arma::Mat<T>&& src) {
+    void set_data(arma::Mat<T>& src, bool copy) {
+        _steal = !copy;
+        if (copy) {
+            mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
+        } else {
+            mat = std::move(src);
+        }
+        _base = create_dummy_capsule(&mat);
+    }
+
+    // SFINAE by adding additional parameter as
+    // to avoid shadowing the class template
+    template <typename U = armaT>
+    void set_data(armaT& src, bool copy, is_Vec<U>) {
+        _steal = !copy;
+        if (copy) {
+            mat = armaT(src.memptr(), src.n_elem, true);
+        } else {
+            mat = std::move(src);
+        }
+        _base = create_dummy_capsule(&mat);
+    }
+
+    void set_data(arma::Cube<T>& src, bool copy) {
+        _steal = !copy;
+        if (copy) {
+            mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
+        } else {
+            mat = std::move(src);
+        }
+        _base = create_dummy_capsule(&mat);
+    }
+
+    void set_data(armaT&& src) {
         _steal = true;
-        _ptr = mat.memptr();
-        _base = create_dummy_capsule(_ptr);
         mat = std::move(src);
+        _base = create_dummy_capsule(&mat);
     }
 
     py::array_t<T> get_view(bool writeable) {
+        ssize_t nslices;
+        ssize_t nelem = static_cast<ssize_t>(mat.n_elem);
         ssize_t nrows = static_cast<ssize_t>(mat.n_rows);
         ssize_t ncols = static_cast<ssize_t>(mat.n_cols);
+        ssize_t rc_elem = nrows * ncols;
 
-        // create the array
-        py::array_t<T> arr = py::array_t<T>(
-            {nrows, ncols},          // shape
-            {tsize, nrows * tsize},  // F-style contiguous strides
-            _ptr,                    // the data pointer
-            _base                    // numpy array references this parent
-        );
+        py::array_t<T> arr;
+
+        if (rc_elem != nelem) {
+            nslices = nelem / rc_elem;
+            arr = py::array_t<T>(
+                {nslices, nrows, ncols}, // shape
+                {tsize * nrows * ncols, tsize, nrows * tsize}, // F-style contiguous strides
+                mat.memptr(), // the data pointer
+                _base // numpy array references this parent
+            );
+        } else {
+            arr =  py::array_t<T>(
+                {nrows, ncols}, // shape
+                {tsize, nrows * tsize}, // F-style contiguous strides
+                mat.memptr(), // the data pointer
+                _base // numpy array references this parent
+            );
+        }
 
         // inform numpy it does not own the buffer
         set_not_owndata(arr);
