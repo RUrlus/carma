@@ -8,9 +8,10 @@ void bind_test_ArrayStore_get_mat(py::module& m);
 void bind_test_ArrayStore_get_mat_rvalue(py::module& m);
 void bind_test_ArrayStore_get_view(py::module& m);
 
-template <typename T>
+template <typename armaT>
 void bind_ArrayStore(py::module& m, std::string&& typestr) {
-    using Class = carma::ArrayStore<T>;
+    using T = typename armaT::elem_type;
+    using Class = carma::ArrayStore<armaT>;
     std::string pyclass_name = typestr + std::string("ArrayStore");
     py::class_<Class>(m, pyclass_name.c_str())
         .def(py::init<py::array_t<T>&, bool>(), R"pbdoc(
@@ -49,7 +50,7 @@ void bind_ArrayStore(py::module& m, std::string&& typestr) {
             RuntimeError : if writeable is True
             but writeable was set to false as initialization
         )pbdoc")
-        .def("set_data", &Class::set_data, R"pbdoc(
+        .def("set_array", &Class::set_array, R"pbdoc(
             Store numpy array in armadillo matrix.
 
             Parameters
