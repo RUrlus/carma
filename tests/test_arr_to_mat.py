@@ -90,6 +90,15 @@ def test_arr_to_col():
     assert flag == 0, test_flags[flag]
 
 
+def test_arr_to_col_2d():
+    """Test arr_to_col."""
+    sample = np.asarray(
+        np.random.normal(size=(10, 1)), dtype=np.float64, order='F'
+    )
+    flag = carma.arr_to_col(sample, False, False)
+    assert flag == 0, test_flags[flag]
+
+
 def test_arr_to_col_C():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=10), dtype=np.float64, order='C')
@@ -122,6 +131,15 @@ def test_arr_to_col_copy_C():
 def test_arr_to_row():
     """Test arr_to_row."""
     sample = np.asarray(np.random.normal(size=10), dtype=np.float64, order='F')
+    flag = carma.arr_to_row(sample, False, False)
+    assert flag == 0, test_flags[flag]
+
+
+def test_arr_to_row_2d():
+    """Test arr_to_row."""
+    sample = np.asarray(
+        np.random.normal(size=(1, 10)), dtype=np.float64, order='F'
+    )
     flag = carma.arr_to_row(sample, False, False)
     assert flag == 0, test_flags[flag]
 
