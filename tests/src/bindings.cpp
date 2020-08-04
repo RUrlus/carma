@@ -4,24 +4,15 @@
 // include numpy header for usage of array_t
 #include <pybind11/numpy.h>
 
-#include "test_store.h"
 #include "test_nparray.h"
 #include "test_arr_to_mat.h"
 #include "test_mat_to_arr.h"
 #include "test_type_caster.h"
+#include "test_arraystore.h"
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(test_carma, m) {
-    // arraystore
-    // bind_ArrayStore<int>(m, std::string("i"));
-    // bind_ArrayStore<long>(m, std::string("l"));
-    // bind_ArrayStore<float>(m, std::string("f"));
-    // bind_ArrayStore<double>(m, std::string("d"));
-    // bind_test_ArrayStore_get_mat(m);
-    // bind_test_ArrayStore_get_mat_rvalue(m);
-    // bind_test_ArrayStore_get_view(m);
-
     // arr_to_mat
     bind_test_arr_to_row(m);
     bind_test_arr_to_col(m);
@@ -79,4 +70,13 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_tc_out_col_rvalue(m);
     bind_test_tc_out_cube(m);
     bind_test_tc_out_cube_rvalue(m);
+
+    // arraystore
+    bind_ArrayStore<arma::Mat<int>>(m, std::string("i"));
+    bind_ArrayStore<arma::Mat<long>>(m, std::string("l"));
+    bind_ArrayStore<arma::Mat<float>>(m, std::string("f"));
+    bind_ArrayStore<arma::Mat<double>>(m, std::string("d"));
+    bind_test_ArrayStore_get_mat(m);
+    bind_test_ArrayStore_get_mat_rvalue(m);
+    bind_test_ArrayStore_get_view(m);
 }
