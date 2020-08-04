@@ -7,6 +7,7 @@ SET(NATIVE_MODNAME "test_carma_native")
 # ##############################################################################
 ADD_EXECUTABLE(${NATIVE_MODNAME}
     src/test_main.cpp
+    src/test_arr_to_mat_native.cpp
     src/test_mat_to_arr_native.cpp
 )
 

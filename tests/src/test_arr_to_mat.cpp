@@ -149,7 +149,7 @@ int test_arr_to_mat_1d(py::array_t<long>& arr, bool copy, bool strict) {
 int test_arr_to_col(py::array_t<double>& arr, bool copy, bool strict) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
-    auto arr_p = arr.unchecked<1>();
+    auto arr_p = arr.unchecked();
 
     // get buffer for raw pointer
     const py::buffer_info info = arr.request();
@@ -178,15 +178,19 @@ int test_arr_to_col(py::array_t<double>& arr, bool copy, bool strict) {
 int test_arr_to_row(py::array_t<double>& arr, bool copy, bool strict) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
-    auto arr_p = arr.unchecked<1>();
+    auto arr_p = arr.unchecked();
 
     // get buffer for raw pointer
     const py::buffer_info info = arr.request();
 
     // compute sum of array
     double arr_sum = 0;
-    for (size_t i = 0; i < arr_N; i++)
-        arr_sum += arr_p[i];
+    if (arr.ndim() == 1) {
+        for (size_t i = 0; i < arr_N; i++) arr_sum += arr_p[i];
+    }
+    else {
+        for (size_t i = 0; i < arr_N; i++) arr_sum += arr_p(0, i);
+    }
 
     // call function to be tested
     arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
@@ -332,7 +336,7 @@ int test_to_arma_cube(py::array_t<double>& arr, bool copy, bool strict) {
 int test_to_arma_col(py::array_t<double>& arr, bool copy, bool strict) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
-    auto arr_p = arr.unchecked<1>();
+    auto arr_p = arr.unchecked();
 
     // get buffer for raw pointer
     const py::buffer_info info = arr.request();
@@ -361,7 +365,7 @@ int test_to_arma_col(py::array_t<double>& arr, bool copy, bool strict) {
 int test_to_arma_row(py::array_t<double>& arr, bool copy, bool strict) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
-    auto arr_p = arr.unchecked<1>();
+    auto arr_p = arr.unchecked();
 
     // get buffer for raw pointer
     const py::buffer_info info = arr.request();
