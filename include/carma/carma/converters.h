@@ -337,7 +337,7 @@ inline py::array_t<T> row_to_arr(const arma::Row<T>& src) {
 template <typename T>
 inline py::array_t<T> row_to_arr(arma::Row<T>&& src) {
     /* Convert armadillo row to numpy array */
-    arma::Row<T>* data = new arma::Row<T>(std::forward<arma::Row<T>>(src));
+    arma::Row<T>* data = new arma::Row<T>(std::move(src));
     return _construct_array<T>(data);
 } /* row_to_arr */
 
@@ -394,7 +394,7 @@ inline py::array_t<T> col_to_arr(const arma::Col<T>& src) {
 template <typename T>
 inline py::array_t<T> col_to_arr(arma::Col<T>&& src) {
     /* Convert armadillo col to numpy array */
-    arma::Col<T>* data = new arma::Col<T>(std::forward<arma::Col<T>>(src));
+    arma::Col<T>* data = new arma::Col<T>(std::move(src));
     return _construct_array<T>(data);
 } /* col_to_arr */
 
@@ -449,7 +449,7 @@ inline py::array_t<T> mat_to_arr(const arma::Mat<T>& src) {
 
 template <typename T>
 inline py::array_t<T> mat_to_arr(arma::Mat<T>&& src) {
-    arma::Mat<T>* data = new arma::Mat<T>(std::forward<arma::Mat<T>>(src));
+    arma::Mat<T>* data = new arma::Mat<T>(std::move(src));
     return _construct_array<T>(data);
 } /* mat_to_arr */
 
@@ -502,7 +502,7 @@ inline py::array_t<T> cube_to_arr(const arma::Cube<T>& src) {
 
 template <typename T>
 inline py::array_t<T> cube_to_arr(arma::Cube<T>&& src) {
-    arma::Cube<T>* data = new arma::Cube<T>(std::forward<arma::Cube<T>>(src));
+    arma::Cube<T>* data = new arma::Cube<T>(std::move(src));
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
@@ -558,7 +558,7 @@ inline py::array_t<T> to_numpy(const armaT& src) {
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
 inline py::array_t<T> to_numpy(armaT&& src) {
-    arma::Cube<T>* data = new arma::Cube<T>(std::move(src));
+    arma::Cube<T>* data = new arma::Cube<T>(std::forward<arma::Cube<T>>(src));
     return _construct_array<T>(data);
 } /* cube_to_arr */
 
@@ -697,11 +697,11 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
     static handle cast_impl(armaT&& src, return_value_policy policy, handle) {
         switch (policy) {
             case return_value_policy::move:
-                return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
+                return carma::to_numpy<armaT>(std::move(src)).release();
             case return_value_policy::automatic:
-                return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
+                return carma::to_numpy<armaT>(std::move(src)).release();
             case return_value_policy::take_ownership:
-                return carma::to_numpy<armaT>(std::forward<armaT>(src)).release();
+                return carma::to_numpy<armaT>(std::move(src)).release();
             case return_value_policy::copy:
                 return carma::to_numpy<armaT>(src, true).release();
             default:
@@ -727,7 +727,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
    public:
     // Normal returned non-reference, non-const value: we steal
     static handle cast(armaT&& src, return_value_policy policy, handle parent) {
-        return cast_impl(std::forward<armaT>(src), policy, parent);
+        return cast_impl(std::move(src), policy, parent);
     }
     // If you return a non-reference const; we copy
     static handle cast(const armaT&& src, return_value_policy policy, handle parent) {
