@@ -3,69 +3,69 @@
 namespace carma {
 namespace tests {
 
-double test_tc_in_mat(arma::Mat<double>& mat) {
+double test_tc_in_mat(const arma::Mat<double>& mat) {
     return arma::accu(mat);
 }
 
-double test_tc_in_row(arma::Row<double>& mat) {
+double test_tc_in_row(const arma::Row<double>& mat) {
     return arma::accu(mat);
 }
 
-double test_tc_in_col(arma::Col<double>& mat) {
+double test_tc_in_col(const arma::Col<double>& mat) {
     return arma::accu(mat);
 }
 
-double test_tc_in_cube(arma::Cube<double>& mat) {
+double test_tc_in_cube(const arma::Cube<double>& mat) {
     return arma::accu(mat);
 }
 
-arma::Mat<double> test_tc_out_mat(py::array_t<double>& arr) {
+arma::Mat<double> test_tc_out_mat(const py::array_t<double>& arr) {
     arma::Mat<double> ones = arma::ones(arr.shape(0), arr.shape(1));
     arma::Mat<double> mat = carma::arr_to_mat<double>(arr);
     arma::Mat<double> out = ones + mat;
     return out;
 }
 
-arma::Mat<double> test_tc_out_mat_rvalue(py::array_t<double>& arr) {
+arma::Mat<double> test_tc_out_mat_rvalue(const py::array_t<double>& arr) {
     arma::Mat<double> ones = arma::ones(arr.shape(0), arr.shape(1));
     arma::Mat<double> mat = carma::arr_to_mat<double>(arr);
     return ones + mat;
 }
 
-arma::Row<double> test_tc_out_row(py::array_t<double>& arr) {
+arma::Row<double> test_tc_out_row(const py::array_t<double>& arr) {
     arma::Row<double> ones = arma::Row<double>(arr.size(), arma::fill::ones);
     arma::Row<double> mat = carma::arr_to_row<double>(arr);
     arma::Row<double> out = ones + mat;
     return out;
 }
 
-arma::Row<double> test_tc_out_row_rvalue(py::array_t<double>& arr) {
+arma::Row<double> test_tc_out_row_rvalue(const py::array_t<double>& arr) {
     arma::Row<double> ones = arma::Row<double>(arr.size(), arma::fill::ones);
     arma::Row<double> mat = carma::arr_to_row<double>(arr);
     return ones + mat;
 }
 
-arma::Col<double> test_tc_out_col(py::array_t<double>& arr) {
+arma::Col<double> test_tc_out_col(const py::array_t<double>& arr) {
     arma::Col<double> ones = arma::Col<double>(arr.size(), arma::fill::ones);
     arma::Col<double> mat = carma::arr_to_col<double>(arr);
     arma::Col<double> out = ones + mat;
     return out;
 }
 
-arma::Col<double> test_tc_out_col_rvalue(py::array_t<double>& arr) {
+arma::Col<double> test_tc_out_col_rvalue(const py::array_t<double>& arr) {
     arma::Col<double> ones = arma::Col<double>(arr.size(), arma::fill::ones);
     arma::Col<double> mat = carma::arr_to_col<double>(arr);
     return ones + mat;
 }
 
-arma::Cube<double> test_tc_out_cube(py::array_t<double>& arr) {
+arma::Cube<double> test_tc_out_cube(const py::array_t<double>& arr) {
     arma::Cube<double> ones = arma::Cube<double>(arr.shape(0), arr.shape(1), arr.shape(2), arma::fill::ones);
     arma::Cube<double> mat = carma::arr_to_cube<double>(arr);
     arma::Cube<double> out = ones + mat;
     return out;
 }
 
-arma::Cube<double> test_tc_out_cube_rvalue(py::array_t<double>& arr) {
+arma::Cube<double> test_tc_out_cube_rvalue(const py::array_t<double>& arr) {
     arma::Cube<double> ones = arma::Cube<double>(arr.shape(0), arr.shape(1), arr.shape(2), arma::fill::ones);
     arma::Cube<double> mat = carma::arr_to_cube<double>(arr);
     return ones + mat;
