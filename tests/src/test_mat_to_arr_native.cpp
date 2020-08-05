@@ -27,7 +27,7 @@ TEST_CASE("Test mat_to_arr", "[mat_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -59,7 +59,7 @@ TEST_CASE("Test mat_to_arr", "[mat_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -91,7 +91,7 @@ TEST_CASE("Test mat_to_arr", "[mat_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -116,7 +116,7 @@ TEST_CASE("Test mat_to_arr", "[mat_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -146,7 +146,7 @@ TEST_CASE("Test mat_to_arr", "[mat_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -179,7 +179,7 @@ TEST_CASE("Test mat_to_arr", "[mat_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -210,7 +210,7 @@ TEST_CASE("Test row_to_arr", "[row_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -240,7 +240,7 @@ TEST_CASE("Test row_to_arr", "[row_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -270,7 +270,7 @@ TEST_CASE("Test row_to_arr", "[row_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -293,7 +293,7 @@ TEST_CASE("Test row_to_arr", "[row_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -321,7 +321,7 @@ TEST_CASE("Test row_to_arr", "[row_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -352,7 +352,7 @@ TEST_CASE("Test row_to_arr", "[row_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -382,7 +382,7 @@ TEST_CASE("Test col_to_arr", "[col_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -412,7 +412,7 @@ TEST_CASE("Test col_to_arr", "[col_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -442,7 +442,7 @@ TEST_CASE("Test col_to_arr", "[col_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -465,7 +465,7 @@ TEST_CASE("Test col_to_arr", "[col_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -493,7 +493,7 @@ TEST_CASE("Test col_to_arr", "[col_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -524,7 +524,7 @@ TEST_CASE("Test col_to_arr", "[col_to_arr]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -767,7 +767,7 @@ TEST_CASE("Test to_numpy Mat", "[to_numpy<Mat>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -799,7 +799,7 @@ TEST_CASE("Test to_numpy Mat", "[to_numpy<Mat>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -831,7 +831,7 @@ TEST_CASE("Test to_numpy Mat", "[to_numpy<Mat>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -856,7 +856,7 @@ TEST_CASE("Test to_numpy Mat", "[to_numpy<Mat>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -880,7 +880,7 @@ TEST_CASE("Test to_numpy Mat", "[to_numpy<Mat>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        long* ptr = static_cast<long*>(info.ptr);
+        const long* ptr = static_cast<long*>(info.ptr);
 
         // compute sum of array
         long arr_sum = 0;
@@ -910,7 +910,7 @@ TEST_CASE("Test to_numpy Mat", "[to_numpy<Mat>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -943,7 +943,7 @@ TEST_CASE("Test to_numpy Mat", "[to_numpy<Mat>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -974,7 +974,7 @@ TEST_CASE("Test to_numpy Row", "[to_numpy<Row>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1004,7 +1004,7 @@ TEST_CASE("Test to_numpy Row", "[to_numpy<Row>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1034,7 +1034,7 @@ TEST_CASE("Test to_numpy Row", "[to_numpy<Row>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1057,7 +1057,7 @@ TEST_CASE("Test to_numpy Row", "[to_numpy<Row>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1085,7 +1085,7 @@ TEST_CASE("Test to_numpy Row", "[to_numpy<Row>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1116,7 +1116,7 @@ TEST_CASE("Test to_numpy Row", "[to_numpy<Row>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1146,7 +1146,7 @@ TEST_CASE("Test to_numpy Col", "[to_numpy<Col>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1176,7 +1176,7 @@ TEST_CASE("Test to_numpy Col", "[to_numpy<Col>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1206,7 +1206,7 @@ TEST_CASE("Test to_numpy Col", "[to_numpy<Col>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1229,7 +1229,7 @@ TEST_CASE("Test to_numpy Col", "[to_numpy<Col>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1257,7 +1257,7 @@ TEST_CASE("Test to_numpy Col", "[to_numpy<Col>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1288,7 +1288,7 @@ TEST_CASE("Test to_numpy Col", "[to_numpy<Col>]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1525,7 +1525,7 @@ TEST_CASE("Test update_array Row", "[update_array<Row>]") {
 
     // get buffer for raw pointer
     py::buffer_info info = arr.request();
-    double* ptr = reinterpret_cast<double*>(info.ptr);
+    const double* ptr = reinterpret_cast<double*>(info.ptr);
 
     // compute sum of array
     double arr_sum = 0.0;
@@ -1556,7 +1556,7 @@ TEST_CASE("Test update_array Col", "[update_array<Col>]") {
     double mat_sum = arma::accu(M);
 
     py::buffer_info info = arr.request();
-    double* ptr = reinterpret_cast<double*>(info.ptr);
+    const double* ptr = reinterpret_cast<double*>(info.ptr);
     // compute sum of array
     double arr_sum = 0.0;
     for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)

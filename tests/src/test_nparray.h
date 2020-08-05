@@ -1,8 +1,8 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
-namespace py = pybind11;
-
 #include <carma/carma/nparray.h>
+
+namespace py = pybind11;
 
 void bind_test_is_f_contiguous(py::module& m);
 void bind_test_is_c_contiguous(py::module& m);
