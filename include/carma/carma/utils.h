@@ -76,51 +76,15 @@ struct is_cube : std::false_type {};
 template <typename T>
 struct is_cube<arma::Cube<T>> : std::true_type {};
 
-template <typename T>
-inline py::capsule create_capsule(arma::Mat<T>* data) {
+template <typename armaT>
+inline py::capsule create_capsule(armaT* data) {
     return py::capsule(data, [](void* f) {
-        arma::Mat<T>* mat = reinterpret_cast<arma::Mat<T>*>(f);
+        armaT* mat = reinterpret_cast<armaT*>(f);
 #ifndef NDEBUG
         // if in debug mode let us know what pointer is being freed
         std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
 #endif
-        mat->~Mat();
-    });
-} /* create_capsule */
-
-template <typename T>
-inline py::capsule create_capsule(arma::Row<T>* data) {
-    return py::capsule(data, [](void* f) {
-        arma::Row<T>* mat = reinterpret_cast<arma::Row<T>*>(f);
-#ifndef NDEBUG
-        // if in debug mode let us know what pointer is being freed
-        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
-#endif
-        mat->~Row();
-    });
-} /* create_capsule */
-
-template <typename T>
-inline py::capsule create_capsule(arma::Col<T>* data) {
-    return py::capsule(data, [](void* f) {
-        arma::Col<T>* mat = reinterpret_cast<arma::Col<T>*>(f);
-#ifndef NDEBUG
-        // if in debug mode let us know what pointer is being freed
-        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
-#endif
-        mat->~Col();
-    });
-} /* create_capsule */
-
-template <typename T>
-inline py::capsule create_capsule(arma::Cube<T>* data) {
-    return py::capsule(data, [](void* f) {
-        arma::Cube<T>* mat = reinterpret_cast<arma::Cube<T>*>(f);
-#ifndef NDEBUG
-        // if in debug mode let us know what pointer is being freed
-        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
-#endif
-        mat->~Cube();
+        delete mat;
     });
 } /* create_capsule */
 
