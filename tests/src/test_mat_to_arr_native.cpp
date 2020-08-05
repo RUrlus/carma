@@ -10,6 +10,7 @@ typedef arma::Mat<double> dMat;
 typedef arma::Row<double> dRow;
 typedef arma::Col<double> dCol;
 typedef arma::Cube<double> dCube;
+typedef py::array_t<double, py::array::f_style | py::array::forcecast> fArr;
 
 TEST_CASE("Test mat_to_arr", "[mat_to_arr]") {
     SECTION("const l-value reference") {
@@ -1482,7 +1483,7 @@ TEST_CASE("Test to_numpy Cube", "[to_numpy<Cube>]") {
 
 TEST_CASE("Test update_array Mat", "[update_array<Mat>]") {
     py::module np_rand = py::module::import("numpy.random");
-    py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2));
+    py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
     dMat M = carma::arr_to_mat<double>(arr, false, false);
 
@@ -1495,14 +1496,14 @@ TEST_CASE("Test update_array Mat", "[update_array<Mat>]") {
 
     double mat_sum = arma::accu(M);
 
-    // get buffer for raw pointer
-    py::buffer_info info = arr.request();
-    double* ptr = reinterpret_cast<double*>(info.ptr);
-
     // compute sum of array
     double arr_sum = 0.0;
-    for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
-        arr_sum += ptr[i];
+    auto p_arr = arr.unchecked<2>();
+    for (size_t j = 0; j < arr_S1 ; j++) {
+        for (size_t i = 0; i < arr_S0 ; i++) {
+            arr_sum += p_arr(i, j);
+        }
+    }
 
     // variable for test status
     CHECK(arr_N == M.n_elem);
@@ -1574,7 +1575,7 @@ TEST_CASE("Test update_array Col", "[update_array<Col>]") {
 
 TEST_CASE("Test update_array Cube", "[update_array<Cube>]") {
     py::module np_rand = py::module::import("numpy.random");
-    py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 1));
+    py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 1)));
 
     dCube M = carma::arr_to_cube<double>(arr, false, false);
 
@@ -1583,19 +1584,21 @@ TEST_CASE("Test update_array Cube", "[update_array<Cube>]") {
 
     double mat_sum = arma::accu(M);
 
-    // get buffer for raw pointer
-    py::buffer_info info = arr.request();
-    double* ptr = reinterpret_cast<double*>(info.ptr);
-
-    // compute sum of array
-    double arr_sum = 0.0;
-    for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
-        arr_sum += ptr[i];
-
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
     size_t arr_S1 = arr.shape(1);
     size_t arr_S2 = arr.shape(2);
+
+    // compute sum of array
+    double arr_sum = 0.0;
+    auto p_arr = arr.unchecked<3>();
+    for (size_t si = 0; si < arr_S2; si++) {
+        for (size_t ci = 0; ci < arr_S1; ci++) {
+            for (size_t ri = 0; ri < arr_S0; ri++) {
+                arr_sum += p_arr(ri, ci, si);
+            }
+        }
+    }
 
     // variable for test status
     CHECK(arr_N == M.n_elem);
