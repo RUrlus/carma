@@ -1,8 +1,9 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
-namespace py = pybind11;
 
 #include <carma/carma/arraystore.h>
+
+namespace py = pybind11;
 
 void bind_test_ArrayStore_get_mat(py::module& m);
 void bind_test_ArrayStore_get_mat_rvalue(py::module& m);

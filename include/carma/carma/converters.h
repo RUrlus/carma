@@ -704,7 +704,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
                 return carma::to_numpy<armaT>(src, true).release();
             default:
                 throw cast_error("unhandled return_value_policy");
-        };
+        }
     }
 
     static handle cast_impl(armaT* src, return_value_policy policy, handle) {
@@ -719,7 +719,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
                 return carma::to_numpy<armaT>(src, true).release();
             default:
                 throw cast_error("unhandled return_value_policy");
-        };
+        }
     }
 
    public:
