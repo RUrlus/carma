@@ -67,8 +67,10 @@ def test_mat_to_arr_plus_one_copy():
 def test_update_array_mat():
     """Test update_array."""
     arr = np.asarray(np.random.normal(size=(10, 2)), dtype=np.float, order='F')
+    og_sum = arr.sum()
     carma.update_array_mat(arr, 2)
     assert arr.shape == (10, 4)
+    assert np.isclose(arr.sum(), og_sum)
     assert np.abs(arr[:, 2:].sum()) < 1e-12, arr
 ###############################################################################
 #                                 ROW
@@ -136,8 +138,10 @@ def test_update_array_row():
     arr = np.asarray(
         np.random.normal(size=(1, 10)), dtype=np.float, order='F'
     )
+    og_sum = arr.sum()
     carma.update_array_row(arr, 2)
     assert arr.shape == (1, 12)
+    assert np.isclose(arr.sum(), og_sum)
     assert np.abs(arr[:, 10:].sum()) < 1e-12, arr
 
 ###############################################################################
@@ -210,8 +214,10 @@ def test_update_array_col():
     arr = np.asarray(
         np.random.normal(size=(10, 1)), dtype=np.float, order='F'
     )
+    og_sum = arr.sum()
     carma.update_array_col(arr, 2)
     assert arr.shape == (12, 1)
+    assert np.isclose(arr.sum(), og_sum)
     assert np.abs(arr[10:, :].sum()) < 1e-12, arr
 
 ###############################################################################
@@ -284,5 +290,7 @@ def test_update_array_cube():
     arr = np.asarray(
         np.random.normal(size=(10, 2, 2)), dtype=np.float, order='F'
     )
+    og_sum = arr.sum()
     carma.update_array_cube(arr, 2)
     assert arr.shape == (10, 4, 2)
+    assert np.isclose(arr.sum(), og_sum)
