@@ -46,9 +46,7 @@ class ArrayStore {
         _convert_to_arma(arr);
     }
 
-    ArrayStore(const armaT& src) {
-        _steal = false;
-        mat = armaT(src);
+    explicit ArrayStore(const armaT& src) : _steal{false}, mat{armaT(src)} {
         _base = create_dummy_capsule(&mat);
     }
 
@@ -82,7 +80,7 @@ class ArrayStore {
         _base = create_dummy_capsule(&mat);
     }
 
-    ArrayStore(armaT&& src) : _steal{true}, mat{std::move(src)} { _base = create_dummy_capsule(&mat); }
+    explicit ArrayStore(armaT&& src) noexcept : _steal{true}, mat{std::move(src)} { _base = create_dummy_capsule(&mat); }
 
     // Function requires different name than set_data
     // as overload could not be resolved without
