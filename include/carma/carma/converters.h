@@ -374,7 +374,8 @@ inline void update_array(arma::Row<T>& src, py::array_t<T>& arr) {
 template <typename T>
 inline void update_array(arma::Row<T>&& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_elem)}, false);
+    arma::Row<T> row = std::move(src);
+    arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(row.n_elem)}, false);
 } /* update_array */
 
 template <typename T>
@@ -431,7 +432,8 @@ inline void update_array(arma::Col<T>& src, py::array_t<T>& arr) {
 template <typename T>
 inline void update_array(arma::Col<T>&& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(src.n_elem), static_cast<ssize_t>(1)}, false);
+    arma::Col<T> col = std::move(src);
+    arr.resize({static_cast<ssize_t>(col.n_elem), static_cast<ssize_t>(1)}, false);
 } /* update_array */
 
 template <typename T>
@@ -478,7 +480,8 @@ inline py::array_t<T> mat_to_arr(arma::Mat<T>* src, bool copy = false) {
 template <typename T>
 inline void update_array(arma::Mat<T>&& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols)}, false);
+    arma::Mat<T> mat = std::move(src);
+    arr.resize({static_cast<ssize_t>(mat.n_rows), static_cast<ssize_t>(mat.n_cols)}, false);
 } /* update_array */
 
 template <typename T>
@@ -530,8 +533,9 @@ inline py::array_t<T> cube_to_arr(arma::Cube<T>* src, bool copy = false) {
 
 template <typename T>
 inline void update_array(arma::Cube<T>&& src, py::array_t<T>& arr) {
+    arma::Cube<T> cube = std::move(src);
     arr.resize(
-        {static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols), static_cast<ssize_t>(src.n_slices)},
+        {static_cast<ssize_t>(cube.n_rows), static_cast<ssize_t>(cube.n_cols), static_cast<ssize_t>(cube.n_slices)},
         false);
 } /* update_array */
 
