@@ -267,7 +267,7 @@ inline py::array_t<T> _construct_array(arma::Row<T>* data) {
     constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
 
-    py::capsule base = create_capsule<T>(data);
+    py::capsule base = create_capsule<arma::Row<T>>(data);
 
     return py::array_t<T>(
         {static_cast<ssize_t>(1), ncols},  // shape
@@ -282,7 +282,7 @@ inline py::array_t<T> _construct_array(arma::Col<T>* data) {
     constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
 
-    py::capsule base = create_capsule<T>(data);
+    py::capsule base = create_capsule<arma::Col<T>>(data);
 
     return py::array_t<T>(
         {nrows, static_cast<ssize_t>(1)},  // shape
@@ -298,7 +298,7 @@ inline py::array_t<T> _construct_array(arma::Mat<T>* data) {
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
 
-    py::capsule base = create_capsule<T>(data);
+    py::capsule base = create_capsule<arma::Mat<T>>(data);
 
     return py::array_t<T>(
         {nrows, ncols},          // shape
@@ -315,7 +315,7 @@ inline py::array_t<T> _construct_array(arma::Cube<T>* data) {
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
     ssize_t nslices = static_cast<ssize_t>(data->n_slices);
 
-    py::capsule base = create_capsule<T>(data);
+    py::capsule base = create_capsule<arma::Cube<T>>(data);
 
     return py::array_t<T>(
         {nslices, nrows, ncols},                        // shape
@@ -614,7 +614,6 @@ template <typename armaT, typename T = typename armaT::elem_type, is_Mat_only<ar
 inline py::array_t<T> to_numpy(armaT* src, bool copy = false) {
     // if not copy we steal
     armaT* data;
-    ;
     if (!copy) {
         data = new armaT(std::move(*src));
     } else {
@@ -639,7 +638,6 @@ template <typename armaT, typename T = typename armaT::elem_type, is_Vec<armaT> 
 inline py::array_t<T> to_numpy(armaT* src, bool copy = false) {
     // if not copy we steal
     armaT* data;
-    ;
     if (!copy) {
         data = new armaT(std::move(*src));
     } else {
