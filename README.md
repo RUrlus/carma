@@ -7,7 +7,7 @@
 <div align="center">
   <!-- Build status -->
   <a href="https://travis-ci.com/RUrlus/carma">
-    <img src="https://img.shields.io/travis/rurlus/carma.svg?style=for-the-badge" alt="Build Status"/>
+    <img src="https://img.shields.io/travis/rurlus/carma/master.svg?style=for-the-badge" alt="Build Status"/>
   </a>
   <!-- Documentation status -->
   <a href="https://carma.readthedocs.io/en/latest/?badge=latest">
