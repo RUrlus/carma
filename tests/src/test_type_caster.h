@@ -1,27 +1,28 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <armadillo>
-namespace py = pybind11;
 
 #include <carma/carma.h>
+
+namespace py = pybind11;
 
 namespace carma {
 namespace tests {
 // type_caster_in
-double test_tc_in_mat(arma::Mat<double>& mat);
-double test_tc_in_row(arma::Row<double>& mat);
-double test_tc_in_col(arma::Col<double>& mat);
-double test_tc_in_cube(arma::Cube<double>& mat);
+double test_tc_in_mat(const arma::Mat<double>& mat);
+double test_tc_in_row(const arma::Row<double>& mat);
+double test_tc_in_col(const arma::Col<double>& mat);
+double test_tc_in_cube(const arma::Cube<double>& mat);
 
 // type_caster_out
-arma::Mat<double> test_tc_out_mat(py::array_t<double>& arr);
-arma::Mat<double> test_tc_out_mat_rvalue(py::array_t<double>& arr);
-arma::Row<double> test_tc_out_row(py::array_t<double>& arr);
-arma::Row<double> test_tc_out_row_rvalue(py::array_t<double>& arr);
-arma::Col<double> test_tc_out_col(py::array_t<double>& arr);
-arma::Col<double> test_tc_out_col_rvalue(py::array_t<double>& arr);
-arma::Cube<double> test_tc_out_cube(py::array_t<double>& arr);
-arma::Cube<double> test_tc_out_cube_rvalue(py::array_t<double>& arr);
+arma::Mat<double> test_tc_out_mat(const py::array_t<double>& arr);
+arma::Mat<double> test_tc_out_mat_rvalue(const py::array_t<double>& arr);
+arma::Row<double> test_tc_out_row(const py::array_t<double>& arr);
+arma::Row<double> test_tc_out_row_rvalue(const py::array_t<double>& arr);
+arma::Col<double> test_tc_out_col(const py::array_t<double>& arr);
+arma::Col<double> test_tc_out_col_rvalue(const py::array_t<double>& arr);
+arma::Cube<double> test_tc_out_cube(const py::array_t<double>& arr);
+arma::Cube<double> test_tc_out_cube_rvalue(const py::array_t<double>& arr);
 }  // namespace tests
 }  // namespace carma
 

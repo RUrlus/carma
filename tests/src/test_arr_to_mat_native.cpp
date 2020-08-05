@@ -25,7 +25,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -58,7 +58,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -91,7 +91,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -124,7 +124,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -157,7 +157,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -189,7 +189,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -249,7 +249,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -281,7 +281,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -314,7 +314,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -346,7 +346,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -377,7 +377,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -408,7 +408,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -438,7 +438,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -497,7 +497,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -529,7 +529,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -562,7 +562,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -594,7 +594,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -625,7 +625,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -656,7 +656,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -686,7 +686,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -747,7 +747,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -782,7 +782,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -817,7 +817,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -852,7 +852,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -887,7 +887,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;
@@ -919,7 +919,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0.0;

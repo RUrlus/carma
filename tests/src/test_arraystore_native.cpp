@@ -19,7 +19,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -45,7 +45,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -72,7 +72,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -91,7 +91,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -111,7 +111,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -139,7 +139,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(true);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -169,7 +169,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -198,7 +198,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -227,7 +227,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -253,7 +253,7 @@ TEST_CASE("Test ArrayStore Mat", "[ArrayStore<Mat>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -278,7 +278,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -302,7 +302,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -327,7 +327,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -345,7 +345,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -364,7 +364,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -390,7 +390,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(true);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -418,7 +418,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -445,7 +445,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -472,7 +472,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -496,7 +496,7 @@ TEST_CASE("Test ArrayStore Col", "[ArrayStore<Col>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -517,7 +517,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -545,7 +545,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -574,7 +574,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -594,7 +594,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -618,7 +618,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -649,7 +649,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -680,7 +680,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
@@ -708,7 +708,7 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         py::array_t<double> out = store.get_view(false);
 
         py::buffer_info info = out.request();
-        double* ptr = static_cast<double*>(info.ptr);
+        const double* ptr = static_cast<double*>(info.ptr);
 
         // compute sum of array
         double out_sum = 0;
