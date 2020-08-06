@@ -21,4 +21,9 @@ ${TRAVIS_BUILD_DIR}/.travis-ci/configure.sh
 cd build
 
 cmake --build . --target ${TARGET} --config ${CMAKE_BUILD_TYPE}
-ctest -C ${CMAKE_BUILD_TYPE} -V
+
+if [[ "$COVERAGE" == "true" ]]; then
+  cmake --build . --target coverage --config ${CMAKE_BUILD_TYPE}
+else
+  ctest -C ${CMAKE_BUILD_TYPE} -V
+fi

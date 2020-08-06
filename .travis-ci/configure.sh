@@ -7,6 +7,7 @@ CMAKE_EXTRA_ARGS+=" -DBUILD_TESTS=ON"
 if [ -n "$CPP" ]; then CPPSTD=-std=c++$CPP; fi
 if [ "$NOWND" = true ]; then CMAKE_EXTRA_ARGS+=" -DCARMA_DONT_REQUIRE_OWNDATA"; fi 
 if [ "$VALGRIND" = true ]; then CMAKE_EXTRA_ARGS+=" -DVALGRIND_TEST_WRAPPER=on"; fi 
+if [ "$COVERAGE" = true ]; then CMAKE_EXTRA_ARGS+=" -DENABLE_COVERAGE=on"; fi
 
 case $TRAVIS_OS_NAME in
   linux|osx)
