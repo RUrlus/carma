@@ -83,6 +83,18 @@ matrix:
           - g++-7
           - python3.7-dev
           - python3.7-venv
+  - os: linux
+    dist: bionic
+    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true COVERAGE=true
+    name: Python 3.7, c++14, gcc 7 Coverage
+    addons:
+      apt:
+        packages:
+          - g++-7
+          - python3.7-dev
+          - python3.7-venv
+          - lcov
+          # also required in the standard ubuntu:bionic: gcc, make
   - os: osx
     osx_image: xcode11.5
     env: PYTHON_VERSION=3.7 CPP=14 COMPILER=clang
@@ -134,3 +146,6 @@ script:
 
 after_failure: 
   - cat tests/test_cmake_build/*.log*
+
+after_success:
+  - ${TRAVIS_BUILD_DIR}/.travis-ci/after_success.sh

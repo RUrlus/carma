@@ -13,6 +13,10 @@ case $TRAVIS_OS_NAME in
     ;;
 esac
 
+if [[ "$COVERAGE" == "true" ]]; then
+    gem install coveralls-lcov
+fi
+
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 ${PY_CMD} get-pip.py # or use apt-get install python3-pip
 ${PY_CMD} -m pip install --progress-bar off pip --upgrade
