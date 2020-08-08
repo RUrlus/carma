@@ -11,7 +11,7 @@
   </a>
   <!-- Coverage status -->
   <a href="https://coveralls.io/github/RUrlus/carma?branch=master">
-    <img src="https://img.shields.io/coveralls/gitHub/RUrlus/carma?style=for-the-badge" alt="Coveralls github" >
+    <img src="https://img.shields.io/coveralls/github/RUrlus/carma?style=for-the-badge" alt="Coveralls github" >
   </a>
   <!-- Documentation status -->
   <a href="https://carma.readthedocs.io/en/latest/?badge=latest">
