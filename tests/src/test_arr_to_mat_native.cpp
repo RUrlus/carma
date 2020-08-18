@@ -58,16 +58,16 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         size_t arr_N = arr.size();
         size_t arr_S0 = arr.shape(0);
         size_t arr_S1 = arr.shape(1);
+        auto arr_p = arr.unchecked<2>();
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
 
         // compute sum of array
-        double arr_sum = 0.0;
-        auto ptr = arr.unchecked<2>();
-        for (size_t ir = 0; ir < arr_S0; ir++) {
-            for (size_t ic = 0; ic < arr_S1; ic++) {
-                arr_sum += ptr(ir, ic);
+        double arr_sum = 0;
+        for (size_t ci = 0; ci < arr_S1; ci++) {
+            for (size_t ri = 0; ri < arr_S0; ri++) {
+                arr_sum += arr_p(ri, ci);
             }
         }
 
@@ -80,6 +80,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
+        INFO("is c-contiguous " << carma::is_c_contiguous(arr));
+        INFO("is f-contiguous " << carma::is_f_contiguous(arr));
+        INFO("is aligned " << carma::is_aligned(arr));
+        INFO("mat_sum is  " << mat_sum);
+        INFO("arr_sum is  " << arr_sum);
+        INFO("M " << M);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M.memptr());
     }
@@ -130,16 +136,16 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         size_t arr_N = arr.size();
         size_t arr_S0 = arr.shape(0);
         size_t arr_S1 = arr.shape(1);
+        auto arr_p = arr.unchecked<2>();
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
 
         // compute sum of array
-        double arr_sum = 0.0;
-        auto ptr = arr.unchecked<2>();
-        for (size_t ir = 0; ir < arr_S0; ir++) {
-            for (size_t ic = 0; ic < arr_S1; ic++) {
-                arr_sum += ptr(ir, ic);
+        double arr_sum = 0;
+        for (size_t ci = 0; ci < arr_S1; ci++) {
+            for (size_t ri = 0; ri < arr_S0; ri++) {
+                arr_sum += arr_p(ri, ci);
             }
         }
 
@@ -152,6 +158,12 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
+        INFO("is c-contiguous " << carma::is_c_contiguous(arr));
+        INFO("is f-contiguous " << carma::is_f_contiguous(arr));
+        INFO("is aligned " << carma::is_aligned(arr));
+        INFO("mat_sum is " << mat_sum);
+        INFO("arr_sum is " << arr_sum);
+        INFO("M " << M);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M.memptr());
     }
@@ -802,17 +814,17 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         size_t arr_S0 = arr.shape(0);
         size_t arr_S1 = arr.shape(1);
         size_t arr_S2 = arr.shape(2);
+        auto arr_p = arr.unchecked<3>();
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
 
         // compute sum of array
-        double arr_sum = 0.0;
-        auto ptr = arr.unchecked<3>();
-        for (size_t is = 0; is < arr_S2; is++) {
-            for (size_t ir = 0; ir < arr_S0; ir++) {
-                for (size_t ic = 0; ic < arr_S1; ic++) {
-                    arr_sum += ptr(ir, ic, is);
+        double arr_sum = 0;
+        for (size_t si = 0; si < arr_S2; si++) {
+            for (size_t ci = 0; ci < arr_S1; ci++) {
+                for (size_t ri = 0; ri < arr_S0; ri++) {
+                    arr_sum += arr_p(ri, ci, si);
                 }
             }
         }
@@ -827,6 +839,12 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
         CHECK(arr_S2 == M.n_slices);
+        INFO("is c-contiguous " << carma::is_c_contiguous(arr));
+        INFO("is f-contiguous " << carma::is_f_contiguous(arr));
+        INFO("is aligned " << carma::is_aligned(arr));
+        INFO("mat_sum is  " << mat_sum);
+        INFO("arr_sum is  " << arr_sum);
+        INFO("M " << M);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M.memptr());
     }
@@ -882,17 +900,17 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         size_t arr_S0 = arr.shape(0);
         size_t arr_S1 = arr.shape(1);
         size_t arr_S2 = arr.shape(2);
+        auto arr_p = arr.unchecked<3>();
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
 
         // compute sum of array
-        double arr_sum = 0.0;
-        auto ptr = arr.unchecked<3>();
-        for (size_t is = 0; is < arr_S2; is++) {
-            for (size_t ir = 0; ir < arr_S0; ir++) {
-                for (size_t ic = 0; ic < arr_S1; ic++) {
-                    arr_sum += ptr(ir, ic, is);
+        double arr_sum = 0;
+        for (size_t si = 0; si < arr_S2; si++) {
+            for (size_t ci = 0; ci < arr_S1; ci++) {
+                for (size_t ri = 0; ri < arr_S0; ri++) {
+                    arr_sum += arr_p(ri, ci, si);
                 }
             }
         }
