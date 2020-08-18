@@ -54,7 +54,11 @@ arma::Mat<T> arr_to_mat(py::handle src, bool copy = false, bool strict = false) 
      * If the array is 1D we create a column oriented matrix (N, 1)
      */
     // set as array buffer
+#ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     py::array_t<T> buffer = py::array_t<T>::ensure(src);
+#else
+    py::array_t<T> buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
+#endif
     if (!buffer) {
         throw conversion_error("invalid object passed");
     }
@@ -74,24 +78,13 @@ arma::Mat<T> arr_to_mat(py::handle src, bool copy = false, bool strict = false) 
             copy = true;
             strict = false;
         }
-        return arma::Mat<T>(static_cast<T*>(info.ptr), buffer.size(), 1, copy, strict);
+        return arma::Mat<T>(reinterpret_cast<T*>(info.ptr), buffer.size(), 1, copy, strict);
     }
-
-#ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     if (requires_copy(buffer)) {
-        copy = false;
+        copy = true;
         strict = false;
     }
-#else
-    if (requires_copy(buffer) || !is_f_contiguous(buffer)) {
-        // If not F-contiguous or writeable or numpy's data let pybind handle the copy
-        buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
-        info = buffer.request();
-        copy = false;
-        strict = false;
-    }
-#endif
-    return arma::Mat<T>(static_cast<T*>(info.ptr), info.shape[0], info.shape[1], copy, strict);
+    return arma::Mat<T>(reinterpret_cast<T*>(info.ptr), info.shape[0], info.shape[1], copy, strict);
 } /* arr_to_mat */
 
 template <typename T>
@@ -125,7 +118,7 @@ arma::Col<T> arr_to_col(py::handle src, bool copy = false, bool strict = false) 
         copy = true;
         strict = false;
     }
-    return arma::Col<T>(static_cast<T*>(info.ptr), buffer.size(), copy, strict);
+    return arma::Col<T>(reinterpret_cast<T*>(info.ptr), buffer.size(), copy, strict);
 } /* arr_to_col */
 
 template <typename T>
@@ -159,7 +152,7 @@ arma::Row<T> arr_to_row(py::handle src, bool copy = false, bool strict = false) 
         copy = true;
         strict = false;
     }
-    return arma::Row<T>(static_cast<T*>(info.ptr), buffer.size(), copy, strict);
+    return arma::Row<T>(reinterpret_cast<T*>(info.ptr), buffer.size(), copy, strict);
 } /* arr_to_row */
 
 template <typename T>
@@ -176,7 +169,11 @@ arma::Cube<T> arr_to_cube(py::handle src, bool copy = false, bool strict = false
      *
      */
     // set as array buffer
+#ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     py::array_t<T> buffer = py::array_t<T>::ensure(src);
+#else
+    py::array_t<T> buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
+#endif
     if (!buffer) {
         throw conversion_error("invalid object passed");
     }
@@ -191,22 +188,11 @@ arma::Cube<T> arr_to_cube(py::handle src, bool copy = false, bool strict = false
         throw conversion_error("armadillo matrix conversion failed, nullptr");
     }
 
-#ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     if (requires_copy(buffer)) {
-        copy = false;
+        copy = true;
         strict = false;
     }
-#else
-    if (requires_copy(buffer) || !is_f_contiguous(buffer)) {
-        // If not F-contiguous or writeable or numpy's data let pybind handle the copy
-        buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
-        info = buffer.request();
-        copy = false;
-        strict = false;
-    }
-#endif
-
-    return arma::Cube<T>(static_cast<T*>(info.ptr), info.shape[0], info.shape[1], info.shape[2], copy, strict);
+    return arma::Cube<T>(reinterpret_cast<T*>(info.ptr), info.shape[0], info.shape[1], info.shape[2], copy, strict);
 } /* arr_to_mat */
 
 /* The below functor approach is ported from:
@@ -225,36 +211,32 @@ struct _to_arma {
 template <typename returnT>
 struct _to_arma<returnT, typename is_row<returnT>::type> {
     /* Overload concept on return type; convert to row */
-    template <typename T>
-    static returnT from(py::array_t<T>& arr, bool copy, bool strict) {
-        return arr_to_row<T>(arr, copy, strict);
+    static returnT from(py::handle& arr, bool copy, bool strict) {
+        return arr_to_row<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
 
 template <typename returnT>
 struct _to_arma<returnT, typename is_col<returnT>::type> {
     /* Overload concept on return type; convert to col */
-    template <typename T>
-    static returnT from(py::array_t<T>& arr, bool copy, bool strict) {
-        return arr_to_col<T>(arr, copy, strict);
+    static returnT from(py::handle& arr, bool copy, bool strict) {
+        return arr_to_col<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
 
 template <typename returnT>
 struct _to_arma<returnT, typename is_mat<returnT>::type> {
     /* Overload concept on return type; convert to matrix */
-    template <typename T>
-    static returnT from(py::array_t<T>& arr, bool copy, bool strict) {
-        return arr_to_mat<T>(arr, copy, strict);
+    static returnT from(py::handle& arr, bool copy, bool strict) {
+        return arr_to_mat<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
 
 template <typename returnT>
 struct _to_arma<returnT, typename is_cube<returnT>::type> {
     /* Overload concept on return type; convert to cube */
-    template <typename T>
-    static returnT from(py::array_t<T>& arr, bool copy, bool strict) {
-        return arr_to_cube<T>(arr, copy, strict);
+    static returnT from(py::handle& arr, bool copy, bool strict) {
+        return arr_to_cube<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
 
@@ -674,23 +656,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         // set as array buffer
         bool copy = false;
         bool strict = true;
-
-        py::array_t<T> buffer = py::array_t<T>::ensure(src);
-        if (!buffer) {
-            return false;
-        }
-
-        auto dims = buffer.ndim();
-        if (dims < 1 || dims > 3) {
-            return false;
-        }
-
-        py::buffer_info info = buffer.request();
-        if (info.ptr == nullptr) {
-            return false;
-        }
-
-        value = carma::_to_arma<armaT>::from(buffer, copy, strict);
+        value = carma::_to_arma<armaT>::from(src, copy, strict);
         return true;
     }
 
