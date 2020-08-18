@@ -32,7 +32,20 @@ case "$DEBUG" in
     ;;
 esac
 
-export CXX CC CXXFLAGS CMAKE_BUILD_TYPE
+case $TRAVIS_OS_NAME in
+   linux|osx)
+     ;;
+   windows)
+     # in Windows Python DLL is not in the default path
+     PATH=/c/Python37:$PATH
+     ;;
+   *)
+     echo "Unknown OS [$TRAVIS_OS_NAME]"
+     exit 1
+     ;;
+ esac
+
+export CXX CC CXXFLAGS CMAKE_BUILD_TYPE PATH
 
 if [ -z ${PYTHON_SUFFIX+x} ]; then
   # variable not set, use PYTHON_VERSION
