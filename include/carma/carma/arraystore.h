@@ -25,7 +25,7 @@ class ArrayStore {
    protected:
     inline void _convert_to_arma(py::array_t<T>& arr) {
         mat = _to_arma<armaT>::from(arr, !_steal, false);
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
         // inform numpy it no longer owns the data
         if (_steal)
             set_not_owndata(arr);
@@ -47,7 +47,7 @@ class ArrayStore {
     }
 
     explicit ArrayStore(const armaT& src) : _steal{false}, mat{armaT(src)} {
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     ArrayStore(arma::Mat<T>& src, bool copy) : _steal{!copy} {
@@ -56,7 +56,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     ArrayStore(arma::Cube<T>& src, bool copy) : _steal{!copy} {
@@ -65,7 +65,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     // SFINAE by adding additional parameter as
@@ -77,10 +77,10 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
-    explicit ArrayStore(armaT&& src) noexcept : _steal{true}, mat{std::move(src)} { _base = create_dummy_capsule(&mat); }
+    explicit ArrayStore(armaT&& src) noexcept : _steal{true}, mat{std::move(src)} { _base = create_dummy_capsule(mat.memptr()); }
 
     // Function requires different name than set_data
     // as overload could not be resolved without
@@ -92,7 +92,7 @@ class ArrayStore {
     void set_data(const armaT& src) {
         _steal = false;
         mat = armaT(src);
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(arma::Mat<T>& src, bool copy) {
@@ -102,7 +102,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     // SFINAE by adding additional parameter as
@@ -115,7 +115,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(arma::Cube<T>& src, bool copy) {
@@ -125,13 +125,13 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(armaT&& src) {
         _steal = true;
         mat = std::move(src);
-        _base = create_dummy_capsule(&mat);
+        _base = create_dummy_capsule(mat.memptr());
     }
 
     py::array_t<T> get_view(bool writeable) {

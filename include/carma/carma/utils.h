@@ -88,9 +88,9 @@ inline py::capsule create_capsule(armaT* data) {
     });
 } /* create_capsule */
 
-template <typename armaT>
-inline py::capsule create_dummy_capsule(armaT* data) {
-    return py::capsule(data->memptr(), [](void* f) {
+template <typename T>
+inline py::capsule create_dummy_capsule(T* data) {
+    return py::capsule(data, [](void* f) {
 #ifndef NDEBUG
         // if in debug mode let us know what pointer is being freed
         std::cerr << "dummy capsule for memory @ " << f << std::endl;
