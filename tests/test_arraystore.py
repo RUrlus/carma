@@ -6,8 +6,8 @@ import test_carma as carma
 
 def test_ArrayStore_get_view():
     """Tests for ArrayStore class.get_view()."""
-    sample = np.random.uniform(-1, 1, size=100)
-    arraystore = carma.dArrayStore(sample, False)
+    sample = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
+    arraystore = carma.dArrayStore(sample, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
@@ -15,7 +15,7 @@ def test_ArrayStore_get_view():
 
 def test_ArrayStore_copy():
     """Test ArrayStore class when not stealing."""
-    og_sample = np.random.uniform(-1, 1, size=100)
+    og_sample = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
     sample = og_sample.copy()
 
     arraystore = carma.dArrayStore(sample, True)
@@ -33,7 +33,7 @@ def test_ArrayStore_copy():
 
 def test_ArrayStore_non_writeable():
     """Test ArrayStore class when marked as non-readable."""
-    sample = np.random.uniform(-1, 1, size=100)
+    sample = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
     arraystore = carma.dArrayStore(sample, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
@@ -44,7 +44,7 @@ def test_ArrayStore_non_writeable():
 
 def test_ArrayStore_writeable():
     """Test ArrayStore class when marked as writeable."""
-    sample = np.random.uniform(-1, 1, size=100)
+    sample = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
     arraystore = carma.dArrayStore(sample, True)
     arr = arraystore.get_view(True)
     assert arr.flags['OWNDATA'] is False
@@ -54,12 +54,12 @@ def test_ArrayStore_writeable():
 
 def test_ArrayStore_steal():
     """Test ArrayStore class when we steal the memory."""
-    og_sample = np.random.uniform(-1, 1, size=100)
+    og_sample = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
     sample = og_sample.copy()
 
     arraystore = carma.dArrayStore(sample, False)
     arr = arraystore.get_view(True)
-    np.testing.assert_allclose(arr.flatten(), sample)
+    np.testing.assert_allclose(arr.flatten(), og_sample)
 
     # trigger destructor
     arraystore = None
@@ -70,10 +70,10 @@ def test_ArrayStore_steal():
 
 def test_ArrayStore_set_data():
     """Test ArrayStore class function set_data."""
-    sample1 = np.random.uniform(-1, 1, size=100)
-    sample2 = np.random.uniform(-1, 1, size=100)
+    sample1 = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
+    sample2 = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
 
-    arraystore = carma.dArrayStore(sample1, False)
+    arraystore = carma.dArrayStore(sample1, True)
     arr = arraystore.get_view(True)
     np.testing.assert_allclose(arr.flatten(), sample1)
 
@@ -86,10 +86,10 @@ def test_ArrayStore_set_data():
 
 def test_ArrayStore_set_data_flags():
     """Test ArrayStore class function set_data."""
-    sample1 = np.random.uniform(-1, 1, size=100)
-    sample2 = np.random.uniform(-1, 1, size=100)
+    sample1 = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
+    sample2 = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
 
-    arraystore = carma.dArrayStore(sample1, False)
+    arraystore = carma.dArrayStore(sample1, True)
     arr = arraystore.get_view(True)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is True
@@ -102,8 +102,12 @@ def test_ArrayStore_set_data_flags():
 
 def test_ArrayStore_get_view_float():
     """Tests for ArrayStore class.get_view()."""
-    sample = np.random.uniform(-1, 1, size=100).astype(np.float32)
-    arraystore = carma.fArrayStore(sample, False)
+    sample = np.asarray(
+        np.random.uniform(-1, 1, size=100),
+        order='F',
+        dtype=np.float32
+    )
+    arraystore = carma.fArrayStore(sample, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
@@ -111,8 +115,11 @@ def test_ArrayStore_get_view_float():
 
 def test_ArrayStore_get_view_long():
     """Tests for ArrayStore class.get_view()."""
-    sample = np.random.randint(-10, 10, size=100).astype(np.int)
-    arraystore = carma.lArrayStore(sample, False)
+    sample = np.asarray(
+        np.random.randint(-10, 10, size=100).astype(np.int),
+        order='F'
+    )
+    arraystore = carma.lArrayStore(sample, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
@@ -120,8 +127,12 @@ def test_ArrayStore_get_view_long():
 
 def test_ArrayStore_get_view_int():
     """Tests for ArrayStore class.get_view()."""
-    sample = np.random.randint(-10, 10, size=100).astype(np.int32)
-    arraystore = carma.iArrayStore(sample, False)
+    sample = np.asarray(
+        np.random.randint(-10, 10, size=100).astype(np.int),
+        order='F',
+        dtype=np.int32
+    )
+    arraystore = carma.iArrayStore(sample, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     np.testing.assert_allclose(arr.flatten(), sample)
