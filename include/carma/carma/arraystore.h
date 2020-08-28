@@ -16,7 +16,7 @@ class ArrayStore {
 
    protected:
     constexpr static ssize_t tsize = sizeof(T);
-    bool _steal;
+    bool _copy;
     py::capsule _base;
 
    public:
@@ -24,15 +24,15 @@ class ArrayStore {
 
    protected:
     inline void _convert_to_arma(py::array_t<T>& arr) {
-        mat = _to_arma<armaT>::from(arr, !_steal, false);
+        mat = _to_arma<armaT>::from(arr, _copy, false);
         _base = create_dummy_capsule(mat.memptr());
         // inform numpy it no longer owns the data
-        if (_steal)
+        if (!_copy)
             set_not_owndata(arr);
     }
 
    public:
-    ArrayStore(py::array_t<T>& arr, bool copy) : _steal{!copy} {
+    ArrayStore(py::array_t<T>& arr, bool copy) : _copy{copy} {
         /* Constructor
          *
          * Takes numpy array and converters to Armadillo matrix.
@@ -46,12 +46,12 @@ class ArrayStore {
         _convert_to_arma(arr);
     }
 
-    explicit ArrayStore(const armaT& src) : _steal{false}, mat{armaT(src)} {
+    explicit ArrayStore(const armaT& src) : _copy{true}, mat{armaT(src)} {
         _base = create_dummy_capsule(mat.memptr());
     }
 
-    ArrayStore(arma::Mat<T>& src, bool copy) : _steal{!copy} {
-        if (copy) {
+    ArrayStore(arma::Mat<T>& src, bool copy) : _copy{copy} {
+        if (_copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
         } else {
             mat = std::move(src);
@@ -59,8 +59,8 @@ class ArrayStore {
         _base = create_dummy_capsule(mat.memptr());
     }
 
-    ArrayStore(arma::Cube<T>& src, bool copy) : _steal{!copy} {
-        if (copy) {
+    ArrayStore(arma::Cube<T>& src, bool copy) : _copy{copy} {
+        if (_copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
         } else {
             mat = std::move(src);
@@ -71,8 +71,8 @@ class ArrayStore {
     // SFINAE by adding additional parameter as
     // to avoid shadowing the class template
     template <typename U = armaT>
-    ArrayStore(armaT& src, bool copy, is_Vec<U>) : _steal{!copy} {
-        if (copy) {
+    ArrayStore(armaT& src, bool copy, is_Vec<U>) : _copy{copy} {
+        if (_copy) {
             mat = armaT(src.memptr(), src.n_elem, true);
         } else {
             mat = std::move(src);
@@ -80,23 +80,23 @@ class ArrayStore {
         _base = create_dummy_capsule(mat.memptr());
     }
 
-    explicit ArrayStore(armaT&& src) noexcept : _steal{true}, mat{std::move(src)} { _base = create_dummy_capsule(mat.memptr()); }
+    explicit ArrayStore(armaT&& src) noexcept : _copy{false}, mat{std::move(src)} { _base = create_dummy_capsule(mat.memptr()); }
 
     // Function requires different name than set_data
     // as overload could not be resolved without
     void set_array(py::array_t<T>& arr, bool copy) {
-        _steal = !copy;
+        _copy = copy;
         _convert_to_arma(arr);
     }
 
     void set_data(const armaT& src) {
-        _steal = false;
+        _copy = true;
         mat = armaT(src);
         _base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(arma::Mat<T>& src, bool copy) {
-        _steal = !copy;
+        _copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
         } else {
@@ -109,7 +109,7 @@ class ArrayStore {
     // to avoid shadowing the class template
     template <typename U = armaT>
     void set_data(armaT& src, bool copy, is_Vec<U>) {
-        _steal = !copy;
+        _copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_elem, true);
         } else {
@@ -119,7 +119,7 @@ class ArrayStore {
     }
 
     void set_data(arma::Cube<T>& src, bool copy) {
-        _steal = !copy;
+        _copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
         } else {
@@ -129,7 +129,7 @@ class ArrayStore {
     }
 
     void set_data(armaT&& src) {
-        _steal = true;
+        _copy = false;
         mat = std::move(src);
         _base = create_dummy_capsule(mat.memptr());
     }
@@ -143,6 +143,7 @@ class ArrayStore {
 
         py::array_t<T> arr;
 
+        // detect cubes
         if (rc_elem != nelem) {
             nslices = nelem / rc_elem;
             arr = py::array_t<T>(
