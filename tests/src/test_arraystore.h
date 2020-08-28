@@ -26,12 +26,10 @@ void bind_ArrayStore(py::module& m, std::string&& typestr) {
             ----------
             arr: np.ndarray
                 array to be stored in armadillo matrix
-            steal : bool
-                steal the memory of the numpy array.
-                Note that the previous array should
+            copy : bool
+                if false steal the memory of the numpy array,
+                note that the previous array should
                 no longer be used.
-            writeable : bool
-                mark matrix as read-only
         )pbdoc")
         .def("get_view", &Class::get_view, R"pbdoc(
             Get view of matrix as numpy array.
