@@ -48,9 +48,10 @@ CMake can be installed with :bash:`pip install cmake`, your package manager or d
 
 .. code-block:: bash
 
+   git submodule update --init
    mkdir build
    cd build
-   cmake ..
+   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -DBUILD_EXAMPLES=true  -DBUILD_TESTS=true .. && make install
 
 To run the tests you need to install `pytest`:
 
@@ -64,7 +65,7 @@ and run:
 
    ctest
 
-To installation `carma`, you have to define 
+To install `carma`, you have to define 
 
 .. code-block:: bash
     
@@ -96,8 +97,8 @@ To do so, you have to define locations of `armadillo` or/and `pybind11` by setti
     -DPYBIND11_ROOT_DIR=/path/to/pybind11/root/directory
 
 Sometimes, if you have multiple python interpret available in your system, 
-you may want to specify the one you want. Python detection is delegated to `pybind11 dependency 
-and you can drive it using   
+you may want to specify the one you want. Python detection is delegated to pybind11 dependency 
+and you can drive it using
 
 .. code-block:: bash
 
