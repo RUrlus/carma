@@ -171,3 +171,5 @@ articles
 pyenv.cfg
 
 *.pdf
+compile_commands.json
+.clangd
