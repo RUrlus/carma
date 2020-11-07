@@ -1,4 +1,4 @@
-/*  carma/carma.h: Coverter of Numpy arrays and Armadillo matrices
+/*  carma/converters.h: Coverter of Numpy arrays and Armadillo matrices
  *  Copyright (c) 2020 Ralph Urlus <rurlus.dev@gmail.com>
  *  All rights reserved. Use of this source code is governed by a
  *  Apache-2.0 license that can be found in the LICENSE file.
@@ -19,20 +19,20 @@
 #include <utility>
 
 /* External headers */
-#include <pybind11/buffer_info.h>
-#include <pybind11/detail/common.h>
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-#include <armadillo>
+#include <armadillo>  // NOLINT
+#include <pybind11/buffer_info.h>  // NOLINT
+#include <pybind11/detail/common.h>  // NOLINT
+#include <pybind11/numpy.h>  // NOLINT
+#include <pybind11/pybind11.h>  // NOLINT
 
 /* carma headers */
-#include <carma/carma/nparray.h>
-#include <carma/carma/utils.h>
+#include <carma/carma/nparray.h>  // NOLINT
+#include <carma/carma/utils.h>  // NOLINT
 
 namespace py = pybind11;
 
-#ifndef ARMA_CONVERTERS
-#define ARMA_CONVERTERS
+#ifndef INCLUDE_CARMA_CARMA_CONVERTERS_H_
+#define INCLUDE_CARMA_CARMA_CONVERTERS_H_
 
 namespace carma {
 
@@ -723,4 +723,4 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
 };
 } /* namespace detail */
 } /* namespace pybind11 */
-#endif /* ARMA_CONVERTERS */
+#endif  // INCLUDE_CARMA_CARMA_CONVERTERS_H_
