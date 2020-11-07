@@ -19,13 +19,14 @@
 #include <utility>
 
 /* External headers */
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-#include <armadillo>
+#include <armadillo>  // NOLINT
+#include <pybind11/numpy.h>  // NOLINT
+#include <pybind11/pybind11.h>  // NOLINT
+
 namespace py = pybind11;
 
-#ifndef ARMA_UTILS
-#define ARMA_UTILS
+#ifndef INCLUDE_CARMA_CARMA_UTILS_H_
+#define INCLUDE_CARMA_CARMA_UTILS_H_
 
 namespace carma {
 
@@ -99,4 +100,4 @@ inline py::capsule create_dummy_capsule(T* data) {
 } /* create_capsule */
 
 }  // namespace carma
-#endif /* ARMA_UTILS */
+#endif  // INCLUDE_CARMA_CARMA_UTILS_H_

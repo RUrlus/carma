@@ -16,12 +16,12 @@
 #include <type_traits>
 #include <utility>
 
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>  // NOLINT
+#include <pybind11/pybind11.h>  // NOLINT
 namespace py = pybind11;
 
-#ifndef NPARRAY
-#define NPARRAY
+#ifndef INCLUDE_CARMA_CARMA_NPARRAY_H_
+#define INCLUDE_CARMA_CARMA_NPARRAY_H_
 
 namespace carma {
 
@@ -96,4 +96,4 @@ inline void set_c_contiguous(py::array_t<T>& arr) {
 
 }  // namespace carma
 
-#endif /* NPARRAY */
+#endif  // INCLUDE_CARMA_CARMA_NPARRAY_H_

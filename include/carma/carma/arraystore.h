@@ -1,12 +1,29 @@
-#include <carma/carma/converters.h>
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
+/*  carma/arraystore.h: Store arrays as armadillo matrices
+ *  Copyright (c) 2020 Ralph Urlus <rurlus.dev@gmail.com>
+ *  All rights reserved. Use of this source code is governed by a
+ *  Apache-2.0 license that can be found in the LICENSE file.
+ *
+ *  Adapated from:
+ *
+ *      pybind11/eigen.h: Transparent conversion for dense and sparse Eigen matrices
+ *      Copyright (c) 2016 Wolf Vollprecht <w.vollprecht@gmail.com>
+ *                         Wenzel Jakob <wenzel.jakob@epfl.ch>
+ *      All rights reserved. Use of this source code is governed by a
+ *      BSD-style license that can be found in the pybind11/LICENSE file.
+ *
+ *      arma_wrapper/arma_wrapper.h:
+ *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
+ */
+#include <utility>
 #include <iostream>
+#include <pybind11/numpy.h>  // NOLINT
+#include <pybind11/pybind11.h>  // NOLINT
+#include <carma/carma/converters.h>  // NOLINT
 
 namespace py = pybind11;
 
-#ifndef CARMA_ARRAYSTORE
-#define CARMA_ARRAYSTORE
+#ifndef INCLUDE_CARMA_CARMA_ARRAYSTORE_H_
+#define INCLUDE_CARMA_CARMA_ARRAYSTORE_H_
 
 namespace carma {
 
@@ -172,4 +189,4 @@ class ArrayStore {
 
 } /* namespace carma */
 
-#endif /* CARMA_ARRAYSTORE */
+#endif  // INCLUDE_CARMA_CARMA_ARRAYSTORE_H_
