@@ -57,6 +57,53 @@ def test_type_caster_in_cube():
     assert np.isclose(accu, npsum)
 
 
+
+def test_type_caster_in_fixed_vec3():
+    """Test type caster input handling of fixed vec3."""
+    sample = np.random.normal(size=(3))
+    npsum = sample.sum()
+    accu = carma.tc_in_fixed_vec3(sample)
+    assert np.isclose(accu, npsum)
+
+
+def test_type_caster_in_fixed_vec4():
+    """Test type caster input handling of fixed vec4."""
+    sample = np.random.normal(size=(4))
+    npsum = sample.sum()
+    accu = carma.tc_in_fixed_vec4(sample)
+    assert np.isclose(accu, npsum)
+
+
+def test_type_caster_in_fixed_mat33():
+    """Test type caster input handling of fixed matrix."""
+    sample = np.random.normal(size=(3, 3))
+    npsum = sample.sum()
+    accu = carma.tc_in_fixed_mat33(sample)
+    assert np.isclose(accu, npsum)
+
+    # Should not be close
+    sample = np.random.normal(size=(4, 4))
+    npsum = sample.sum()
+    accu = carma.tc_in_fixed_mat33(sample)
+    assert not np.isclose(accu, npsum)
+
+
+def test_type_caster_in_fixed_rowvec3():
+    """Test type caster input handling of fixed rowvec."""
+    sample = np.random.normal(size=(3))
+    npsum = sample.sum()
+    accu = carma.tc_in_fixed_rowvec3(sample)
+    assert np.isclose(accu, npsum)
+
+
+def test_type_caster_in_fixed_rowvec3_2d():
+    """Test type caster input handling of fixed 2d rowvec."""
+    sample = np.random.normal(size=(1, 3))
+    npsum = sample.sum()
+    accu = carma.tc_in_fixed_rowvec3(sample)
+    assert np.isclose(accu, npsum)
+
+
 def test_type_caster_out_mat():
     """Test type caster output handling of matrix."""
     sample = np.random.normal(size=(10, 2))

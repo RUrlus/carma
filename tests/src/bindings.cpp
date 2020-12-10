@@ -75,6 +75,10 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_tc_in_row(m);
     bind_test_tc_in_col(m);
     bind_test_tc_in_cube(m);
+    bind_test_tc_in_fixed_vec3(m);
+    bind_test_tc_in_fixed_vec4(m);
+    bind_test_tc_in_fixed_mat33(m);
+    bind_test_tc_in_fixed_rowvec3(m);
     bind_test_tc_out_mat(m);
     bind_test_tc_out_mat_rvalue(m);
     bind_test_tc_out_row(m);

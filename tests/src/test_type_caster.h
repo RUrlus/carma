@@ -12,6 +12,10 @@ double test_tc_in_mat(arma::Mat<double>& mat);
 double test_tc_in_row(arma::Row<double>& mat);
 double test_tc_in_col(arma::Col<double>& mat);
 double test_tc_in_cube(arma::Cube<double>& mat);
+double test_tc_in_fixed_vec3(arma::vec3& mat);
+double test_tc_in_fixed_vec4(arma::vec4& mat);
+double test_tc_in_fixed_mat33(arma::mat33& mat);
+double test_tc_in_fixed_rowvec3(arma::rowvec3& mat);
 
 // type_caster_out
 arma::Mat<double> test_tc_out_mat(py::array_t<double>& arr);
@@ -30,6 +34,10 @@ void bind_test_tc_in_mat(py::module& m);
 void bind_test_tc_in_row(py::module& m);
 void bind_test_tc_in_col(py::module& m);
 void bind_test_tc_in_cube(py::module& m);
+void bind_test_tc_in_fixed_vec3(py::module& m);
+void bind_test_tc_in_fixed_vec4(py::module& m);
+void bind_test_tc_in_fixed_mat33(py::module& m);
+void bind_test_tc_in_fixed_rowvec3(py::module& m);
 void bind_test_tc_out_mat(py::module& m);
 void bind_test_tc_out_row(py::module& m);
 

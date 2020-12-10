@@ -19,6 +19,22 @@ double test_tc_in_cube(arma::Cube<double>& mat) {
     return arma::accu(mat);
 }
 
+double test_tc_in_fixed_vec3(arma::vec3& mat) {
+    return arma::accu(mat);
+}
+
+double test_tc_in_fixed_vec4(arma::vec4& mat) {
+    return arma::accu(mat);
+}
+
+double test_tc_in_fixed_mat33(arma::mat33& mat) {
+    return arma::accu(mat);
+}
+
+double test_tc_in_fixed_rowvec3(arma::rowvec3& mat) {
+    return arma::accu(mat);
+}
+
 arma::Mat<double> test_tc_out_mat(py::array_t<double>& arr) {
     arma::Mat<double> ones = arma::ones(arr.shape(0), arr.shape(1));
     arma::Mat<double> mat = carma::arr_to_mat<double>(arr);
@@ -90,6 +106,21 @@ void bind_test_tc_in_cube(py::module& m) {
     m.def("tc_in_cube", &carma::tests::test_tc_in_cube, "Test type caster");
 }
 
+void bind_test_tc_in_fixed_vec3(py::module& m) {
+    m.def("tc_in_fixed_vec3", &carma::tests::test_tc_in_fixed_vec3, "Test type caster");
+}
+
+void bind_test_tc_in_fixed_vec4(py::module& m) {
+    m.def("tc_in_fixed_vec4", &carma::tests::test_tc_in_fixed_vec4, "Test type caster");
+}
+
+void bind_test_tc_in_fixed_mat33(py::module& m) {
+    m.def("tc_in_fixed_mat33", &carma::tests::test_tc_in_fixed_mat33, "Test type caster");
+}
+
+void bind_test_tc_in_fixed_rowvec3(py::module& m) {
+    m.def("tc_in_fixed_rowvec3", &carma::tests::test_tc_in_fixed_rowvec3, "Test type caster");
+}
 void bind_test_tc_out_mat(py::module& m) {
     m.def("tc_out_mat", &carma::tests::test_tc_out_mat, "Test type caster");
 }
