@@ -2,7 +2,6 @@
  *  Copyright (c) 2020 Ralph Urlus <rurlus.dev@gmail.com>
  *  All rights reserved. Use of this source code is governed by a
  *  Apache-2.0 license that can be found in the LICENSE file.
- *
  *  Adapated from:
  *
  *      pybind11/eigen.h: Transparent conversion for dense and sparse Eigen matrices

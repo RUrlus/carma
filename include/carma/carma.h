@@ -14,6 +14,10 @@
  *      arma_wrapper/arma_wrapper.h:
  *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
  */
+#ifndef INCLUDE_CARMA_CARMA_H_
+#define INCLUDE_CARMA_CARMA_H_
+#include "carma/nparray.h"
+#include "carma/cnumpy.h"
 #include "carma/arraystore.h"
 #include "carma/converters.h"
-#include "carma/nparray.h"
+#endif  // INCLUDE_CARMA_CARMA_H_
