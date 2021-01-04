@@ -117,7 +117,7 @@ int test_arr_to_mat_double_copy(py::array_t<double> arr) {
     return 0;
 } /* arr_to_mat_double_copy */
 
-int test_arr_to_mat_1d(py::array_t<long>& arr, bool copy, bool strict) {
+int test_arr_to_mat_1d(py::array_t<double>& arr, bool copy, bool strict) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     auto arr_p = arr.unchecked<1>();
@@ -126,23 +126,20 @@ int test_arr_to_mat_1d(py::array_t<long>& arr, bool copy, bool strict) {
     py::buffer_info info = arr.request();
 
     // compute sum of array
-    long arr_sum = 0;
+    double arr_sum = 0;
     for (size_t i = 0; i < arr_N; i++)
         arr_sum += arr_p[i];
 
     // call function to be tested
-    arma::Mat<long> M = carma::arr_to_mat<long>(arr, copy, strict);
+    arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
 
     // ---------------------------------------------------------------
-    long mat_sum = arma::accu(M);
+    double mat_sum = arma::accu(M);
 
     // variable for test status
-    if (arr_N != M.n_elem)
-        return 1;
-    if (arr_sum != mat_sum)
-        return 4;
-    if (info.ptr != M.memptr())
-        return 5;
+    if (arr_N != M.n_elem) return 1;
+    if (std::abs(arr_sum - mat_sum) > 1e-12) return 4;
+    if (info.ptr != M.memptr()) return 5;
     return 0;
 } /* arr_to_mat_1d */
 
