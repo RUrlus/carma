@@ -41,6 +41,33 @@ namespace carma {
  *                                   Numpy to Armadillo                                   *
  *****************************************************************************************/
 
+template <typename T>
+inline arma::Mat<T> mat_steal_memory(py::array_t<T>& src, T* data) {
+    arma::Mat<T> dest;
+    arma::access::rw(dest.mem) = data;
+
+    arma::uword nrows;
+    arma::uword ncols;
+    arma::uword nelems = src.size();
+
+    if (src.ndim() == 1) {
+        nrows = nelems;
+        ncols = 1;
+    } else {
+        nrows = src.shape(0);
+        ncols = src.shape(1);
+    }
+    arma::access::rw(dest.n_rows) = nrows;
+    arma::access::rw(dest.n_cols) = ncols;
+    arma::access::rw(dest.n_elem) = nelems;
+    arma::access::rw(dest.n_alloc) = nelems;
+    arma::access::rw(dest.vec_state) = 0;
+    arma::access::rw(dest.mem_state) = 0;
+    steal_memory(src.ptr());
+    return dest;
+}
+
+
 /* Convert numpy array to Armadillo Matrix
  *
  * The default behaviour is to avoid copying, we copy if:
@@ -74,11 +101,23 @@ arma::Mat<T> arr_to_mat(py::handle src, int copy = 0, int strict = 0) {
     }
 
     bool steal = false;
-    bool is_owner = false;
     if (copy < 0) {
         steal = true;
-        is_owner = true;
         copy = 0;
+    }
+
+#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    // determine ordering, if c-contiguous memory we are going to copy below
+    if (is_c_contiguous_2d(buffer) || requires_copy(buffer) || copy) {
+#else
+    if (requires_copy(buffer) || copy) {
+#endif
+        data = as_fortran<T>(buffer);
+        steal = true;
+    }
+
+    if (steal) {
+        return mat_steal_memory(buffer, data);
     }
 
     arma::uword nrows;
@@ -91,28 +130,7 @@ arma::Mat<T> arr_to_mat(py::handle src, int copy = 0, int strict = 0) {
         nrows = info.shape[0];
         ncols = info.shape[1];
     }
-
-#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
-    // determine ordering, if c-contiguous memory we are going to copy below
-    if (is_c_contiguous_2d(buffer) || requires_copy(buffer) || copy) {
-#else
-    if (requires_copy(buffer) || copy) {
-#endif
-        data = steal_copy_array<T>(buffer);
-        // it's allready stolen at this point
-        steal = false;
-        // inform the matrix it owns the data
-        is_owner = true;
-    }
-
-    arma::Mat<T> mat(data, nrows, ncols, false, strict);
-
-    // if we copied the array or when stealing the array
-    // inform the matrix it owns the memory
-    if (is_owner & (arma::access::rw(mat.mem_state) != 3)) arma::access::rw(mat.mem_state) = 0;
-    if (steal) steal_memory(buffer.ptr());
-
-    return mat;
+    return arma::Mat<T>(data, nrows, ncols, false, strict);
 } /* arr_to_mat */
 
 /* Convert numpy array to Armadillo Column
