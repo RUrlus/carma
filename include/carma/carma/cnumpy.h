@@ -51,6 +51,7 @@ static inline void steal_memory(PyObject* src) {
      *
      * Better alternative are very welcome.
      */
+    // FIXME [RURLUS] -- sort out the refcount
     PyArrayObject_fields* obj = reinterpret_cast<PyArrayObject_fields *>(src);
 #ifdef CARMA_HARD_STEAL
     obj->data = nullptr;
@@ -60,40 +61,97 @@ static inline void steal_memory(PyObject* src) {
     // decrease the reference of the PyObject that holds the stolen memory
     Py_XDECREF(src);
 #else
-    obj->data = reinterpret_cast<char *>(
-        new double[1] {std::numeric_limits<double>::quiet_NaN()}
-    );
+    char* data = reinterpret_cast<char *>(malloc(sizeof(double)));
+    data[0] = std::numeric_limits<double>::quiet_NaN();
+    obj->data = data;
+
+    size_t ndim = obj->nd;
     obj->nd = 1;
-    obj->dimensions = reinterpret_cast<npy_intp*>(new int[2] {1, 0});
-    obj->strides = reinterpret_cast<npy_intp*>(new int[2] {sizeof(double), 0});
+    if (ndim == 1) {
+        obj->dimensions[0] = static_cast<npy_int>(1);
+    } else if (ndim == 2) {
+        obj->dimensions[0] = static_cast<npy_int>(1);
+        obj->dimensions[1] = static_cast<npy_int>(0);
+    } else {
+        obj->dimensions[0] = static_cast<npy_int>(1);
+        obj->dimensions[1] = static_cast<npy_int>(0);
+        obj->dimensions[2] = static_cast<npy_int>(0);
+    }
+    // reducte the refcount as we don't need to hold one anymore
+    Py_XDECREF(src);
+
+    // npy_intp* dims = reinterpret_cast<npy_intp*>(malloc(sizeof(npy_int) * 2));
+    // dims[0] = static_cast<npy_int>(1);
+    // dims[1] = static_cast<npy_int>(1);
+    // npy_intp* strides = reinterpret_cast<npy_intp*>(malloc(sizeof(npy_int) * 2));
+    // strides[0] = static_cast<npy_int>(sizeof(double));
+    // strides[1] = static_cast<npy_int>(0);
 #endif
 }  // steal_memory
 
-static inline void* c_steal_copy_array(PyObject* src) {
-    /* Use Numpy's api to account for stride, order and steal the memory
-     */
-    auto tmp = reinterpret_cast<PyArrayObject_fields *>(src);
+static inline void * c_swap_c_to_f_order(PyObject* src) {
     // this is needed as otherwise we get mysterious segfaults
     import_array();
-    PyObject* dest = PyArray_NewCopy(reinterpret_cast<PyArrayObject *>(src), NPY_FORTRANORDER);
+    PyArrayObject* np_src = reinterpret_cast<PyArrayObject *>(src);
+    PyArrayObject* tmp = reinterpret_cast<PyArrayObject *>(PyArray_NewCopy(np_src, NPY_FORTRANORDER));
+    int state = PyArray_MoveInto(np_src, tmp);
+    if (state == 1) {
+        return reinterpret_cast<void *>(src);
+    }
+    return nullptr;
+}  // c_swap_c_to_f_order
+
+/* Use Numpy's api to account for stride, order and steal the memory */
+static inline void* c_steal_copy_array(PyObject* src) {
+    // this is needed as otherwise we get mysterious segfaults
+    import_array();
+    PyArrayObject* np_src = reinterpret_cast<PyArrayObject *>(src);
+    PyObject* dest = PyArray_NewCopy(np_src, NPY_FORTRANORDER);
     void* data = PyArray_DATA(reinterpret_cast<PyArrayObject *>(dest));
     // we steal the memory as we can't control the refcount correctly on conversion back
     steal_memory(dest);
     return data;
-}  // _steal_copy_array
+}  // c_steal_copy_array
+
+/* Copy to fortran and return data ptr
+ * We us Numpy's api to account for stride, order of the memory */
+static inline void* c_as_fortran(PyObject* src) {
+    // this is needed as otherwise we get mysterious segfaults
+    import_array();
+    PyArrayObject* np_src = reinterpret_cast<PyArrayObject *>(src);
+    PyObject* dest = PyArray_NewCopy(np_src, NPY_FORTRANORDER);
+    return PyArray_DATA(reinterpret_cast<PyArrayObject *>(dest));
+}  // c_as_fortran
 
 }  // extern "C"
 
 namespace carma {
 
 template <typename T>
-T* steal_copy_array(py::handle& src) {
+inline py::array_t<T> swap_c_to_f_order(py::handle& src) {
     /* Use Numpy's api to account for stride, order and steal the memory
      * This function is to deal with no templates in extern C
      */
+    void * obj = c_swap_c_to_f_order(src.ptr());
+    if (obj == nullptr) {
+        return src;
+    }
+    return py::array_t<T>(reinterpret_cast<PyObject *>(obj));
+}  // steal_copy_array
+
+/* Use Numpy's api to account for stride, order and steal the memory */
+template <typename T>
+inline T* steal_copy_array(py::handle& src) {
     void * data = c_steal_copy_array(src.ptr());
     return reinterpret_cast<T*>(data);
 }  // steal_copy_array
+
+/* Copy to fortran and return data ptr
+ * We us Numpy's api to account for stride, order of the memory */
+template <typename T>
+inline T* as_fortran(py::handle& src) {
+    return reinterpret_cast<T*>(c_as_fortran(src.ptr()));
+}  // as_fortran
 
 }  // namespace carma
 
