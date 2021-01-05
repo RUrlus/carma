@@ -31,36 +31,18 @@ template <typename armaT>
 class ArrayStore {
     using T = typename armaT::elem_type;
 
-   protected:
+ protected:
     constexpr static ssize_t tsize = sizeof(T);
     bool _copy;
     py::capsule _base;
 
-   public:
+ public:
     armaT mat;
 
-   protected:
-    inline void _convert_to_arma(py::array_t<T>& arr) {
-        mat = _to_arma<armaT>::from(arr, _copy, false);
+ public:
+    ArrayStore(py::array_t<T>& arr, bool copy) :
+    _copy{copy}, mat{_to_arma<armaT>::from(arr, copy, false)} {
         _base = create_dummy_capsule(mat.memptr());
-        // inform numpy it no longer owns the data
-        if (!_copy)
-            set_not_owndata(arr);
-    }
-
-   public:
-    ArrayStore(py::array_t<T>& arr, bool copy) : _copy{copy} {
-        /* Constructor
-         *
-         * Takes numpy array and converters to Armadillo matrix.
-         * If the array should be stolen we set owndata false for
-         * numpy array.
-         *
-         * We store a capsule to serve as a reference for the
-         * views on the data
-         *
-         */
-        _convert_to_arma(arr);
     }
 
     explicit ArrayStore(const armaT& src) : _copy{true}, mat{armaT(src)} {
@@ -103,7 +85,7 @@ class ArrayStore {
     // as overload could not be resolved without
     void set_array(py::array_t<T>& arr, bool copy) {
         _copy = copy;
-        _convert_to_arma(arr);
+        mat = _to_arma<armaT>::from(arr, copy, false);
     }
 
     void set_data(const armaT& src) {

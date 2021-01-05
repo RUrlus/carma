@@ -29,6 +29,8 @@
 #include <carma/carma/utils.h>  // NOLINT
 #include <carma/carma/cnumpy.h>  // NOLINT
 #include <carma/carma/nparray.h>  // NOLINT
+#include <carma/carma/numpytoarma.h>  // NOLINT
+#include <carma/carma/armatonumpy.h>  // NOLINT
 
 namespace py = pybind11;
 
@@ -41,36 +43,52 @@ namespace carma {
  *                                   Numpy to Armadillo                                   *
  *****************************************************************************************/
 
+/* Convert numpy array to Armadillo Matrix with copy
+ * If the array is 1D we create a column oriented matrix (N, 1)
+ */
 template <typename T>
-inline arma::Mat<T> mat_steal_memory(py::array_t<T>& src, T* data) {
-    arma::Mat<T> dest;
-    arma::access::rw(dest.mem) = data;
+arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_mat<T>(info);
+    // copy and ensure fortran order
+    data = steal_copy_array<T>(src.ptr());
+    return _arr_to_mat(info, data, true, false);
+} /* arr_to_mat */
 
-    arma::uword nrows;
-    arma::uword ncols;
-    arma::uword nelems = src.size();
-
-    if (src.ndim() == 1) {
-        nrows = nelems;
-        ncols = 1;
+/* Convert numpy array to Armadillo Matrix by stealing the data
+ *
+ * We copy the array if:
+ * - ndim == 2 && (optional) not F contiguous memory
+ * - writeable is false
+ * - owndata is false
+ * - memory is not aligned
+ *
+ * If the array is 1D we create a column oriented matrix (N, 1)
+ */
+template <typename T>
+arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_mat<T>(info);
+    PyObject* obj = src.ptr();
+#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    // determine ordering, if c-contiguous memory we are going to copy below
+    if (is_c_contiguous_2d(src) || requires_copy(src)) {
+#else
+    if (requires_copy(src)) {
+#endif
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(obj);
     } else {
-        nrows = src.shape(0);
-        ncols = src.shape(1);
+        // remove control of memory from numpy
+        steal_memory(obj);
     }
-    arma::access::rw(dest.n_rows) = nrows;
-    arma::access::rw(dest.n_cols) = ncols;
-    arma::access::rw(dest.n_elem) = nelems;
-    arma::access::rw(dest.n_alloc) = nelems;
-    arma::access::rw(dest.vec_state) = 0;
-    arma::access::rw(dest.mem_state) = 0;
-    steal_memory(src.ptr());
-    return dest;
-}
-
+    return _arr_to_mat(info, data, true, false);
+} /* arr_to_mat */
 
 /* Convert numpy array to Armadillo Matrix
  *
- * The default behaviour is to avoid copying, we copy if:
+ * The default behaviour is to borrow the array, we copy if:
+ * - copy is true
  * - ndim == 2 && (optional) not F contiguous memory
  * - writeable is false
  * - owndata is false
@@ -81,61 +99,63 @@ inline arma::Mat<T> mat_steal_memory(py::array_t<T>& src, T* data) {
  * If the array is 1D we create a column oriented matrix (N, 1)
  */
 template <typename T>
-arma::Mat<T> arr_to_mat(py::handle src, int copy = 0, int strict = 0) {
-    // set as array buffer
-    py::array_t<T> buffer = py::array_t<T>::ensure(src);
-    if (!buffer) {
-        throw conversion_error("invalid object passed");
-    }
-    // extract buffer information
-    py::buffer_info info = buffer.request();
-    T* data = reinterpret_cast<T*>(info.ptr);
-    ssize_t dims = info.ndim;
-
-    if (dims < 1 || dims > 2) {
-        throw conversion_error("Number of dimensions must be 1 <= ndim <= 2");
-    }
-
-    if (data == nullptr) {
-        throw conversion_error("armadillo matrix conversion failed, nullptr");
-    }
-
-    bool steal = false;
-    if (copy < 0) {
-        steal = true;
-        copy = 0;
-    }
-
+arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = false) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_mat<T>(info);
 #ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     // determine ordering, if c-contiguous memory we are going to copy below
-    if (is_c_contiguous_2d(buffer) || requires_copy(buffer) || copy) {
+    if (is_c_contiguous_2d(src) || requires_copy(src) || copy) {
 #else
-    if (requires_copy(buffer) || copy) {
+    if (requires_copy(src) || copy) {
 #endif
-        data = as_fortran<T>(buffer);
-        steal = true;
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(src.ptr());
+        return _arr_to_mat(info, data, true, strict);
     }
-
-    if (steal) {
-        return mat_steal_memory(buffer, data);
-    }
-
-    arma::uword nrows;
-    arma::uword ncols;
-
-    if (dims == 1) {
-        nrows = info.size;
-        ncols = 1;
-    } else {
-        nrows = info.shape[0];
-        ncols = info.shape[1];
-    }
-    return arma::Mat<T>(data, nrows, ncols, false, strict);
+    return _arr_to_mat(info, data, false, strict);
 } /* arr_to_mat */
 
-/* Convert numpy array to Armadillo Column
+
+// #########################################################################
+//                                   COL
+// #########################################################################
+
+/* Convert numpy array to Armadillo Column with copy */
+template <typename T>
+arma::Col<T> arr_to_col(const py::array_t<T>& src) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_col<T>(info);
+    // copy and ensure fortran order
+    data = steal_copy_array<T>(src.ptr());
+    return _arr_to_col(info, data, true, false);
+} /* arr_to_col */
+
+/* Convert numpy array to Armadillo Column by stealing the data
  *
- * The default behaviour is to avoid copying, we copy if:
+ * We copy the array if:
+ * - writeable is false
+ * - owndata is false
+ * - memory is not aligned
+ */
+template <typename T>
+arma::Col<T> arr_to_col(py::array_t<T>&& src) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_col<T>(info);
+    PyObject* obj = src.ptr();
+    if (requires_copy(src)) {
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(obj);
+    } else {
+        // remove control of memory from numpy
+        steal_memory(obj);
+    }
+    return _arr_to_col(info, data, true, false);
+} /* arr_to_col */
+
+/* Convert numpy array to Armadillo Col
+ *
+ * The default behaviour is to borrow the array, we copy if:
+ * - copy is true
  * - writeable is false
  * - owndata is false
  * - memory is not aligned
@@ -143,55 +163,57 @@ arma::Mat<T> arr_to_mat(py::handle src, int copy = 0, int strict = 0) {
  * is true
  */
 template <typename T>
-arma::Col<T> arr_to_col(py::handle src, int copy = 0, int strict = 0) {
-    // set as array buffer
-    py::array_t<T> buffer = py::array_t<T>::ensure(src);
-    if (!buffer) {
-        throw conversion_error("invalid object passed");
+arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = false) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_col<T>(info);
+    if (requires_copy(src) || copy) {
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(src.ptr());
+        return _arr_to_col(info, data, true, strict);
     }
-
-    // extract buffer information
-    py::buffer_info info = buffer.request();
-    T* data = reinterpret_cast<T*>(info.ptr);
-    ssize_t dims = info.ndim;
-    if ((dims >= 2) && (buffer.shape(1) != 1)) {
-        throw conversion_error("Number of columns must <= 1");
-    }
-
-    if (info.ptr == nullptr) {
-        throw conversion_error("armadillo matrix conversion failed, nullptr");
-    }
-
-    bool steal = false;
-    bool is_owner = false;
-    if (copy < 0) {
-        steal = true;
-        is_owner = true;
-        copy = 0;
-    }
-
-    arma::uword nrows = info.size;
-
-    if (requires_copy(buffer) || copy) {
-        data = steal_copy_array<T>(buffer);
-        // it's allready stolen at this point
-        steal = false;
-        // inform the matrix it owns the data
-        is_owner = true;
-    }
-    arma::Col<T> col(data, nrows, false, strict);
-
-    // if we copied the array or when stealing the array
-    // inform the matrix it owns the memory
-    if (is_owner & (arma::access::rw(col.mem_state) != 3)) arma::access::rw(col.mem_state) = 0;
-    if (steal) steal_memory(buffer.ptr());
-
-    return col;
+    return _arr_to_col(info, data, false, strict);
 } /* arr_to_col */
+
+// #########################################################################
+//                                   ROW
+// #########################################################################
+
+/* Convert numpy array to Armadillo Row with copy */
+template <typename T>
+arma::Row<T> arr_to_row(const py::array_t<T>& src) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_row<T>(info);
+    // copy and ensure fortran order
+    data = steal_copy_array<T>(src.ptr());
+    return _arr_to_row(info, data, true, false);
+} /* arr_to_row */
+
+/* Convert numpy array to Armadillo Row by stealing the data
+ *
+ * We copy the array if:
+ * - writeable is false
+ * - owndata is false
+ * - memory is not aligned
+ */
+template <typename T>
+arma::Row<T> arr_to_row(py::array_t<T>&& src) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_row<T>(info);
+    PyObject* obj = src.ptr();
+    if (requires_copy(src)) {
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(obj);
+    } else {
+        // remove control of memory from numpy
+        steal_memory(obj);
+    }
+    return _arr_to_row(obj, info, data, true, false);
+} /* arr_to_row */
 
 /* Convert numpy array to Armadillo Row
  *
- * The default behaviour is to avoid copying, we copy if:
+ * The default behaviour is to borrow the array, we copy if:
+ * - copy is true
  * - writeable is false
  * - owndata is false
  * - memory is not aligned
@@ -199,54 +221,35 @@ arma::Col<T> arr_to_col(py::handle src, int copy = 0, int strict = 0) {
  * is true
  */
 template <typename T>
-arma::Row<T> arr_to_row(py::handle src, int copy = 0, int strict = 0) {
-    // set as array buffer
-    py::array_t<T> buffer = py::array_t<T>::ensure(src);
-    if (!buffer) {
-        throw conversion_error("invalid object passed");
+arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false, bool strict = false) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_row<T>(info);
+    if (requires_copy(src) || copy) {
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(src.ptr());
+        return _arr_to_row(info, data, true, strict);
     }
-
-    // extract buffer information
-    py::buffer_info info = buffer.request();
-    T* data = reinterpret_cast<T*>(info.ptr);
-    ssize_t dims = info.ndim;
-    if ((dims >= 2) && (buffer.shape(0) != 1)) {
-        throw conversion_error("Number of rows must <= 1");
-    }
-
-    if (info.ptr == nullptr) {
-        throw conversion_error("armadillo matrix conversion failed, nullptr");
-    }
-
-    bool steal = false;
-    bool is_owner = false;
-    if (copy < 0) {
-        steal = true;
-        is_owner = true;
-        copy = 0;
-    }
-
-    arma::uword ncols = info.size;
-
-    if (requires_copy(buffer) || copy) {
-        data = steal_copy_array<T>(buffer);
-        // it's allready stolen at this point
-        steal = false;
-        // inform the matrix it owns the data
-        is_owner = true;
-    }
-    arma::Row<T> row(data, ncols, false, strict);
-
-    // if we copied the array or when stealing the array
-    // inform the matrix it owns the memory
-    if (is_owner & (arma::access::rw(row.mem_state) != 3)) arma::access::rw(row.mem_state) = 0;
-    if (steal) steal_memory(buffer.ptr());
-    return row;
+    return _arr_to_row(info, data, false, strict);
 } /* arr_to_row */
 
-/* Convert numpy array to Armadillo Cube
+// #########################################################################
+//                                   Cube
+// #########################################################################
+
+/* Convert numpy array to Armadillo Cube with copy */
+template <typename T>
+arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
+
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_cube<T>(info);
+    // copy and ensure fortran order
+    data = steal_copy_array<T>(src.ptr());
+    return _arr_to_cube(info, data, true, false);
+} /* arr_to_cube */
+
+/* Convert numpy array to Armadillo Cube by stealing
  *
- * The default behaviour is to avoid copying, we copy if:
+ * We copy if:
  * - (optional) not F contiguous memory
  * - writeable is false
  * - owndata is false
@@ -255,62 +258,58 @@ arma::Row<T> arr_to_row(py::handle src, int copy = 0, int strict = 0) {
  * is true
  */
 template <typename T>
-arma::Cube<T> arr_to_cube(py::handle src, int copy = 0, int strict = 0) {
-    // set as array buffer
-#ifdef CARMA_DONT_REQUIRE_F_CONTIGUOUS
-    py::array_t<T> buffer = py::array_t<T>::ensure(src);
-#else
-    py::array_t<T> buffer = py::array_t<T, py::array::f_style | py::array::forcecast>::ensure(src);
-#endif
-    if (!buffer) {
-        throw conversion_error("invalid object passed");
-    }
-    // extract buffer information
-    py::buffer_info info = buffer.request();
-    T* data = reinterpret_cast<T*>(info.ptr);
-    ssize_t dims = info.ndim;
+arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
 
-    if (dims != 3) {
-        throw conversion_error("Number of dimensions must be 3");
-    }
-
-    if (info.ptr == nullptr) {
-        throw conversion_error("armadillo matrix conversion failed, nullptr");
-    }
-
-    bool steal = false;
-    bool is_owner = false;
-    if (copy < 0) {
-        steal = true;
-        is_owner = true;
-        copy = 0;
-    }
-
-    arma::uword nrows = info.shape[0];
-    arma::uword ncols = info.shape[1];
-    arma::uword nslices = info.shape[2];
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_cube<T>(info);
+    PyObject* obj = src.ptr();
 
 #ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     // determine ordering, if c-contiguous memory we are going to copy below
-    if (is_c_contiguous(buffer) || requires_copy(buffer) || copy) {
+    if (is_c_contiguous(src) || requires_copy(src)) {
 #else
-    if (requires_copy(buffer) || copy) {
+    if (requires_copy(src)) {
 #endif
-        data = steal_copy_array<T>(buffer);
-        // it's allready stolen at this point
-        steal = false;
-        // inform the matrix it owns the data
-        is_owner = true;
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(obj);
+    } else {
+        // remove control of memory from numpy
+        steal_memory(obj);
     }
-    arma::Cube<T> cube(data, nrows, ncols, nslices, false, strict);
-
-    // if we copied the array or when stealing the array
-    // inform the matrix it owns the memory
-    if (is_owner & (arma::access::rw(cube.mem_state) != 3)) arma::access::rw(cube.mem_state) = 0;
-    if (steal) steal_memory(buffer.ptr());
-
-    return cube;
+    return _arr_to_cube(info, data, true, false);
 } /* arr_to_cube */
+
+/* Convert numpy array to Armadillo Cube
+ *
+ * The default behaviour is to borrow the array, we copy if:
+ * - copy is true
+ * - (optional) not F contiguous memory
+ * - writeable is false
+ * - owndata is false
+ * - memory is not aligned
+ * Note that the user set behaviour is overridden is one of the above conditions
+ * is true
+ */
+template <typename T>
+arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = false) {
+    py::buffer_info info = src.request();
+    T* data = _validate_from_array_cube<T>(info);
+#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    // determine ordering, if c-contiguous memory we are going to copy below
+    if (is_c_contiguous(src) || requires_copy(src) || copy) {
+#else
+    if (requires_copy(src) || copy) {
+#endif
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(src.ptr());
+        return _arr_to_cube(info, data, true, strict);
+    }
+    return _arr_to_cube(info, data, false, strict);
+} /* arr_to_cube */
+
+// #########################################################################
+//                                   TO_ARMA
+// #########################################################################
 
 /* The below functor approach is ported from:
  *     Arma_Wrapper - Paul Sangrey 2019
@@ -328,7 +327,7 @@ struct _to_arma {
 template <typename returnT>
 struct _to_arma<returnT, typename is_row<returnT>::type> {
     /* Overload concept on return type; convert to row */
-    static returnT from(py::handle& arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
         return arr_to_row<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
@@ -336,7 +335,7 @@ struct _to_arma<returnT, typename is_row<returnT>::type> {
 template <typename returnT>
 struct _to_arma<returnT, typename is_col<returnT>::type> {
     /* Overload concept on return type; convert to col */
-    static returnT from(py::handle& arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type> arr, int copy, int strict) {
         return arr_to_col<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
@@ -344,7 +343,7 @@ struct _to_arma<returnT, typename is_col<returnT>::type> {
 template <typename returnT>
 struct _to_arma<returnT, typename is_mat<returnT>::type> {
     /* Overload concept on return type; convert to matrix */
-    static returnT from(py::handle& arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
         return arr_to_mat<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
@@ -352,7 +351,7 @@ struct _to_arma<returnT, typename is_mat<returnT>::type> {
 template <typename returnT>
 struct _to_arma<returnT, typename is_cube<returnT>::type> {
     /* Overload concept on return type; convert to cube */
-    static returnT from(py::handle& arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
         return arr_to_cube<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
@@ -360,72 +359,9 @@ struct _to_arma<returnT, typename is_cube<returnT>::type> {
 /*****************************************************************************************
  *                                   Armadillo to Numpy                                   *
  *****************************************************************************************/
-/* ---------------------------------- array_constr ---------------------------------- */
-template <typename T>
-inline py::array_t<T> _construct_array(arma::Row<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t ncols = static_cast<ssize_t>(data->n_cols);
 
-    py::capsule base = create_capsule<arma::Row<T>>(data);
-
-    return py::array_t<T>(
-        {static_cast<ssize_t>(1), ncols},  // shape
-        {tsize, tsize},                    // F-style contiguous strides
-        data->memptr(),                    // the data pointer
-        base                               // numpy array references this parent
-    );
-} /* _construct_array */
-
-template <typename T>
-inline py::array_t<T> _construct_array(arma::Col<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t nrows = static_cast<ssize_t>(data->n_rows);
-
-    py::capsule base = create_capsule<arma::Col<T>>(data);
-
-    return py::array_t<T>(
-        {nrows, static_cast<ssize_t>(1)},  // shape
-        {tsize, nrows * tsize},            // F-style contiguous strides
-        data->memptr(),                    // the data pointer
-        base                               // numpy array references this parent
-    );
-} /* _construct_array */
-
-template <typename T>
-inline py::array_t<T> _construct_array(arma::Mat<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t nrows = static_cast<ssize_t>(data->n_rows);
-    ssize_t ncols = static_cast<ssize_t>(data->n_cols);
-
-    py::capsule base = create_capsule<arma::Mat<T>>(data);
-
-    return py::array_t<T>(
-        {nrows, ncols},          // shape
-        {tsize, nrows * tsize},  // F-style contiguous strides
-        data->memptr(),          // the data pointer
-        base                     // numpy array references this parent
-    );
-} /* _construct_array */
-
-template <typename T>
-inline py::array_t<T> _construct_array(arma::Cube<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t nrows = static_cast<ssize_t>(data->n_rows);
-    ssize_t ncols = static_cast<ssize_t>(data->n_cols);
-    ssize_t nslices = static_cast<ssize_t>(data->n_slices);
-
-    py::capsule base = create_capsule<arma::Cube<T>>(data);
-
-    return py::array_t<T>(
-        {nslices, nrows, ncols},                        // shape
-        {tsize * nrows * ncols, tsize, nrows * tsize},  // F-style contiguous strides
-        data->memptr(),                                 // the data pointer
-        base                                            // numpy array references this parent
-    );
-} /* _construct_array */
-
-/* -------------------------------- Type specific funcs -------------------------------- */
 /* ######################################## Row ######################################## */
+
 template <typename T>
 inline py::array_t<T> row_to_arr(const arma::Row<T>& src) {
     /* Convert armadillo row to numpy array */
@@ -544,42 +480,38 @@ inline void update_array(arma::Col<T>* src, py::array_t<T>& arr) {
 /* ######################################## Mat ######################################## */
 template <typename T>
 inline py::array_t<T> mat_to_arr(const arma::Mat<T>& src) {
-    arma::Mat<T>* data = new arma::Mat<T>(src);
-    return _construct_array<T>(data);
+    return _construct_array<T>(new arma::Mat<T>(src));
 } /* mat_to_arr */
 
 template <typename T>
 inline py::array_t<T> mat_to_arr(arma::Mat<T>&& src) {
-    arma::Mat<T>* data = new arma::Mat<T>(std::move(src));
-    return _construct_array<T>(data);
+    return _construct_array<T>(new arma::Mat<T>(std::move(src)));
 } /* mat_to_arr */
 
 template <typename T>
 inline py::array_t<T> mat_to_arr(arma::Mat<T>& src, int copy = 0) {
-    arma::Mat<T>* data;
     if (!copy) {
-        data = new arma::Mat<T>(std::move(src));
-    } else {
-        data = new arma::Mat<T>(src.memptr(), src.n_rows, src.n_cols, true);
+        return _construct_array<T>(new arma::Mat<T>(std::move(src)));
     }
-    return _construct_array<T>(data);
+    return _construct_array<T>(
+        new arma::Mat<T>(src.memptr(), src.n_rows, src.n_cols, true)
+    );
 } /* mat_to_arr */
 
 template <typename T>
 inline py::array_t<T> mat_to_arr(arma::Mat<T>* src, int copy = 0) {
-    arma::Mat<T>* data;
     if (!copy) {
-        data = new arma::Mat<T>(std::move(*src));
-    } else {
-        data = new arma::Mat<T>(src->memptr(), src->n_rows, src->n_cols, true);
+        return _construct_array<T>(new arma::Mat<T>(std::move(*src)));
     }
-    return _construct_array<T>(data);
+    return _construct_array(
+        new arma::Mat<T>(src->memptr(), src->n_rows, src->n_cols, true)
+    );
 } /* mat_to_arr */
 
 template <typename T>
 inline void update_array(arma::Mat<T>&& src, py::array_t<T>& arr) {
     /* Update underlying numpy array */
-    arma::Mat<T> mat = std::move(src);
+    arma::Mat<T> mat(std::move(src));
     arr.resize({static_cast<ssize_t>(mat.n_rows), static_cast<ssize_t>(mat.n_cols)}, false);
 } /* update_array */
 
@@ -771,7 +703,12 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
      * If the array is 1D we create a column oriented matrix (N, 1) */
     bool load(handle src, bool) {
         // set as array buffer
-        value = carma::_to_arma<armaT>::from(src, 0, 1);
+        //
+        py::array_t<T> buffer = py::array_t<T>::ensure(src);
+        if (!buffer) {
+            throw carma::conversion_error("invalid object passed");
+        }
+        value = carma::_to_arma<armaT>::from(buffer, 0, 1);
         return true;
     }
 

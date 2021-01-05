@@ -29,12 +29,6 @@ namespace py = pybind11;
 
 namespace carma {
 
-struct conversion_error : std::exception {
-    const char* _message;
-    explicit conversion_error(const char* message) : _message(message) {}
-    const char* what() const throw() { return _message; }
-};
-
 // Mat catches Row and Col as well
 template <typename T>
 struct is_convertible {
@@ -75,28 +69,6 @@ template <typename T>
 struct is_cube : std::false_type {};
 template <typename T>
 struct is_cube<arma::Cube<T>> : std::true_type {};
-
-template <typename armaT>
-inline py::capsule create_capsule(armaT* data) {
-    return py::capsule(data, [](void* f) {
-        armaT* mat = reinterpret_cast<armaT*>(f);
-#ifndef NDEBUG
-        // if in debug mode let us know what pointer is being freed
-        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
-#endif
-        delete mat;
-    });
-} /* create_capsule */
-
-template <typename T>
-inline py::capsule create_dummy_capsule(T* data) {
-    return py::capsule(data, [](void* f) {
-#ifndef NDEBUG
-        // if in debug mode let us know what pointer is being freed
-        std::cerr << "dummy capsule for memory @ " << f << std::endl;
-#endif
-    });
-} /* create_capsule */
 
 }  // namespace carma
 #endif  // INCLUDE_CARMA_CARMA_UTILS_H_
