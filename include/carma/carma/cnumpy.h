@@ -13,12 +13,13 @@
 #include <numpy/ndarraytypes.h>
 
 /* STD header */
-#include <iostream>
 #include <limits>
 
 /* External */
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
+
+#include <iostream>
 
 namespace py = pybind11;
 
@@ -40,7 +41,7 @@ static inline void steal_memory(PyObject* src) {
      * functions defined below (PyArray_DATA and friends) to access fields here
      * for a number of releases. Direct access to the members themselves is
      * deprecated. To ensure that your code does not use deprecated access,
-     * Py_XDECREF #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION (or
+     * #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION (or
      * NPY_1_8_API_VERSION or higher as required).
      * This struct will be moved to a private header in a future release"
      *
@@ -49,12 +50,12 @@ static inline void steal_memory(PyObject* src) {
      * The deprecation macro has been included which will at least raise an error
      * during compilation if `PyArrayObject_fields` has become deprecated.
      *
-     * Better alternative are very welcome.
+     * Better solutions are very welcome.
      */
-    PyArrayObject_fields* obj = reinterpret_cast<PyArrayObject_fields *>(src);
 #ifdef CARMA_HARD_STEAL
-    obj->data = nullptr;
+    reinterpret_cast<PyArrayObject_fields *>(src)->data = nullptr;
 #else
+    PyArrayObject_fields* obj = reinterpret_cast<PyArrayObject_fields *>(src);
     double* data = reinterpret_cast<double *>(malloc(sizeof(double)));
     data[0] = NAN;
     obj->data = reinterpret_cast<char*>(data);
@@ -74,27 +75,18 @@ static inline void steal_memory(PyObject* src) {
 #endif
 }  // steal_memory
 
-static inline void * c_swap_c_to_f_order(PyObject* src) {
-    // this is needed as otherwise we get mysterious segfaults
-    import_array();
-    PyArrayObject* np_src = reinterpret_cast<PyArrayObject *>(src);
-    PyArrayObject* tmp = reinterpret_cast<PyArrayObject *>(PyArray_NewCopy(np_src, NPY_FORTRANORDER));
-    int state = PyArray_MoveInto(np_src, tmp);
-    if (state == 1) {
-        return reinterpret_cast<void *>(src);
-    }
-    return nullptr;
-}  // c_swap_c_to_f_order
-
-/* Use Numpy's api to account for stride, order and steal the memory */
+/* Use Numpy's api to copy, accounting miss behaved memory, and steal the memory */
 static inline void* c_steal_copy_array(PyObject* src) {
     // this is needed as otherwise we get mysterious segfaults
     import_array();
-    PyArrayObject* np_src = reinterpret_cast<PyArrayObject *>(src);
-    PyObject* dest = PyArray_NewCopy(np_src, NPY_FORTRANORDER);
-    void* data = PyArray_DATA(reinterpret_cast<PyArrayObject *>(dest));
-    // we steal the memory as we can't control the refcount correctly on conversion back
-    steal_memory(dest);
+    // copy the array to a well behaved F-order
+    PyObject* dest = PyArray_NewCopy(reinterpret_cast<PyArrayObject *>(src), NPY_FORTRANORDER);
+    // we steal the memory
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject *>(dest);
+    void* data = PyArray_DATA(arr);
+    reinterpret_cast<PyArrayObject_fields *>(dest)->data = nullptr;
+    // free the array
+    PyArray_Free(dest, nullptr);
     return data;
 }  // c_steal_copy_array
 
@@ -103,43 +95,33 @@ static inline void* c_steal_copy_array(PyObject* src) {
 static inline PyObject* copy_well_behaved(PyObject* src) {
     // this is needed as otherwise we get mysterious segfaults
     import_array();
-    PyArrayObject* np_src = reinterpret_cast<PyArrayObject *>(src);
-    return PyArray_NewCopy(np_src, NPY_FORTRANORDER);
+    return PyArray_NewCopy(reinterpret_cast<PyArrayObject *>(src), NPY_FORTRANORDER);
 }  // c_copy_well_behaved
 
-/* get data pointer from object, steals a reference */
+/* get data pointer from PyObject, steals a reference */
 static inline void * c_get_ptr(PyObject* obj) {
-    void * data = PyArray_DATA(reinterpret_cast<PyArrayObject *>(obj));
-    Py_XDECREF(obj);
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject *>(obj);
+    void * data = PyArray_DATA(arr);
+    PyArray_XDECREF(arr);
     return data;
-}
+}  // c_get_ptr
+
 }  // extern "C"
 
 namespace carma {
 
-template <typename T>
-inline py::array_t<T> swap_c_to_f_order(py::handle& src) {
-    /* Use Numpy's api to account for stride, order and steal the memory
-     * This function is to deal with no templates in extern C
-     */
-    void * obj = c_swap_c_to_f_order(src.ptr());
-    if (obj == nullptr) {
-        return src;
-    }
-    return py::array_t<T>(reinterpret_cast<PyObject *>(obj));
-}  // steal_copy_array
-
 /* Use Numpy's api to account for stride, order and steal the memory */
 template <typename T>
-inline T* steal_copy_array(py::handle& src) {
-    void * data = c_steal_copy_array(src.ptr());
-    return reinterpret_cast<T*>(data);
+inline T* steal_copy_array(PyObject* src) {
+    return reinterpret_cast<T*>(c_steal_copy_array(src));
 }  // steal_copy_array
 
+/* get data pointer from PyObject, steals a reference */
 template <typename T>
 inline T* get_ptr(PyObject* obj) {
     return reinterpret_cast<T*>(c_get_ptr(obj));
 }  // steal_copy_array
+
 }  // namespace carma
 
 #endif  // INCLUDE_CARMA_CARMA_CNUMPY_H_
