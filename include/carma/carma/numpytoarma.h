@@ -35,6 +35,7 @@ namespace py = pybind11;
 namespace carma {
 
 using uword = arma::uword;
+using aconf =  arma::arma_config;
 
 struct conversion_error : std::exception {
     const char* _message;
@@ -73,13 +74,30 @@ inline arma::Mat<T> _arr_to_mat(
         ncols = src.shape[1];
     }
 
-    arma::Mat<T> dest(data, nrows, ncols, false, strict);
+    /* Handling small arrays
+     *
+     * ARMA assumes that it's objects with less than mat_prealloc have
+     * been stack allocated. Hence, the memory will not be free'd in
+     * case of construction.
+     *
+     * Since the data is soo small copying is not a big deal,
+     * we free the array after if it was stolen as arma will
+     * not own it.
+     */
+    bool copy = (nelem > aconf::mat_prealloc) ? false : true;
 
-    if (stolen) {
+    arma::Mat<T> dest(data, nrows, ncols, copy, strict);
+
+    if (!stolen) {
+        return dest;
+    }
+    if (!copy) {
         // after stealing Arma has to manage the lifetime of the memory
         arma::access::rw(dest.n_alloc) = nelem;
         arma::access::rw(dest.mem_state) = 0;
+        return dest;
     }
+    free(data);
     return dest;
 } /* _arr_to_mat */
 
@@ -104,12 +122,18 @@ arma::Col<T> _arr_to_col(
     ssize_t dims = src.ndim;
     uword nelem = src.size;
 
-    arma::Col<T> dest(data, nelem, false, strict);
-    if (stolen) {
+    bool copy = (nelem > aconf::mat_prealloc) ? false : true;
+    arma::Col<T> dest(data, nelem, copy, strict);
+    if (!stolen) {
+        return dest;
+    }
+    if (!copy) {
         // after stealing Arma has to manage the lifetime of the memory
         arma::access::rw(dest.n_alloc) = nelem;
         arma::access::rw(dest.mem_state) = 0;
+        return dest;
     }
+    free(data);
     return dest;
 } /* _arr_to_col */
 
@@ -135,13 +159,18 @@ arma::Row<T> _arr_to_row(
     ssize_t dims = src.ndim;
     uword nelem = src.size;
 
-    arma::Row<T> dest(data, nelem, false, strict);
-
-    if (stolen) {
+    bool copy = (nelem > aconf::mat_prealloc) ? false : true;
+    arma::Row<T> dest(data, nelem, copy, strict);
+    if (!stolen) {
+        return dest;
+    }
+    if (!copy) {
         // after stealing Arma has to manage the lifetime of the memory
         arma::access::rw(dest.n_alloc) = nelem;
         arma::access::rw(dest.mem_state) = 0;
+        return dest;
     }
+    free(data);
     return dest;
 } /* _arr_to_Row */
 
@@ -170,15 +199,21 @@ arma::Cube<T> _arr_to_cube(
     uword nslices = src.shape[2];
     uword nelem = src.size;
 
-    arma::Cube<T> dest(data, nrows, ncols, nslices, false, strict);
-
-    if (stolen) {
+    bool copy = (nelem > arma::Cube_prealloc::mem_n_elem) ? false : true;
+    arma::Cube<T> dest(data, nrows, ncols, nslices, copy, strict);
+    if (!stolen) {
+        return dest;
+    }
+    if (!copy) {
         // after stealing Arma has to manage the lifetime of the memory
         arma::access::rw(dest.n_alloc) = nelem;
         arma::access::rw(dest.mem_state) = 0;
+        return dest;
     }
+    free(data);
     return dest;
 } /* _arr_to_cube */
+
 }  // namespace carma
 
 #endif  // INCLUDE_CARMA_CARMA_NUMPYTOARMA_H_
