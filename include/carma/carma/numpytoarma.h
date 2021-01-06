@@ -43,6 +43,14 @@ struct conversion_error : std::exception {
     const char* what() const throw() { return _message; }
 };
 
+template<typename T> inline void free_array(T* data) {
+#if defined(_MSC_VER)
+    _aligned_free(reinterpret_cast<void *>(data));
+#else
+    free(reinterpret_cast<void *>(data));
+#endif
+}  // free_array
+
 template <typename T>
 inline T* _validate_from_array_mat(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
@@ -97,7 +105,7 @@ inline arma::Mat<T> _arr_to_mat(
         arma::access::rw(dest.mem_state) = 0;
         return dest;
     }
-    free(data);
+    free_array(data);
     return dest;
 } /* _arr_to_mat */
 
@@ -133,7 +141,7 @@ arma::Col<T> _arr_to_col(
         arma::access::rw(dest.mem_state) = 0;
         return dest;
     }
-    free(data);
+    free_array(data);
     return dest;
 } /* _arr_to_col */
 
@@ -170,7 +178,7 @@ arma::Row<T> _arr_to_row(
         arma::access::rw(dest.mem_state) = 0;
         return dest;
     }
-    free(data);
+    free_array(data);
     return dest;
 } /* _arr_to_Row */
 
@@ -210,7 +218,7 @@ arma::Cube<T> _arr_to_cube(
         arma::access::rw(dest.mem_state) = 0;
         return dest;
     }
-    free(data);
+    free_array(data);
     return dest;
 } /* _arr_to_cube */
 
