@@ -36,7 +36,7 @@ struct is_convertible {
 };
 
 template <typename T>
-struct _is_Vec {
+struct p_is_Vec {
     static const bool value = (arma::is_Row<T>::value || arma::is_Col<T>::value);
 };
 
@@ -44,7 +44,7 @@ struct _is_Vec {
 template <typename armaT>
 using is_Cube = std::enable_if_t<arma::is_Cube<armaT>::value, int>;
 template <typename armaT>
-using is_Vec = std::enable_if_t<_is_Vec<armaT>::value, int>;
+using is_Vec = std::enable_if_t<p_is_Vec<armaT>::value, int>;
 template <typename armaT>
 using is_Mat = std::enable_if_t<arma::is_Mat<armaT>::value, int>;
 template <typename armaT>

@@ -49,10 +49,10 @@ namespace carma {
 template <typename T>
 arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_mat<T>(info);
+    T* data = p_validate_from_array_mat<T>(info);
     // copy and ensure fortran order
     data = steal_copy_array<T>(src.ptr());
-    return _arr_to_mat(info, data, true, false);
+    return p_arr_to_mat(info, data, true, false);
 } /* arr_to_mat */
 
 /* Convert numpy array to Armadillo Matrix by stealing the data
@@ -68,7 +68,7 @@ arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
 template <typename T>
 arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_mat<T>(info);
+    T* data = p_validate_from_array_mat<T>(info);
     PyObject* obj = src.ptr();
 #ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     // determine ordering, if c-contiguous memory we are going to copy below
@@ -82,7 +82,7 @@ arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
         // remove control of memory from numpy
         steal_memory(obj);
     }
-    return _arr_to_mat(info, data, true, false);
+    return p_arr_to_mat(info, data, true, false);
 } /* arr_to_mat */
 
 /* Convert numpy array to Armadillo Matrix
@@ -101,7 +101,7 @@ arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
 template <typename T>
 arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_mat<T>(info);
+    T* data = p_validate_from_array_mat<T>(info);
 #ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     // determine ordering, if c-contiguous memory we are going to copy below
     if (is_c_contiguous_2d(src) || requires_copy(src) || copy) {
@@ -110,9 +110,9 @@ arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = fa
 #endif
         // copy and ensure fortran order
         data = steal_copy_array<T>(src.ptr());
-        return _arr_to_mat(info, data, true, strict);
+        return p_arr_to_mat(info, data, true, strict);
     }
-    return _arr_to_mat(info, data, false, strict);
+    return p_arr_to_mat(info, data, false, strict);
 } /* arr_to_mat */
 
 
@@ -124,10 +124,10 @@ arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = fa
 template <typename T>
 arma::Col<T> arr_to_col(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_col<T>(info);
+    T* data = p_validate_from_array_col<T>(info);
     // copy and ensure fortran order
     data = steal_copy_array<T>(src.ptr());
-    return _arr_to_col(info, data, true, false);
+    return p_arr_to_col(info, data, true, false);
 } /* arr_to_col */
 
 /* Convert numpy array to Armadillo Column by stealing the data
@@ -140,7 +140,7 @@ arma::Col<T> arr_to_col(const py::array_t<T>& src) {
 template <typename T>
 arma::Col<T> arr_to_col(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_col<T>(info);
+    T* data = p_validate_from_array_col<T>(info);
     PyObject* obj = src.ptr();
     if (requires_copy(src)) {
         // copy and ensure fortran order
@@ -149,7 +149,7 @@ arma::Col<T> arr_to_col(py::array_t<T>&& src) {
         // remove control of memory from numpy
         steal_memory(obj);
     }
-    return _arr_to_col(info, data, true, false);
+    return p_arr_to_col(info, data, true, false);
 } /* arr_to_col */
 
 /* Convert numpy array to Armadillo Col
@@ -165,13 +165,13 @@ arma::Col<T> arr_to_col(py::array_t<T>&& src) {
 template <typename T>
 arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_col<T>(info);
+    T* data = p_validate_from_array_col<T>(info);
     if (requires_copy(src) || copy) {
         // copy and ensure fortran order
         data = steal_copy_array<T>(src.ptr());
-        return _arr_to_col(info, data, true, strict);
+        return p_arr_to_col(info, data, true, strict);
     }
-    return _arr_to_col(info, data, false, strict);
+    return p_arr_to_col(info, data, false, strict);
 } /* arr_to_col */
 
 // #########################################################################
@@ -182,10 +182,10 @@ arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = fa
 template <typename T>
 arma::Row<T> arr_to_row(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_row<T>(info);
+    T* data = p_validate_from_array_row<T>(info);
     // copy and ensure fortran order
     data = steal_copy_array<T>(src.ptr());
-    return _arr_to_row(info, data, true, false);
+    return p_arr_to_row(info, data, true, false);
 } /* arr_to_row */
 
 /* Convert numpy array to Armadillo Row by stealing the data
@@ -198,7 +198,7 @@ arma::Row<T> arr_to_row(const py::array_t<T>& src) {
 template <typename T>
 arma::Row<T> arr_to_row(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_row<T>(info);
+    T* data = p_validate_from_array_row<T>(info);
     PyObject* obj = src.ptr();
     if (requires_copy(src)) {
         // copy and ensure fortran order
@@ -207,7 +207,7 @@ arma::Row<T> arr_to_row(py::array_t<T>&& src) {
         // remove control of memory from numpy
         steal_memory(obj);
     }
-    return _arr_to_row(obj, info, data, true, false);
+    return p_arr_to_row(obj, info, data, true, false);
 } /* arr_to_row */
 
 /* Convert numpy array to Armadillo Row
@@ -223,13 +223,13 @@ arma::Row<T> arr_to_row(py::array_t<T>&& src) {
 template <typename T>
 arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_row<T>(info);
+    T* data = p_validate_from_array_row<T>(info);
     if (requires_copy(src) || copy) {
         // copy and ensure fortran order
         data = steal_copy_array<T>(src.ptr());
-        return _arr_to_row(info, data, true, strict);
+        return p_arr_to_row(info, data, true, strict);
     }
-    return _arr_to_row(info, data, false, strict);
+    return p_arr_to_row(info, data, false, strict);
 } /* arr_to_row */
 
 // #########################################################################
@@ -241,10 +241,10 @@ template <typename T>
 arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
 
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_cube<T>(info);
+    T* data = p_validate_from_array_cube<T>(info);
     // copy and ensure fortran order
     data = steal_copy_array<T>(src.ptr());
-    return _arr_to_cube(info, data, true, false);
+    return p_arr_to_cube(info, data, true, false);
 } /* arr_to_cube */
 
 /* Convert numpy array to Armadillo Cube by stealing
@@ -261,7 +261,7 @@ template <typename T>
 arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
 
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_cube<T>(info);
+    T* data = p_validate_from_array_cube<T>(info);
     PyObject* obj = src.ptr();
 
 #ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
@@ -276,7 +276,7 @@ arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
         // remove control of memory from numpy
         steal_memory(obj);
     }
-    return _arr_to_cube(info, data, true, false);
+    return p_arr_to_cube(info, data, true, false);
 } /* arr_to_cube */
 
 /* Convert numpy array to Armadillo Cube
@@ -293,7 +293,7 @@ arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
 template <typename T>
 arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
-    T* data = _validate_from_array_cube<T>(info);
+    T* data = p_validate_from_array_cube<T>(info);
 #ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
     // determine ordering, if c-contiguous memory we are going to copy below
     if (is_c_contiguous(src) || requires_copy(src) || copy) {
@@ -302,9 +302,9 @@ arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = 
 #endif
         // copy and ensure fortran order
         data = steal_copy_array<T>(src.ptr());
-        return _arr_to_cube(info, data, true, strict);
+        return p_arr_to_cube(info, data, true, strict);
     }
-    return _arr_to_cube(info, data, false, strict);
+    return p_arr_to_cube(info, data, false, strict);
 } /* arr_to_cube */
 
 // #########################################################################
@@ -318,14 +318,14 @@ arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = 
  * types that I want to pass from Python to C++.
  */
 template <typename returnT, typename SFINAE = std::true_type>
-struct _to_arma {
+struct p_to_arma {
     static_assert(!SFINAE::value, "The general case is not defined.");
     template <typename innerT>
     static returnT from(innerT&&);
 }; /* to_arma */
 
 template <typename returnT>
-struct _to_arma<returnT, typename is_row<returnT>::type> {
+struct p_to_arma<returnT, typename is_row<returnT>::type> {
     /* Overload concept on return type; convert to row */
     static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
         return arr_to_row<typename returnT::elem_type>(arr, copy, strict);
@@ -333,7 +333,7 @@ struct _to_arma<returnT, typename is_row<returnT>::type> {
 }; /* to_arma */
 
 template <typename returnT>
-struct _to_arma<returnT, typename is_col<returnT>::type> {
+struct p_to_arma<returnT, typename is_col<returnT>::type> {
     /* Overload concept on return type; convert to col */
     static returnT from(py::array_t<typename returnT::elem_type> arr, int copy, int strict) {
         return arr_to_col<typename returnT::elem_type>(arr, copy, strict);
@@ -341,7 +341,7 @@ struct _to_arma<returnT, typename is_col<returnT>::type> {
 }; /* to_arma */
 
 template <typename returnT>
-struct _to_arma<returnT, typename is_mat<returnT>::type> {
+struct p_to_arma<returnT, typename is_mat<returnT>::type> {
     /* Overload concept on return type; convert to matrix */
     static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
         return arr_to_mat<typename returnT::elem_type>(arr, copy, strict);
@@ -349,7 +349,7 @@ struct _to_arma<returnT, typename is_mat<returnT>::type> {
 }; /* to_arma */
 
 template <typename returnT>
-struct _to_arma<returnT, typename is_cube<returnT>::type> {
+struct p_to_arma<returnT, typename is_cube<returnT>::type> {
     /* Overload concept on return type; convert to cube */
     static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
         return arr_to_cube<typename returnT::elem_type>(arr, copy, strict);
@@ -366,14 +366,14 @@ template <typename T>
 inline py::array_t<T> row_to_arr(const arma::Row<T>& src) {
     /* Convert armadillo row to numpy array */
     arma::Row<T>* data = new arma::Row<T>(src);
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* row_to_arr */
 
 template <typename T>
 inline py::array_t<T> row_to_arr(arma::Row<T>&& src) {
     /* Convert armadillo row to numpy array */
     arma::Row<T>* data = new arma::Row<T>(std::move(src));
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* row_to_arr */
 
 template <typename T>
@@ -385,7 +385,7 @@ inline py::array_t<T> row_to_arr(arma::Row<T>& src, int copy = false) {
     } else {
         data = new arma::Row<T>(src.memptr(), src.n_elem, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* row_to_arr */
 
 template <typename T>
@@ -397,7 +397,7 @@ inline py::array_t<T> row_to_arr(arma::Row<T>* src, int copy = false) {
     } else {
         data = new arma::Row<T>(src->memptr(), src->n_elem, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* row_to_arr */
 
 template <typename T>
@@ -424,14 +424,14 @@ template <typename T>
 inline py::array_t<T> col_to_arr(const arma::Col<T>& src) {
     /* Convert armadillo col to numpy array */
     arma::Col<T>* data = new arma::Col<T>(src);
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* col_to_arr */
 
 template <typename T>
 inline py::array_t<T> col_to_arr(arma::Col<T>&& src) {
     /* Convert armadillo col to numpy array */
     arma::Col<T>* data = new arma::Col<T>(std::move(src));
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* col_to_arr */
 
 template <typename T>
@@ -443,7 +443,7 @@ inline py::array_t<T> col_to_arr(arma::Col<T>& src, int copy = false) {
     } else {
         data = new arma::Col<T>(src.memptr(), src.n_elem, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* col_to_arr */
 
 template <typename T>
@@ -455,7 +455,7 @@ inline py::array_t<T> col_to_arr(arma::Col<T>* src, int copy = 0) {
     } else {
         data = new arma::Col<T>(src->memptr(), src->n_elem, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* col_to_arr */
 
 template <typename T>
@@ -480,20 +480,20 @@ inline void update_array(arma::Col<T>* src, py::array_t<T>& arr) {
 /* ######################################## Mat ######################################## */
 template <typename T>
 inline py::array_t<T> mat_to_arr(const arma::Mat<T>& src) {
-    return _construct_array<T>(new arma::Mat<T>(src));
+    return p_construct_array<T>(new arma::Mat<T>(src));
 } /* mat_to_arr */
 
 template <typename T>
 inline py::array_t<T> mat_to_arr(arma::Mat<T>&& src) {
-    return _construct_array<T>(new arma::Mat<T>(std::move(src)));
+    return p_construct_array<T>(new arma::Mat<T>(std::move(src)));
 } /* mat_to_arr */
 
 template <typename T>
 inline py::array_t<T> mat_to_arr(arma::Mat<T>& src, int copy = 0) {
     if (!copy) {
-        return _construct_array<T>(new arma::Mat<T>(std::move(src)));
+        return p_construct_array<T>(new arma::Mat<T>(std::move(src)));
     }
-    return _construct_array<T>(
+    return p_construct_array<T>(
         new arma::Mat<T>(src.memptr(), src.n_rows, src.n_cols, true)
     );
 } /* mat_to_arr */
@@ -501,9 +501,9 @@ inline py::array_t<T> mat_to_arr(arma::Mat<T>& src, int copy = 0) {
 template <typename T>
 inline py::array_t<T> mat_to_arr(arma::Mat<T>* src, int copy = 0) {
     if (!copy) {
-        return _construct_array<T>(new arma::Mat<T>(std::move(*src)));
+        return p_construct_array<T>(new arma::Mat<T>(std::move(*src)));
     }
-    return _construct_array(
+    return p_construct_array(
         new arma::Mat<T>(src->memptr(), src->n_rows, src->n_cols, true)
     );
 } /* mat_to_arr */
@@ -531,13 +531,13 @@ inline void update_array(arma::Mat<T>* src, py::array_t<T>& arr) {
 template <typename T>
 inline py::array_t<T> cube_to_arr(const arma::Cube<T>& src) {
     arma::Cube<T>* data = new arma::Cube<T>(src);
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename T>
 inline py::array_t<T> cube_to_arr(arma::Cube<T>&& src) {
     arma::Cube<T>* data = new arma::Cube<T>(std::move(src));
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename T>
@@ -548,7 +548,7 @@ inline py::array_t<T> cube_to_arr(arma::Cube<T>& src, int copy = 0) {
     } else {
         data = new arma::Cube<T>(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename T>
@@ -559,7 +559,7 @@ inline py::array_t<T> cube_to_arr(arma::Cube<T>* src, int copy = 0) {
     } else {
         data = new arma::Cube<T>(src->memptr(), src->n_rows, src->n_cols, src->n_slices, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename T>
@@ -588,13 +588,13 @@ inline void update_array(arma::Cube<T>* src, py::array_t<T>& arr) {
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
 inline py::array_t<T> to_numpy(const armaT& src) {
     arma::Cube<T>* data = new arma::Cube<T>(src);
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
 inline py::array_t<T> to_numpy(armaT&& src) {
     arma::Cube<T>* data = new arma::Cube<T>(std::forward<arma::Cube<T>>(src));
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
@@ -605,7 +605,7 @@ inline py::array_t<T> to_numpy(armaT& src, int copy = 0) {
     } else {
         data = new arma::Cube<T>(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
@@ -616,21 +616,21 @@ inline py::array_t<T> to_numpy(armaT* src, int copy = 0) {
     } else {
         data = new arma::Cube<T>(src->memptr(), src->n_rows, src->n_cols, src->n_slices, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Mat<armaT> = 1>
 inline py::array_t<T> to_numpy(const armaT& src) {
     // use armadillo copy constructor
     armaT* data = new armaT(src);
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* to_numpy */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Mat<armaT> = 1>
 inline py::array_t<T> to_numpy(armaT&& src) {
     // steal mem
     armaT* data = new armaT(std::forward<armaT>(src));
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* to_numpy */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Mat_only<armaT> = 2>
@@ -642,7 +642,7 @@ inline py::array_t<T> to_numpy(armaT& src, int copy = 0) {
     } else {
         data = new armaT(src.memptr(), src.n_rows, src.n_cols, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* to_numpy */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Mat_only<armaT> = 2>
@@ -654,7 +654,7 @@ inline py::array_t<T> to_numpy(armaT* src, int copy = 0) {
     } else {
         data = new armaT(src->memptr(), src->n_rows, src->n_cols, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* to_numpy */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Vec<armaT> = 3>
@@ -666,7 +666,7 @@ inline py::array_t<T> to_numpy(armaT& src, int copy = 0) {
     } else {
         data = new armaT(src.memptr(), src.n_elem, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* to_numpy */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Vec<armaT> = 3>
@@ -678,7 +678,7 @@ inline py::array_t<T> to_numpy(armaT* src, int copy = 0) {
     } else {
         data = new armaT(src->memptr(), src->n_elem, true);
     }
-    return _construct_array<T>(data);
+    return p_construct_array<T>(data);
 } /* to_numpy */
 
 }  // namespace carma
@@ -708,7 +708,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         if (!buffer) {
             throw carma::conversion_error("invalid object passed");
         }
-        value = carma::_to_arma<armaT>::from(buffer, 0, 1);
+        value = carma::p_to_arma<armaT>::from(buffer, 0, 1);
         return true;
     }
 
