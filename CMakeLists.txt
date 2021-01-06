@@ -24,8 +24,6 @@ OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
 # ##############################################################################
 #                                 DEFINITIONS                                  #
 # ##############################################################################
-#ADD_DEFINITIONS(-DARMA_DONT_USE_WRAPPER)
-
 # Don't copy arrays if the data is not owned by Numpy
 # ADD_DEFINITIONS(-DCARMA_DONT_REQUIRE_OWNDATA)
 
@@ -34,6 +32,9 @@ OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
 
 # When stealing an array set nullptr
 ADD_DEFINITIONS(-DCARMA_HARD_STEAL)
+
+# when debugging interaction with Armadillo
+# ADD_DEFINITIONS(-DARMA_EXTRA_DEBUG)
 
 # ##############################################################################
 #                                   TARGET                                     #

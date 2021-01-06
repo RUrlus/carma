@@ -34,14 +34,14 @@ int test_arr_to_mat_double(py::array_t<double>& arr, bool copy, bool strict) {
         return 2;
     if (arr_S1 != M.n_cols)
         return 3;
-    if (std::abs(arr_sum - mat_sum) > 1e-12)
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
         return 4;
     if (info.ptr != M.memptr())
         return 5;
     return 0;
 } /* arr_to_mat_double */
 
-int test_arr_to_mat_long(py::array_t<long>& arr, bool copy, bool strict) {
+int test_arr_to_mat_long(py::array_t<int64_t>& arr, bool copy, bool strict) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
@@ -52,7 +52,7 @@ int test_arr_to_mat_long(py::array_t<long>& arr, bool copy, bool strict) {
     py::buffer_info info = arr.request();
 
     // compute sum of array
-    long arr_sum = 0;
+    int64_t arr_sum = 0;
     for (size_t ci = 0; ci < arr_S1; ci++) {
         for (size_t ri = 0; ri < arr_S0; ri++) {
             arr_sum += arr_p(ri, ci);
@@ -60,10 +60,10 @@ int test_arr_to_mat_long(py::array_t<long>& arr, bool copy, bool strict) {
     }
 
     // call function to be tested
-    arma::Mat<long> M = carma::arr_to_mat<long>(arr, copy, strict);
+    arma::Mat<int64_t> M = carma::arr_to_mat<int64_t>(arr, copy, strict);
 
     // ---------------------------------------------------------------
-    long mat_sum = arma::accu(M);
+    int64_t mat_sum = arma::accu(M);
 
     // variable for test status
     if (arr_N != M.n_elem)
@@ -110,7 +110,7 @@ int test_arr_to_mat_double_copy(py::array_t<double> arr) {
         return 2;
     if (arr_S1 != M.n_cols)
         return 3;
-    if (std::abs(arr_sum - mat_sum) > 1e-12)
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
         return 4;
     if (pre_info.ptr == M.memptr())
         return 5;
@@ -138,7 +138,7 @@ int test_arr_to_mat_1d(py::array_t<double>& arr, bool copy, bool strict) {
 
     // variable for test status
     if (arr_N != M.n_elem) return 1;
-    if (std::abs(arr_sum - mat_sum) > 1e-12) return 4;
+    if (std::abs(arr_sum - mat_sum) > 1e-8) return 4;
     if (info.ptr != M.memptr()) return 5;
     return 0;
 } /* arr_to_mat_1d */
@@ -165,7 +165,7 @@ int test_arr_to_col(py::array_t<double>& arr, bool copy, bool strict) {
     // variable for test status
     if (arr_N != M.n_elem)
         return 1;
-    if (std::abs(arr_sum - mat_sum) > 1e-12)
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
         return 4;
     if (info.ptr != M.memptr())
         return 5;
@@ -199,7 +199,7 @@ int test_arr_to_row(py::array_t<double>& arr, bool copy, bool strict) {
     // variable for test status
     if (arr_N != M.n_elem)
         return 1;
-    if (std::abs(arr_sum - mat_sum) > 1e-12)
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
         return 4;
     if (info.ptr != M.memptr())
         return 5;
@@ -243,7 +243,7 @@ int test_arr_to_cube(py::array_t<double>& arr, bool copy, bool strict) {
         return 3;
     if (arr_S2 != M.n_slices)
         return 3;
-    if (std::abs(arr_sum - cube_sum) > 1e-12)
+    if (std::abs(arr_sum - cube_sum) > 1e-8)
         return 4;
     if (info.ptr != M.memptr())
         return 5;
@@ -280,7 +280,7 @@ int test_to_arma_mat(py::array_t<double>& arr, bool copy, bool strict) {
         return 2;
     if (arr_S1 != M.n_cols)
         return 3;
-    if (std::abs(arr_sum - mat_sum) > 1e-12)
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
         return 4;
     if (pre_info.ptr != M.memptr())
         return 5;
@@ -324,7 +324,7 @@ int test_to_arma_cube(py::array_t<double>& arr, bool copy, bool strict) {
         return 3;
     if (arr_S2 != M.n_slices)
         return 3;
-    if (std::abs(arr_sum - cube_sum) > 1e-12)
+    if (std::abs(arr_sum - cube_sum) > 1e-8)
         return 4;
     if (info.ptr != M.memptr())
         return 5;
@@ -353,7 +353,7 @@ int test_to_arma_col(py::array_t<double>& arr, bool copy, bool strict) {
     // variable for test status
     if (arr_N != M.n_elem)
         return 1;
-    if (std::abs(arr_sum - mat_sum) > 1e-12)
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
         return 4;
     if (info.ptr != M.memptr())
         return 5;
@@ -382,12 +382,20 @@ int test_to_arma_row(py::array_t<double>& arr, bool copy, bool strict) {
     // variable for test status
     if (arr_N != M.n_elem)
         return 1;
-    if (std::abs(arr_sum - mat_sum) > 1e-12)
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
         return 4;
     if (info.ptr != M.memptr())
         return 5;
     return 0;
 } /* arr_to_arma_row */
+
+py::array_t<double> debug_arr_to_mat(py::array_t<double>& arr, int copy, int strict) {
+    if (copy < 0) {
+        return carma::mat_to_arr(carma::arr_to_mat<double>(std::move(arr)));
+    }
+    return carma::mat_to_arr(carma::arr_to_mat<double>(arr, copy, strict));
+}
+
 
 }  // namespace tests
 }  // namespace carma
@@ -434,4 +442,8 @@ void bind_test_to_arma_col(py::module& m) {
 
 void bind_test_to_arma_row(py::module& m) {
     m.def("to_arma_row", &carma::tests::test_to_arma_row, "Test to_arma");
+}
+
+void bind_debug_arr_to_mat(py::module& m) {
+    m.def("debug_arr_to_mat", &carma::tests::debug_arr_to_mat, "Test return mat");
 }

@@ -6,13 +6,16 @@
 
 namespace py = pybind11;
 
+#ifndef TESTS_SRC_TEST_TYPE_CASTER_H_
+#define TESTS_SRC_TEST_TYPE_CASTER_H_
+
 namespace carma {
 namespace tests {
 // type_caster_in
-double test_tc_in_mat(const arma::Mat<double>& mat);
-double test_tc_in_row(const arma::Row<double>& mat);
-double test_tc_in_col(const arma::Col<double>& mat);
-double test_tc_in_cube(const arma::Cube<double>& mat);
+double test_tc_in_mat(arma::Mat<double>& mat);
+double test_tc_in_row(arma::Row<double>& mat);
+double test_tc_in_col(arma::Col<double>& mat);
+double test_tc_in_cube(arma::Cube<double>& mat);
 
 // type_caster_out
 arma::Mat<double> test_tc_out_mat(const py::array_t<double>& arr);
@@ -43,3 +46,5 @@ void bind_test_tc_out_col(py::module& m);
 void bind_test_tc_out_col_rvalue(py::module& m);
 void bind_test_tc_out_cube(py::module& m);
 void bind_test_tc_out_cube_rvalue(py::module& m);
+
+#endif  // TESTS_SRC_TEST_TYPE_CASTER_H_

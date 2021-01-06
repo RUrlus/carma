@@ -71,7 +71,7 @@ def test_update_array_mat():
     carma.update_array_mat(arr, 2)
     assert arr.shape == (10, 4)
     assert np.isclose(arr.sum(), og_sum)
-    assert np.abs(arr[:, 2:].sum()) < 1e-12, arr
+    assert np.abs(arr[:, 2:].sum()) < 1e-6, arr
 ###############################################################################
 #                                 ROW
 ###############################################################################
@@ -142,7 +142,7 @@ def test_update_array_row():
     carma.update_array_row(arr, 2)
     assert arr.shape == (1, 12)
     assert np.isclose(arr.sum(), og_sum)
-    assert np.abs(arr[:, 10:].sum()) < 1e-12, arr
+    assert np.abs(arr[:, 10:].sum()) < 1e-6, arr
 
 ###############################################################################
 #                                 COL
@@ -218,7 +218,7 @@ def test_update_array_col():
     carma.update_array_col(arr, 2)
     assert arr.shape == (12, 1)
     assert np.isclose(arr.sum(), og_sum)
-    assert np.abs(arr[10:, :].sum()) < 1e-12, arr
+    assert np.abs(arr[10:, :].sum()) < 1e-6, arr
 
 ###############################################################################
 #                                 CUBE
@@ -255,7 +255,7 @@ def test_cube_to_arr_return():
     inf_cnt = (arr == np.inf).sum()
     assert inf_cnt == 0, 'Conversion introduced inf values'
 
-    near_null = (np.abs(arr) <= 1e-16).sum()
+    near_null = (np.abs(arr) <= 1e-6).sum()
     assert near_null == 0, 'Conversion introduced near zero values'
 
 
