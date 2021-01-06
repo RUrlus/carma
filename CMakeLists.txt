@@ -31,7 +31,7 @@ OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
 # ADD_DEFINITIONS(-DCARMA_DONT_REQUIRE_F_CONTIGUOUS)
 
 # When stealing an array set nullptr
-ADD_DEFINITIONS(-DCARMA_HARD_STEAL)
+# ADD_DEFINITIONS(-DCARMA_HARD_STEAL)
 
 # when debugging interaction with Armadillo
 # ADD_DEFINITIONS(-DARMA_EXTRA_DEBUG)
