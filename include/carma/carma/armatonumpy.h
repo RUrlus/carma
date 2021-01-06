@@ -52,7 +52,7 @@ inline py::capsule create_dummy_capsule(T* data) {
 
 
 template <typename T>
-inline py::array_t<T> _construct_array(arma::Row<T>* data) {
+inline py::array_t<T> p_construct_array(arma::Row<T>* data) {
     constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
 
@@ -64,10 +64,10 @@ inline py::array_t<T> _construct_array(arma::Row<T>* data) {
         data->memptr(),                    // the data pointer
         base                               // numpy array references this parent
     );
-} /* _construct_array */
+} /* p_construct_array */
 
 template <typename T>
-inline py::array_t<T> _construct_array(arma::Col<T>* data) {
+inline py::array_t<T> p_construct_array(arma::Col<T>* data) {
     constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
 
@@ -79,10 +79,10 @@ inline py::array_t<T> _construct_array(arma::Col<T>* data) {
         data->memptr(),                    // the data pointer
         base                               // numpy array references this parent
     );
-} /* _construct_array */
+} /* p_construct_array */
 
 template <typename T>
-inline py::array_t<T> _construct_array(arma::Mat<T>* data) {
+inline py::array_t<T> p_construct_array(arma::Mat<T>* data) {
     constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
@@ -95,10 +95,10 @@ inline py::array_t<T> _construct_array(arma::Mat<T>* data) {
         data->memptr(),          // the data pointer
         base                     // numpy array references this parent
     );
-} /* _construct_array */
+} /* p_construct_array */
 
 template <typename T>
-inline py::array_t<T> _construct_array(arma::Cube<T>* data) {
+inline py::array_t<T> p_construct_array(arma::Cube<T>* data) {
     constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
     ssize_t nrows = static_cast<ssize_t>(data->n_rows);
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
@@ -112,7 +112,7 @@ inline py::array_t<T> _construct_array(arma::Cube<T>* data) {
         data->memptr(),                                 // the data pointer
         base                                            // numpy array references this parent
     );
-} /* _construct_array */
+} /* p_construct_array */
 
 }  // namespace carma
 #endif  // INCLUDE_CARMA_CARMA_ARMATONUMPY_H_

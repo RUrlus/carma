@@ -33,104 +33,104 @@ class ArrayStore {
 
  protected:
     constexpr static ssize_t tsize = sizeof(T);
-    bool _copy;
-    py::capsule _base;
+    bool p_copy;
+    py::capsule p_base;
 
  public:
     armaT mat;
 
  public:
     ArrayStore(py::array_t<T>& arr, bool copy) :
-    _copy{copy}, mat{_to_arma<armaT>::from(arr, copy, false)} {
-        _base = create_dummy_capsule(mat.memptr());
+    p_copy{copy}, mat{p_to_arma<armaT>::from(arr, copy, false)} {
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
-    explicit ArrayStore(const armaT& src) : _copy{true}, mat{armaT(src)} {
-        _base = create_dummy_capsule(mat.memptr());
+    explicit ArrayStore(const armaT& src) : p_copy{true}, mat{armaT(src)} {
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
-    ArrayStore(arma::Mat<T>& src, bool copy) : _copy{copy} {
-        if (_copy) {
+    ArrayStore(arma::Mat<T>& src, bool copy) : p_copy{copy} {
+        if (p_copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
-    ArrayStore(arma::Cube<T>& src, bool copy) : _copy{copy} {
-        if (_copy) {
+    ArrayStore(arma::Cube<T>& src, bool copy) : p_copy{copy} {
+        if (p_copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
     // SFINAE by adding additional parameter as
     // to avoid shadowing the class template
     template <typename U = armaT>
-    ArrayStore(armaT& src, bool copy, is_Vec<U>) : _copy{copy} {
-        if (_copy) {
+    ArrayStore(armaT& src, bool copy, is_Vec<U>) : p_copy{copy} {
+        if (p_copy) {
             mat = armaT(src.memptr(), src.n_elem, true);
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
-    explicit ArrayStore(armaT&& src) noexcept : _copy{false}, mat{std::move(src)} { _base = create_dummy_capsule(mat.memptr()); }
+    explicit ArrayStore(armaT&& src) noexcept : p_copy{false}, mat{std::move(src)} { p_base = create_dummy_capsule(mat.memptr()); }
 
     // Function requires different name than set_data
     // as overload could not be resolved without
     void set_array(py::array_t<T>& arr, bool copy) {
-        _copy = copy;
-        mat = _to_arma<armaT>::from(arr, copy, false);
+        p_copy = copy;
+        mat = p_to_arma<armaT>::from(arr, copy, false);
     }
 
     void set_data(const armaT& src) {
-        _copy = true;
+        p_copy = true;
         mat = armaT(src);
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(arma::Mat<T>& src, bool copy) {
-        _copy = copy;
+        p_copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
     // SFINAE by adding additional parameter as
     // to avoid shadowing the class template
     template <typename U = armaT>
     void set_data(armaT& src, bool copy, is_Vec<U>) {
-        _copy = copy;
+        p_copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_elem, true);
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(arma::Cube<T>& src, bool copy) {
-        _copy = copy;
+        p_copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
         } else {
             mat = std::move(src);
         }
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(armaT&& src) {
-        _copy = false;
+        p_copy = false;
         mat = std::move(src);
-        _base = create_dummy_capsule(mat.memptr());
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
     py::array_t<T> get_view(bool writeable) {
@@ -149,14 +149,14 @@ class ArrayStore {
                 {nslices, nrows, ncols},                        // shape
                 {tsize * nrows * ncols, tsize, nrows * tsize},  // F-style contiguous strides
                 mat.memptr(),                                   // the data pointer
-                _base                                           // numpy array references this parent
+                p_base                                           // numpy array references this parent
             );
         } else {
             arr = py::array_t<T>(
                 {nrows, ncols},          // shape
                 {tsize, nrows * tsize},  // F-style contiguous strides
                 mat.memptr(),            // the data pointer
-                _base                    // numpy array references this parent
+                p_base                    // numpy array references this parent
             );
         }
 

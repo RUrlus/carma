@@ -38,9 +38,9 @@ using uword = arma::uword;
 using aconf =  arma::arma_config;
 
 struct conversion_error : std::exception {
-    const char* _message;
-    explicit conversion_error(const char* message) : _message(message) {}
-    const char* what() const throw() { return _message; }
+    const char* p_message;
+    explicit conversion_error(const char* message) : p_message(message) {}
+    const char* what() const throw() { return p_message; }
 };
 
 template<typename T> inline void free_array(T* data) {
@@ -52,7 +52,7 @@ template<typename T> inline void free_array(T* data) {
 }  // free_array
 
 template <typename T>
-inline T* _validate_from_array_mat(py::buffer_info& src) {
+inline T* p_validate_from_array_mat(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims < 1 || dims > 2) {
@@ -62,10 +62,10 @@ inline T* _validate_from_array_mat(py::buffer_info& src) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
-}  // _validate_to_array_mat
+}  // p_validate_to_array_mat
 
 template <typename T>
-inline arma::Mat<T> _arr_to_mat(
+inline arma::Mat<T> p_arr_to_mat(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -107,10 +107,10 @@ inline arma::Mat<T> _arr_to_mat(
     }
     free_array(data);
     return dest;
-} /* _arr_to_mat */
+} /* p_arr_to_mat */
 
 template <typename T>
-inline T* _validate_from_array_col(py::buffer_info& src) {
+inline T* p_validate_from_array_col(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[1] != 1)) {
@@ -120,10 +120,10 @@ inline T* _validate_from_array_col(py::buffer_info& src) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
-}  // _validate_to_array_col
+}  // p_validate_to_array_col
 
 template <typename T>
-arma::Col<T> _arr_to_col(
+arma::Col<T> p_arr_to_col(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -143,10 +143,10 @@ arma::Col<T> _arr_to_col(
     }
     free_array(data);
     return dest;
-} /* _arr_to_col */
+} /* p_arr_to_col */
 
 template <typename T>
-inline T* _validate_from_array_row(py::buffer_info& src) {
+inline T* p_validate_from_array_row(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[0] != 1)) {
@@ -157,10 +157,10 @@ inline T* _validate_from_array_row(py::buffer_info& src) {
         throw conversion_error("armadillo matrix conversion failed, nullptr");
     }
     return data;
-}  // _validate_to_array_row
+}  // p_validate_to_array_row
 
 template <typename T>
-arma::Row<T> _arr_to_row(
+arma::Row<T> p_arr_to_row(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -180,10 +180,10 @@ arma::Row<T> _arr_to_row(
     }
     free_array(data);
     return dest;
-} /* _arr_to_Row */
+} /* p_arr_to_Row */
 
 template <typename T>
-inline T* _validate_from_array_cube(py::buffer_info& src) {
+inline T* p_validate_from_array_cube(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims != 3) {
@@ -193,10 +193,10 @@ inline T* _validate_from_array_cube(py::buffer_info& src) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
-}  // _validate_to_array_cube
+}  // p_validate_to_array_cube
 
 template <typename T>
-arma::Cube<T> _arr_to_cube(
+arma::Cube<T> p_arr_to_cube(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
 
@@ -220,7 +220,7 @@ arma::Cube<T> _arr_to_cube(
     }
     free_array(data);
     return dest;
-} /* _arr_to_cube */
+} /* p_arr_to_cube */
 
 }  // namespace carma
 
