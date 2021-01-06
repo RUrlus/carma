@@ -19,8 +19,6 @@
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 
-#include <iostream>
-
 namespace py = pybind11;
 
 extern "C" {
@@ -56,7 +54,7 @@ static inline void steal_memory(PyObject* src) {
     reinterpret_cast<PyArrayObject_fields *>(src)->data = nullptr;
 #else
     PyArrayObject_fields* obj = reinterpret_cast<PyArrayObject_fields *>(src);
-    double* data = reinterpret_cast<double *>(malloc(sizeof(double)));
+    double* data = reinterpret_cast<double *>(PyDataMem_NEW(sizeof(double)));
     data[0] = NAN;
     obj->data = reinterpret_cast<char*>(data);
 
@@ -86,7 +84,7 @@ static inline void* c_steal_copy_array(PyObject* src) {
     void* data = PyArray_DATA(arr);
     reinterpret_cast<PyArrayObject_fields *>(dest)->data = nullptr;
     // free the array
-    PyArray_Free(dest, nullptr);
+    PyArray_Free(dest, static_cast<void *>(nullptr));
     return data;
 }  // c_steal_copy_array
 
