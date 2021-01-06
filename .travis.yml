@@ -101,8 +101,8 @@ matrix:
     name: MacOS Python 3.7, c++14, Apple Clang
 
   - os: windows
-    name: Windows Python 3.7, c++14, Visual Studio
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=msvc PYTHON_PREFIX_PATH=/c/Python37 PYTHON_SUFFIX=
+    name: Windows Python 3.7, c++14, Visual Studio, Debug
+    env: PYTHON_VERSION=3.7 CPP=14 DEBUG=true COMPILER=msvc PYTHON_PREFIX_PATH=/c/Python37 PYTHON_SUFFIX=
 
 env:
   global:
