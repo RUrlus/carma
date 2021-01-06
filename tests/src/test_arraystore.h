@@ -3,7 +3,12 @@
 
 #include <carma/carma/arraystore.h>
 
+#include <string>
+
 namespace py = pybind11;
+
+#ifndef TESTS_SRC_TEST_ARRAYSTORE_H_
+#define TESTS_SRC_TEST_ARRAYSTORE_H_
 
 void bind_test_ArrayStore_get_mat(py::module& m);
 void bind_test_ArrayStore_get_mat_rvalue(py::module& m);
@@ -58,3 +63,5 @@ void bind_ArrayStore(py::module& m, std::string&& typestr) {
                 array to be stored in armadillo matrix
         )pbdoc");
 }
+
+#endif  // TESTS_SRC_TEST_ARRAYSTORE_H_

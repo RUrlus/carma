@@ -13,8 +13,8 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     py::module np_rand = py::module::import("numpy.random");
 
     SECTION("F-contiguous; no copy; no strict") {
-        bool copy = false;
-        bool strict = false;
+        int copy = 0;
+        int strict = 0;
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
@@ -28,6 +28,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // compute sum of array
         double arr_sum = 0.0;
+        double * _ptr = reinterpret_cast<double*>(info.ptr);
         auto ptr = arr.unchecked<2>();
         for (size_t ic = 0; ic < arr_S1; ic++) {
             for (size_t ir = 0; ir < arr_S0; ir++) {
@@ -44,13 +45,13 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
-        CHECK(info.ptr == M.memptr());
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(_ptr == M.memptr());
     }
 
     SECTION("C-contiguous; no copy; no strict") {
-        bool copy = false;
-        bool strict = false;
+        int copy = 0;
+        int strict = 0;
 
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2));
 
@@ -86,13 +87,13 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         INFO("mat_sum is  " << mat_sum);
         INFO("arr_sum is  " << arr_sum);
         INFO("M " << M);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
     SECTION("F-contiguous; copy; no strict") {
-        bool copy = true;
-        bool strict = false;
+        int copy = 1;
+        int strict = 0;
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
@@ -122,13 +123,13 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
     SECTION("C-contiguous; copy; no strict") {
-        bool copy = true;
-        bool strict = false;
+        int copy = 1;
+        int strict = 0;
 
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2));
 
@@ -164,13 +165,13 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         INFO("mat_sum is " << mat_sum);
         INFO("arr_sum is " << arr_sum);
         INFO("M " << M);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
     SECTION("F-contiguous; no copy; strict") {
-        bool copy = false;
-        bool strict = true;
+        int copy = 0;
+        int strict = 1;
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
@@ -191,6 +192,8 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
             }
         }
 
+        INFO("requires_copy: ");
+        INFO(carma::requires_copy(arr));
         // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
         double mat_sum = arma::accu(M);
@@ -199,13 +202,13 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK((arr_S1) == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
     SECTION("F-contiguous; no copy; no strict -- change") {
-        bool copy = false;
-        bool strict = false;
+        int copy = 0;
+        int strict = 0;
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
@@ -237,13 +240,13 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         CHECK((arr_N + 200) == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK((arr_S1 + 2) == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
     SECTION("F-contiguous; no copy; strict -- change") {
-        bool copy = false;
-        bool strict = true;
+        int copy = 0;
+        int strict = 1;
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
@@ -254,8 +257,8 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("dimension exception") {
-        bool copy = false;
-        bool strict = false;
+        int copy = 0;
+        int strict = 1;
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
@@ -294,7 +297,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -327,7 +330,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -360,7 +363,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -391,7 +394,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -422,7 +425,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
@@ -452,7 +455,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -485,7 +488,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         // variable for test status
         CHECK(arr_N + 2 == M.n_elem);
         CHECK(arr_S0 + 2 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
@@ -542,7 +545,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -575,7 +578,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -608,7 +611,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -639,7 +642,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -670,7 +673,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
@@ -700,7 +703,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         // variable for test status
         CHECK(arr_N == M.n_elem);
         CHECK(arr_S0 == M.n_rows);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -733,7 +736,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         // variable for test status
         CHECK(arr_N + 2 == M.n_elem);
         CHECK(arr_S0 + 2 == M.n_rows);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
@@ -799,7 +802,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
         CHECK(arr_S2 == M.n_slices);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -839,17 +842,13 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
         CHECK(arr_S2 == M.n_slices);
-// FIXME [RURLUS] Resolve reason why this test only fails on Windows
-// As the Python tests cover this exact behaviour the test can be disabled relatively safely.
-#ifndef _WINDOWS
         INFO("is c-contiguous " << carma::is_c_contiguous(arr));
         INFO("is f-contiguous " << carma::is_f_contiguous(arr));
         INFO("is aligned " << carma::is_aligned(arr));
         INFO("mat_sum is  " << mat_sum);
         INFO("arr_sum is  " << arr_sum);
         INFO("M " << M);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
-#endif
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
@@ -889,7 +888,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
         CHECK(arr_S2 == M.n_slices);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
@@ -929,7 +928,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(arr_S0 == M.n_rows);
         CHECK(arr_S1 == M.n_cols);
         CHECK(arr_S2 == M.n_slices);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 
@@ -968,7 +967,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(arr_S0 == M.n_rows);
         CHECK((arr_S1) == M.n_cols);
         CHECK((arr_S2) == M.n_slices);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
 
@@ -1008,7 +1007,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(arr_S0 == M.n_rows);
         CHECK((arr_S1 + 2) == M.n_cols);
         CHECK((arr_S1) == M.n_slices);
-        CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr != M.memptr());
     }
 

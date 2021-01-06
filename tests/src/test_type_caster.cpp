@@ -3,19 +3,19 @@
 namespace carma {
 namespace tests {
 
-double test_tc_in_mat(const arma::Mat<double>& mat) {
+double test_tc_in_mat(arma::Mat<double>& mat) {
     return arma::accu(mat);
 }
 
-double test_tc_in_row(const arma::Row<double>& mat) {
+double test_tc_in_row(arma::Row<double>& mat) {
     return arma::accu(mat);
 }
 
-double test_tc_in_col(const arma::Col<double>& mat) {
+double test_tc_in_col(arma::Col<double>& mat) {
     return arma::accu(mat);
 }
 
-double test_tc_in_cube(const arma::Cube<double>& mat) {
+double test_tc_in_cube(arma::Cube<double>& mat) {
     return arma::accu(mat);
 }
 
