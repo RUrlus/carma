@@ -25,6 +25,7 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_to_arma_col(m);
     bind_test_to_arma_row(m);
     bind_test_to_arma_cube(m);
+    bind_debug_arr_to_mat(m);
 
     // mat_to_arr
     bind_test_mat_to_arr(m);
