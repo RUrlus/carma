@@ -19,6 +19,8 @@
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 
+#include<carma/carma/numpyapi.h> // NOLINT
+
 namespace py = pybind11;
 
 extern "C" {
@@ -54,7 +56,7 @@ static inline void steal_memory(PyObject* src) {
     reinterpret_cast<PyArrayObject_fields *>(src)->data = nullptr;
 #else
     PyArrayObject_fields* obj = reinterpret_cast<PyArrayObject_fields *>(src);
-    double* data = reinterpret_cast<double *>(PyDataMem_NEW(sizeof(double)));
+    double* data = reinterpret_cast<double *>(carma::api::npy_api::get().PyDataMem_NEW_(sizeof(double)));
     data[0] = NAN;
     obj->data = reinterpret_cast<char*>(data);
 
@@ -74,35 +76,18 @@ static inline void steal_memory(PyObject* src) {
 }  // steal_memory
 
 /* Use Numpy's api to copy, accounting miss behaved memory, and steal the memory */
-static inline void* c_steal_copy_array(PyObject* src) {
-    // this is needed as otherwise we get mysterious segfaults
-    import_array();
+static inline char* c_steal_copy_array(PyObject* src) {
+    auto &api = carma::api::npy_api::get();
     // copy the array to a well behaved F-order
-    PyObject* dest = PyArray_NewCopy(reinterpret_cast<PyArrayObject *>(src), NPY_FORTRANORDER);
+    PyObject* dest = api.PyArray_NewCopy_(src, NPY_FORTRANORDER);
     // we steal the memory
-    PyArrayObject* arr = reinterpret_cast<PyArrayObject *>(dest);
-    void* data = PyArray_DATA(arr);
-    reinterpret_cast<PyArrayObject_fields *>(dest)->data = nullptr;
+    PyArrayObject_fields* arr = reinterpret_cast<PyArrayObject_fields *>(dest);
+    char* data = arr->data;
+    arr->data = nullptr;
     // free the array
-    PyArray_Free(dest, static_cast<void *>(nullptr));
+    api.PyArray_Free_(dest, static_cast<void *>(nullptr));
     return data;
 }  // c_steal_copy_array
-
-/* Copy to fortran and return data ptr
- * We us Numpy's api to account for stride, order of the memory */
-static inline PyObject* copy_well_behaved(PyObject* src) {
-    // this is needed as otherwise we get mysterious segfaults
-    import_array();
-    return PyArray_NewCopy(reinterpret_cast<PyArrayObject *>(src), NPY_FORTRANORDER);
-}  // c_copy_well_behaved
-
-/* get data pointer from PyObject, steals a reference */
-static inline void * c_get_ptr(PyObject* obj) {
-    PyArrayObject* arr = reinterpret_cast<PyArrayObject *>(obj);
-    void * data = PyArray_DATA(arr);
-    PyArray_XDECREF(arr);
-    return data;
-}  // c_get_ptr
 
 }  // extern "C"
 
@@ -112,12 +97,6 @@ namespace carma {
 template <typename T>
 inline T* steal_copy_array(PyObject* src) {
     return reinterpret_cast<T*>(c_steal_copy_array(src));
-}  // steal_copy_array
-
-/* get data pointer from PyObject, steals a reference */
-template <typename T>
-inline T* get_ptr(PyObject* obj) {
-    return reinterpret_cast<T*>(c_get_ptr(obj));
 }  // steal_copy_array
 
 }  // namespace carma
