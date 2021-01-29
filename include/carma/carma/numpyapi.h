@@ -52,15 +52,21 @@ struct npy_api {
         return api;
     }
 
-    PyObject *(*PyArray_NewCopy_)(PyObject *, int);
-    void (*PyArray_Free_)(PyObject *, void* ptr);
+    PyObject *(*PyArray_NewCopy_)(PyArrayObject *, int);
+    void (*PyArray_Free_)(PyArrayObject *, void* ptr);
     void *(*PyDataMem_NEW_)(size_t nbytes);
-
- private:
+    PyObject* (*PyArray_NewLikeArray_)(PyArrayObject* prototype, NPY_ORDER order, PyArray_Descr* descr, int subok);
+    PyObject* (*PyArray_NewFromDescr_)(PyTypeObject* subtype, PyArray_Descr* descr, int nd, npy_intp const* dims, npy_intp const* strides, void* data, int flags, PyObject* obj);
+    int (*PyArray_CopyInto_)(PyArrayObject* dest, PyArrayObject* src);
+   
+   private:
     enum functions {
         API_PyArray_NewCopy = 85,
         API_PyArray_Free = 165,
         API_PyDataMem_NEW = 288,
+        API_PyArray_NewLikeArray = 277,
+        API_PyArray_NewFromDescr = 94,
+        API_PyArray_CopyInto = 82,
     };
 
     static npy_api lookup() {
@@ -76,6 +82,9 @@ struct npy_api {
         DECL_NPY_API(PyArray_NewCopy);
         DECL_NPY_API(PyArray_Free);
         DECL_NPY_API(PyDataMem_NEW);
+        DECL_NPY_API(PyArray_NewLikeArray);
+        DECL_NPY_API(PyArray_NewFromDescr);
+        DECL_NPY_API(PyArray_CopyInto);
 #undef DECL_NPY_API
         return api;
     }
