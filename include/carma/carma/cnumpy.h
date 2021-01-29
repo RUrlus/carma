@@ -75,28 +75,72 @@ static inline void steal_memory(PyObject* src) {
 #endif
 }  // steal_memory
 
-/* Use Numpy's api to copy, accounting miss behaved memory, and steal the memory */
-static inline char* c_steal_copy_array(PyObject* src) {
-    auto &api = carma::api::npy_api::get();
-    // copy the array to a well behaved F-order
-    PyObject* dest = api.PyArray_NewCopy_(src, NPY_FORTRANORDER);
-    // we steal the memory
-    PyArrayObject_fields* arr = reinterpret_cast<PyArrayObject_fields *>(dest);
-    char* data = arr->data;
-    arr->data = nullptr;
-    // free the array
-    api.PyArray_Free_(dest, static_cast<void *>(nullptr));
-    return data;
-}  // c_steal_copy_array
-
 }  // extern "C"
 
 namespace carma {
 
 /* Use Numpy's api to account for stride, order and steal the memory */
 template <typename T>
-inline T* steal_copy_array(PyObject* src) {
-    return reinterpret_cast<T*>(c_steal_copy_array(src));
+inline static T* steal_copy_array(PyObject* src0) {
+    PyArrayObject* src = reinterpret_cast<PyArrayObject*>(src0);
+    auto& api = carma::api::npy_api::get();
+
+#if WIN32
+    // must be false for WIN32 (cf https://devblogs.microsoft.com/oldnewthing/20060915-04/?p=29723)
+    const bool allow_foreign_allocator = false;  
+#else /* WIN32 */
+    const bool allow_foreign_allocator = true;
+#endif
+    PyArray_Descr* dtype = PyArray_DESCR(src);
+    Py_INCREF(dtype);
+    int ndim = PyArray_NDIM((PyArrayObject*)src);
+    npy_intp const* dims = PyArray_DIMS(src);
+
+    T* data = NULL;
+    npy_intp* strides = NULL;
+    const int subok = 1;
+
+    bool delegate_allocation = PyArray_FLAGS(src) & NPY_ARRAY_F_CONTIGUOUS && allow_foreign_allocator;
+
+    if (!delegate_allocation) {
+        // we allocate a new memory buffer
+        int buffsize = 1;
+        for (int d = 0; d < ndim; ++d)
+            buffsize *= dims[d];
+        data = arma::memory::acquire<T>(buffsize); // data will be freed by arma::memory::release<T> 
+
+        strides = new npy_intp[NPY_MAXDIMS];
+        npy_intp stride = dtype->elsize;
+        for (int idim = 0; idim < ndim; ++idim) {
+            strides[idim] = stride;
+            stride *= dims[idim];
+        }
+    }
+
+    // build an PyArray to do F-order copy
+    PyArrayObject* dest = reinterpret_cast<PyArrayObject*>(api.PyArray_NewFromDescr_(
+        subok ? Py_TYPE(src) : &PyArray_Type,
+        dtype,
+        ndim,
+        dims,
+        strides,
+        data,
+        NPY_FORTRANORDER | ((data) ? ~NPY_ARRAY_OWNDATA : 0),  // | NPY_ARRAY_F_CONTIGUOUS /* | NPY_ARRAY_WRITEABLE*/,
+        subok ? (PyObject*)src : NULL));
+
+    // copy the array to a well behaved F-order
+    api.PyArray_CopyInto_(dest, src);
+
+    if (delegate_allocation) {
+        // we steal the memory
+        PyArrayObject_fields* arr = reinterpret_cast<PyArrayObject_fields*>(dest);
+        data = reinterpret_cast<T*>(std::exchange(arr->data, nullptr));
+    }
+    // free the array
+    api.PyArray_Free_(dest, static_cast<void*>(nullptr));
+    delete[] strides;
+
+    return data;
 }  // steal_copy_array
 
 }  // namespace carma
