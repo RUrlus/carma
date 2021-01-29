@@ -932,6 +932,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(info.ptr != M.memptr());
     }
 
+#ifndef WIN32
     SECTION("F-contiguous; no copy; strict") {
         bool copy = false;
         bool strict = true;
@@ -970,7 +971,8 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
-
+#endif
+    
     SECTION("F-contiguous; no copy; no strict -- change") {
         bool copy = false;
         bool strict = false;
@@ -1011,6 +1013,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(info.ptr != M.memptr());
     }
 
+#ifndef WIN32
     SECTION("F-contiguous; no copy; strict -- change") {
         bool copy = false;
         bool strict = true;
@@ -1022,7 +1025,8 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         REQUIRE_THROWS(M.insert_cols(0, 2, true));
     }
-
+#endif
+    
     SECTION("dimension exception") {
         bool copy = false;
         bool strict = false;
