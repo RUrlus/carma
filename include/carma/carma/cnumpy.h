@@ -21,6 +21,8 @@
 
 #include<carma/carma/numpyapi.h> // NOLINT
 
+#include <armadillo> // NOLINT
+
 namespace py = pybind11;
 
 extern "C" {
@@ -87,13 +89,13 @@ inline static T* steal_copy_array(PyObject* src0) {
 
 #if WIN32
     // must be false for WIN32 (cf https://devblogs.microsoft.com/oldnewthing/20060915-04/?p=29723)
-    const bool allow_foreign_allocator = false;  
+    const bool allow_foreign_allocator = false;
 #else /* WIN32 */
     const bool allow_foreign_allocator = true;
 #endif
     PyArray_Descr* dtype = PyArray_DESCR(src);
     Py_INCREF(dtype);
-    int ndim = PyArray_NDIM((PyArrayObject*)src);
+    int ndim = PyArray_NDIM(reinterpret_cast<PyArrayObject*>(src));
     npy_intp const* dims = PyArray_DIMS(src);
 
     T* data = NULL;
@@ -107,7 +109,7 @@ inline static T* steal_copy_array(PyObject* src0) {
         int buffsize = 1;
         for (int d = 0; d < ndim; ++d)
             buffsize *= dims[d];
-        data = arma::memory::acquire<T>(buffsize); // data will be freed by arma::memory::release<T> 
+        data = arma::memory::acquire<T>(buffsize); // data will be freed by arma::memory::release<T>
 
         strides = new npy_intp[NPY_MAXDIMS];
         npy_intp stride = dtype->elsize;
@@ -126,7 +128,7 @@ inline static T* steal_copy_array(PyObject* src0) {
         strides,
         data,
         NPY_FORTRANORDER | ((data) ? ~NPY_ARRAY_OWNDATA : 0),  // | NPY_ARRAY_F_CONTIGUOUS /* | NPY_ARRAY_WRITEABLE*/,
-        subok ? (PyObject*)src : NULL));
+        subok ? reinterpret_cast<PyObject*>(src) : NULL));
 
     // copy the array to a well behaved F-order
     api.PyArray_CopyInto_(dest, src);
