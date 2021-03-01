@@ -20,8 +20,8 @@
 #include <pybind11/pybind11.h>  // NOLINT
 namespace py = pybind11;
 
-#ifndef INCLUDE_CARMA_CARMA_NPARRAY_H_
-#define INCLUDE_CARMA_CARMA_NPARRAY_H_
+#ifndef INCLUDE_CARMA_BITS_NPARRAY_H_
+#define INCLUDE_CARMA_BITS_NPARRAY_H_
 
 namespace carma {
 
@@ -104,4 +104,4 @@ inline void set_c_contiguous(py::array_t<T>& arr) {
 
 }  // namespace carma
 
-#endif  // INCLUDE_CARMA_CARMA_NPARRAY_H_
+#endif  // INCLUDE_CARMA_BITS_NPARRAY_H_

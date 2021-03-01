@@ -1,4 +1,4 @@
-#include <carma/carma.h>
+#include <carma>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <armadillo>
@@ -972,7 +972,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(info.ptr == M.memptr());
     }
 #endif
-    
+
     SECTION("F-contiguous; no copy; no strict -- change") {
         bool copy = false;
         bool strict = false;
@@ -1026,7 +1026,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         REQUIRE_THROWS(M.insert_cols(0, 2, true));
     }
 #endif
-    
+
     SECTION("dimension exception") {
         bool copy = false;
         bool strict = false;

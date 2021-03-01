@@ -18,12 +18,12 @@
 #include <iostream>
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
-#include <carma/carma/converters.h>  // NOLINT
+#include <carma_bits/converters.h>  // NOLINT
 
 namespace py = pybind11;
 
-#ifndef INCLUDE_CARMA_CARMA_ARRAYSTORE_H_
-#define INCLUDE_CARMA_CARMA_ARRAYSTORE_H_
+#ifndef INCLUDE_CARMA_BITS_ARRAYSTORE_H_
+#define INCLUDE_CARMA_BITS_ARRAYSTORE_H_
 
 namespace carma {
 
@@ -171,4 +171,4 @@ class ArrayStore {
 
 } /* namespace carma */
 
-#endif  // INCLUDE_CARMA_CARMA_ARRAYSTORE_H_
+#endif  // INCLUDE_CARMA_BITS_ARRAYSTORE_H_

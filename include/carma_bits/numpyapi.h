@@ -12,8 +12,8 @@
  *  Apache-2.0 license that can be found in the LICENSE file.
  */
 
-#ifndef INCLUDE_CARMA_CARMA_NUMPYAPI_H_
-#define INCLUDE_CARMA_CARMA_NUMPYAPI_H_
+#ifndef INCLUDE_CARMA_BITS_NUMPYAPI_H_
+#define INCLUDE_CARMA_BITS_NUMPYAPI_H_
 
 #define NPY_NO_DEPRECATED_API NPY_1_14_API_VERSION
 /* C headers */
@@ -26,8 +26,7 @@
 
 namespace py = pybind11;
 
-namespace carma {
-namespace api {
+namespace carman {
 
 inline void * NPy_Malloc(size_t size) {
     return PyMem_RawMalloc(size);
@@ -55,15 +54,17 @@ struct npy_api {
     PyObject *(*PyArray_NewCopy_)(PyArrayObject *, int);
     void (*PyArray_Free_)(PyArrayObject *, void* ptr);
     void *(*PyDataMem_NEW_)(size_t nbytes);
+    void (*PyDataMem_FREE_)(void* ptr);
     PyObject* (*PyArray_NewLikeArray_)(PyArrayObject* prototype, NPY_ORDER order, PyArray_Descr* descr, int subok);
     PyObject* (*PyArray_NewFromDescr_)(PyTypeObject* subtype, PyArray_Descr* descr, int nd, npy_intp const* dims, npy_intp const* strides, void* data, int flags, PyObject* obj);
     int (*PyArray_CopyInto_)(PyArrayObject* dest, PyArrayObject* src);
-   
-   private:
+
+ private:
     enum functions {
         API_PyArray_NewCopy = 85,
         API_PyArray_Free = 165,
         API_PyDataMem_NEW = 288,
+        API_PyDataMem_FREE = 289,
         API_PyArray_NewLikeArray = 277,
         API_PyArray_NewFromDescr = 94,
         API_PyArray_CopyInto = 82,
@@ -82,6 +83,7 @@ struct npy_api {
         DECL_NPY_API(PyArray_NewCopy);
         DECL_NPY_API(PyArray_Free);
         DECL_NPY_API(PyDataMem_NEW);
+        DECL_NPY_API(PyDataMem_FREE);
         DECL_NPY_API(PyArray_NewLikeArray);
         DECL_NPY_API(PyArray_NewFromDescr);
         DECL_NPY_API(PyArray_CopyInto);
@@ -90,7 +92,6 @@ struct npy_api {
     }
 };
 
-}  // namespace api
-}  // namespace carma
+}  // namespace carman
 
-#endif  // INCLUDE_CARMA_CARMA_NUMPYAPI_H_
+#endif  // INCLUDE_CARMA_BITS_NUMPYAPI_H_

@@ -23,14 +23,14 @@
 #include <pybind11/pybind11.h>  // NOLINT
 
 /* carma headers */
-#include <carma/carma/utils.h>  // NOLINT
-#include <carma/carma/cnumpy.h>  // NOLINT
-#include <carma/carma/nparray.h>  // NOLINT
+#include <carma_bits/utils.h>  // NOLINT
+#include <carma_bits/cnumpy.h>  // NOLINT
+#include <carma_bits/nparray.h>  // NOLINT
 
 namespace py = pybind11;
 
-#ifndef INCLUDE_CARMA_CARMA_NUMPYTOARMA_H_
-#define INCLUDE_CARMA_CARMA_NUMPYTOARMA_H_
+#ifndef INCLUDE_CARMA_BITS_NUMPYTOARMA_H_
+#define INCLUDE_CARMA_BITS_NUMPYTOARMA_H_
 
 namespace carma {
 
@@ -224,4 +224,4 @@ arma::Cube<T> p_arr_to_cube(
 
 }  // namespace carma
 
-#endif  // INCLUDE_CARMA_CARMA_NUMPYTOARMA_H_
+#endif  // INCLUDE_CARMA_BITS_NUMPYTOARMA_H_
