@@ -4,11 +4,12 @@
  *  Apache-2.0 license that can be found in the LICENSE file.
  */
 
-#ifndef INCLUDE_CARMA_CARMA_CNUMPY_H_
-#define INCLUDE_CARMA_CARMA_CNUMPY_H_
+#ifndef INCLUDE_CARMA_BITS_CNUMPY_H_
+#define INCLUDE_CARMA_BITS_CNUMPY_H_
 #define NPY_NO_DEPRECATED_API NPY_1_14_API_VERSION
 /* C headers */
 #include <Python.h>
+#include <pymem.h>
 #include <numpy/arrayobject.h>
 #include <numpy/ndarraytypes.h>
 
@@ -19,7 +20,7 @@
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 
-#include<carma/carma/numpyapi.h> // NOLINT
+#include <carma_bits/numpyapi.h> // NOLINT
 
 #include <armadillo> // NOLINT
 
@@ -58,7 +59,7 @@ static inline void steal_memory(PyObject* src) {
     reinterpret_cast<PyArrayObject_fields *>(src)->data = nullptr;
 #else
     PyArrayObject_fields* obj = reinterpret_cast<PyArrayObject_fields *>(src);
-    double* data = reinterpret_cast<double *>(carma::api::npy_api::get().PyDataMem_NEW_(sizeof(double)));
+    double* data = reinterpret_cast<double *>(carman::npy_api::get().PyDataMem_NEW_(sizeof(double)));
     data[0] = NAN;
     obj->data = reinterpret_cast<char*>(data);
 
@@ -85,7 +86,7 @@ namespace carma {
 template <typename T>
 inline static T* steal_copy_array(PyObject* src0) {
     PyArrayObject* src = reinterpret_cast<PyArrayObject*>(src0);
-    auto& api = carma::api::npy_api::get();
+    auto& api = carman::npy_api::get();
 
 #if WIN32
     // must be false for WIN32 (cf https://devblogs.microsoft.com/oldnewthing/20060915-04/?p=29723)
@@ -147,4 +148,4 @@ inline static T* steal_copy_array(PyObject* src0) {
 
 }  // namespace carma
 
-#endif  // INCLUDE_CARMA_CARMA_CNUMPY_H_
+#endif  // INCLUDE_CARMA_BITS_CNUMPY_H_

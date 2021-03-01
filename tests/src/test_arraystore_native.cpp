@@ -3,7 +3,7 @@
 #include <armadillo>
 #include <catch2/catch.hpp>
 
-#include <carma/carma.h>
+#include <carma>
 namespace py = pybind11;
 
 typedef arma::Mat<long> lMat;

@@ -26,16 +26,16 @@
 #include <pybind11/pybind11.h>  // NOLINT
 
 /* carma headers */
-#include <carma/carma/utils.h>  // NOLINT
-#include <carma/carma/cnumpy.h>  // NOLINT
-#include <carma/carma/nparray.h>  // NOLINT
-#include <carma/carma/numpytoarma.h>  // NOLINT
-#include <carma/carma/armatonumpy.h>  // NOLINT
+#include <carma_bits/utils.h>  // NOLINT
+#include <carma_bits/cnumpy.h>  // NOLINT
+#include <carma_bits/nparray.h>  // NOLINT
+#include <carma_bits/numpytoarma.h>  // NOLINT
+#include <carma_bits/armatonumpy.h>  // NOLINT
 
 namespace py = pybind11;
 
-#ifndef INCLUDE_CARMA_CARMA_CONVERTERS_H_
-#define INCLUDE_CARMA_CARMA_CONVERTERS_H_
+#ifndef INCLUDE_CARMA_BITS_CONVERTERS_H_
+#define INCLUDE_CARMA_BITS_CONVERTERS_H_
 
 namespace carma {
 
@@ -777,4 +777,4 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
 };
 } /* namespace detail */
 } /* namespace pybind11 */
-#endif  // INCLUDE_CARMA_CARMA_CONVERTERS_H_
+#endif  // INCLUDE_CARMA_BITS_CONVERTERS_H_
