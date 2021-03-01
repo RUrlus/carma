@@ -1,5 +1,5 @@
 #include <armadillo>
-#include <carma/carma.h>
+#include <carma>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 

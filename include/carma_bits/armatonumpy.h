@@ -23,8 +23,8 @@
 
 namespace py = pybind11;
 
-#ifndef INCLUDE_CARMA_CARMA_ARMATONUMPY_H_
-#define INCLUDE_CARMA_CARMA_ARMATONUMPY_H_
+#ifndef INCLUDE_CARMA_BITS_ARMATONUMPY_H_
+#define INCLUDE_CARMA_BITS_ARMATONUMPY_H_
 
 namespace carma {
 
@@ -115,4 +115,4 @@ inline py::array_t<T> p_construct_array(arma::Cube<T>* data) {
 } /* p_construct_array */
 
 }  // namespace carma
-#endif  // INCLUDE_CARMA_CARMA_ARMATONUMPY_H_
+#endif  // INCLUDE_CARMA_BITS_ARMATONUMPY_H_

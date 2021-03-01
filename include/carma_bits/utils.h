@@ -24,8 +24,8 @@
 
 namespace py = pybind11;
 
-#ifndef INCLUDE_CARMA_CARMA_UTILS_H_
-#define INCLUDE_CARMA_CARMA_UTILS_H_
+#ifndef INCLUDE_CARMA_BITS_UTILS_H_
+#define INCLUDE_CARMA_BITS_UTILS_H_
 
 namespace carma {
 
