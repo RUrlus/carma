@@ -12,8 +12,8 @@
  *  Apache-2.0 license that can be found in the LICENSE file.
  */
 
-#ifndef INCLUDE_CARMA_BITS_NUMPYAPI_H_
-#define INCLUDE_CARMA_BITS_NUMPYAPI_H_
+#ifndef CARMANUMPY_CARMANUMPY_H_
+#define CARMANUMPY_CARMANUMPY_H_
 
 #define NPY_NO_DEPRECATED_API NPY_1_14_API_VERSION
 /* C headers */
@@ -94,4 +94,4 @@ struct npy_api {
 
 }  // namespace carman
 
-#endif  // INCLUDE_CARMA_BITS_NUMPYAPI_H_
+#endif  // CARMANUMPY_CARMANUMPY_H_

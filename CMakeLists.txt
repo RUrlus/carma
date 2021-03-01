@@ -62,15 +62,49 @@ endif()
 
 find_package(Python3 COMPONENTS Interpreter NumPy)
 
+ADD_LIBRARY(carman INTERFACE)
+TARGET_INCLUDE_DIRECTORIES(carman INTERFACE ${PROJECT_SOURCE_DIR}/carmanumpy)
+TARGET_LINK_LIBRARIES(carman INTERFACE pybind11 Python3::NumPy)
+
+INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/carmanumpy" 
+        DESTINATION .
+        FILES_MATCHING PATTERN "*.h")
+
+###############################################################################
+#                       CUSTOM ARMADILLO TARGET                               #
+###############################################################################
+# This target is needed as we link carmanumpy, header containing our numpy
+# api to armadillo. On windows platform we need to use the same de-allocater,
+# numpy's wrapper around malloc/free, as allocater. We set a compile time
+# definition that enables the use of numpy's malloc within armadillo but
+# requires linking with carmanumpy
+IF(WIN32)
+    if(NOT TARGET armadillo)
+        ADD_DEFINITIONS(-DCARMA_USE_NUMPY_ALLOC)
+        if (ARMADILLO_ROOT_DIR)
+            #add_subdirectory(${ARMADILLO_ROOT_DIR} armadillo-code)
+            SET(ARMADILLO_INCLUDE_DIR ${ARMADILLO_ROOT_DIR}/include)
+        else()
+            #add_subdirectory(third_party/armadillo-code)
+            SET(ARMADILLO_INCLUDE_DIR third_party/armadillo-code/include)
+        endif()
+        ADD_LIBRARY(armadillo INTERFACE)
+        TARGET_LINK_LIBRARIES(armadillo INTERFACE carman)
+        TARGET_INCLUDE_DIRECTORIES(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/carmanumpy)
+    else()
+        MESSAGE(FATAL_ERROR "A custom armadillo target is required on Windows, please set ARMADILLO_ROOT_DIR. See documentation section `Building--Windows`")
+    endif()
+endif()
 
 ADD_LIBRARY(carma INTERFACE)
-TARGET_LINK_LIBRARIES(carma INTERFACE pybind11 armadillo Python3::NumPy)
+TARGET_LINK_LIBRARIES(carma INTERFACE pybind11 armadillo Python3::NumPy carman)
 TARGET_INCLUDE_DIRECTORIES(carma
         INTERFACE
         # path of the headers after installation
         $<INSTALL_INTERFACE:include> # <prefix>/include/carma
         # path of the headers before installation
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        ${PROJECT_SOURCE_DIR}/carmanumpy
         )
 INSTALL(DIRECTORY "${PROJECT_SOURCE_DIR}/include" 
         DESTINATION .
@@ -102,7 +136,8 @@ IF (BUILD_TESTS OR BUILD_EXAMPLES)
             SET(ARMADILLO_INCLUDE_DIR third_party/armadillo-code/include)
         endif()
         ADD_LIBRARY(armadillo INTERFACE)
-        target_include_directories(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
+        TARGET_LINK_LIBRARIES(armadillo INTERFACE carman)
+        TARGET_INCLUDE_DIRECTORIES(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/carmanumpy)
     endif()
 
     if(NOT TARGET pybind11)

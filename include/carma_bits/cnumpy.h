@@ -20,7 +20,7 @@
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 
-#include <carma_bits/numpyapi.h> // NOLINT
+#include <carmanumpy.h> // NOLINT
 
 #include <armadillo> // NOLINT
 
