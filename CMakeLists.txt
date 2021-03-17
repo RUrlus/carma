@@ -60,11 +60,10 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 endif()
 
-find_package(Python3 COMPONENTS Interpreter NumPy)
-
+FIND_PACKAGE(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
 
 ADD_LIBRARY(carma INTERFACE)
-TARGET_LINK_LIBRARIES(carma INTERFACE pybind11 armadillo Python3::NumPy)
+TARGET_LINK_LIBRARIES(carma INTERFACE armadillo pybind11::headers Python3::Module Python3::NumPy)
 TARGET_INCLUDE_DIRECTORIES(carma
         INTERFACE
         # path of the headers after installation
