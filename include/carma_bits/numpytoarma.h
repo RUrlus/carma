@@ -46,8 +46,27 @@ struct conversion_error : std::exception {
 template<typename T> inline void free_array(T* data) {
     carman::npy_api::get().PyDataMem_FREE_(static_cast<void *>(data));
 }  // free_array
+
+template <typename T>
+    inline T* steal_andor_copy(PyObject* obj, T* data) {
+#ifdef WIN32
+    // we must copy as foreign (de)allocators are not
+    // allowed on windows and armadillo will own the memory
+    // from this point onwards
+    // https://devblogs.microsoft.com/oldnewthing/20060915-04/?p=29723
+    data = steal_copy_array<T>(obj);
 #else
+    if (!well_behaved(obj)) {
+        // copy and ensure fortran order
+        data = steal_copy_array<T>(obj);
+    } else {
+        // remove control of memory from numpy
+        steal_memory<T>(obj);
+    }
 #endif
+    return data;
+}
+
 
 template <typename T>
 inline T* p_validate_from_array_mat(py::buffer_info& src) {
