@@ -15,6 +15,7 @@
 
 /* STD header */
 #include <limits>
+#include <iostream>
 
 #include <armadillo> // NOLINT
 
@@ -86,39 +87,56 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
     );
 #endif
 }
+
+/* ---- steal_memory ----
+ * The default behaviour is to turn off the owndata flag, numpy will no longer
+ * free the allocated resources.
+ * Benefit of this approach is that it's doesn't rely on deprecated access.
+ * However, it can result in hard to detect bugs
+ *
+ * If CARMA_SOFT_STEAL is defined, the stolen array is replaced with an array
+ * containing a single NaN and set the appropriate dimensions and strides.
+ * This means the original references can be accessed but no longer should.
+ *
+ * Alternative is to define CARMA_HARD_STEAL which sets a nullptr and decreases
+ * the reference count. NOTE, accessing the original reference when using
+ * CARMA_HARD_STEAL will trigger a segfault.
+ *
+ * Note this function makes use of PyArrayObject_fields which is internal
+ * and is noted with:
+ *
+ * "The main array object structure. It has been recommended to use the inline
+ * functions defined below (PyArray_DATA and friends) to access fields here
+ * for a number of releases. Direct access to the members themselves is
+ * deprecated. To ensure that your code does not use deprecated access,
+ * #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION (or
+ * NPY_1_8_API_VERSION or higher as required).
+ * This struct will be moved to a private header in a future release"
+ */
 static inline void steal_memory(PyObject* src) {
-    /* ---- steal_memory ----
-     * The default behaviour is to replace the stolen array with an array containing
-     * a single NaN and set the appropriate dimensions and strides.
-     * This means the original references can be accessed but no longer should.
-     *
-     * Alternative is to define CARMA_HARD_STEAL which sets a nullptr and decreases
-     * the reference count. NOTE, accessing the original reference when using
-     * CARMA_HARD_STEAL will trigger a segfault.
-     *
-     * Note this function makes use of PyArrayObject_fields which is internal
-     * and is noted with:
-     *
-     * "The main array object structure. It has been recommended to use the inline
-     * functions defined below (PyArray_DATA and friends) to access fields here
-     * for a number of releases. Direct access to the members themselves is
-     * deprecated. To ensure that your code does not use deprecated access,
-     * #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION (or
-     * NPY_1_8_API_VERSION or higher as required).
-     * This struct will be moved to a private header in a future release"
-     *
-     * I don't know of a way around it, assignment using the macros,
-     * such as PyArray_DATA, is not possible.
-     * The deprecation macro has been included which will at least raise an error
-     * during compilation if `PyArrayObject_fields` has become deprecated.
-     *
-     * Better solutions are very welcome.
-     */
-#ifdef CARMA_HARD_STEAL
+#ifdef CARMA_DEBUG_STEAL
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src)
+    std::cout << "CARMA DEBUG INFO" << "\n";
+    std::cout << "Array with adress: " << PyArray_DATA(arr) << "is being stolen" << "\n";
+    int ndim = PyArray_NDIM(arr);
+    npy_int * dims = PyArray_DIMS(arr);
+    bool first = true;
+    std::cout << "the array has shape: ";
+    for (int i = 0; i < ndim; i++) {
+        std::cout << (first ? "(" : ", ") << dims[i];
+        first = false;
+    }
+    std::cout << ")" << "\n";
+    std::cout << "with first element: " << arr[0] << "\n";
+#endif
+#if defined CARMA_HARD_STEAL
     reinterpret_cast<PyArrayObject_fields *>(src)->data = nullptr;
-#else
+#elif defined CARMA_SOFT_STEAL
     PyArrayObject_fields* obj = reinterpret_cast<PyArrayObject_fields *>(src);
-    double* data = reinterpret_cast<double *>(carman::npy_api::get().PyDataMem_NEW_(sizeof(double)));
+    double* data = reinterpret_cast<double *>(
+            carman::npy_api::get().PyDataMem_NEW_(sizeof(double))
+    );
+    if (data == NULL) throw std::bad_alloc();
     data[0] = NAN;
     obj->data = reinterpret_cast<char*>(data);
 
@@ -134,6 +152,8 @@ static inline void steal_memory(PyObject* src) {
         obj->dimensions[1] = static_cast<npy_int>(0);
         obj->dimensions[2] = static_cast<npy_int>(0);
     }
+#else
+    PyArray_CLEARFLAGS(reinterpret_cast<PyArrayObject*>(src), NPY_ARRAY_OWNDATA);
 #endif
 }  // steal_memory
 
