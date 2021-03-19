@@ -96,16 +96,21 @@ inline arma::Mat<T> p_arr_to_mat(
 
     arma::Mat<T> dest(data, nrows, ncols, copy, strict);
 
+    // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
         return dest;
     }
-    if (!copy) {
-        // after stealing Arma has to manage the lifetime of the memory
-        arma::access::rw(dest.n_alloc) = nelem;
-        arma::access::rw(dest.mem_state) = 0;
+    // we have stolen, numpy no longer owns the memory.
+    // but we have copied into the matrix, hence we have to free the memory
+    if (copy) {
+        free_array(data);
         return dest;
     }
-    free_array(data);
+    // we have stolen, numpy no longer owns the memory and
+    // we haven't copied into the matrix hence Arma has to manage the lifetime
+    // of the memory
+    arma::access::rw(dest.n_alloc) = nelem;
+    arma::access::rw(dest.mem_state) = 0;
     return dest;
 } /* p_arr_to_mat */
 
@@ -132,16 +137,21 @@ arma::Col<T> p_arr_to_col(
 
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
     arma::Col<T> dest(data, nelem, copy, strict);
+    // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
         return dest;
     }
-    if (!copy) {
-        // after stealing Arma has to manage the lifetime of the memory
-        arma::access::rw(dest.n_alloc) = nelem;
-        arma::access::rw(dest.mem_state) = 0;
+    // we have stolen, numpy no longer owns the memory.
+    // but we have copied into the matrix, hence we have to free the memory
+    if (copy) {
+        free_array(data);
         return dest;
     }
-    free_array(data);
+    // we have stolen, numpy no longer owns the memory and
+    // we haven't copied into the matrix hence Arma has to manage the lifetime
+    // of the memory
+    arma::access::rw(dest.n_alloc) = nelem;
+    arma::access::rw(dest.mem_state) = 0;
     return dest;
 } /* p_arr_to_col */
 
@@ -169,16 +179,21 @@ arma::Row<T> p_arr_to_row(
 
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
     arma::Row<T> dest(data, nelem, copy, strict);
+    // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
         return dest;
     }
-    if (!copy) {
-        // after stealing Arma has to manage the lifetime of the memory
-        arma::access::rw(dest.n_alloc) = nelem;
-        arma::access::rw(dest.mem_state) = 0;
+    // we have stolen, numpy no longer owns the memory.
+    // but we have copied into the matrix, hence we have to free the memory
+    if (copy) {
+        free_array(data);
         return dest;
     }
-    free_array(data);
+    // we have stolen, numpy no longer owns the memory and
+    // we haven't copied into the matrix hence Arma has to manage the lifetime
+    // of the memory
+    arma::access::rw(dest.n_alloc) = nelem;
+    arma::access::rw(dest.mem_state) = 0;
     return dest;
 } /* p_arr_to_Row */
 
@@ -209,16 +224,21 @@ arma::Cube<T> p_arr_to_cube(
 
     bool copy = (nelem > arma::Cube_prealloc::mem_n_elem) ? false : true;
     arma::Cube<T> dest(data, nrows, ncols, nslices, copy, strict);
+    // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
         return dest;
     }
-    if (!copy) {
-        // after stealing Arma has to manage the lifetime of the memory
-        arma::access::rw(dest.n_alloc) = nelem;
-        arma::access::rw(dest.mem_state) = 0;
+    // we have stolen, numpy no longer owns the memory.
+    // but we have copied into the matrix, hence we have to free the memory
+    if (copy) {
+        free_array(data);
         return dest;
     }
-    free_array(data);
+    // we have stolen, numpy no longer owns the memory and
+    // we haven't copied into the matrix hence Arma has to manage the lifetime
+    // of the memory
+    arma::access::rw(dest.n_alloc) = nelem;
+    arma::access::rw(dest.mem_state) = 0;
     return dest;
 } /* p_arr_to_cube */
 
