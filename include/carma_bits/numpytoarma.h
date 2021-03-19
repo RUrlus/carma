@@ -44,12 +44,10 @@ struct conversion_error : std::exception {
 };
 
 template<typename T> inline void free_array(T* data) {
-#if defined(_MSC_VER)
-    _aligned_free(reinterpret_cast<void *>(data));
-#else
-    free(reinterpret_cast<void *>(data));
-#endif
+    carman::npy_api::get().PyDataMem_FREE_(static_cast<void *>(data));
 }  // free_array
+#else
+#endif
 
 template <typename T>
 inline T* p_validate_from_array_mat(py::buffer_info& src) {
