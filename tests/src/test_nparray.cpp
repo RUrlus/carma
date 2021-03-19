@@ -40,3 +40,11 @@ void bind_test_set_not_writeable(py::module& m) {
         [](py::array_t<double>& arr) { carma::set_not_writeable(arr); },
         "Test is set_not_writeable");
 }
+
+void bind_test_is_well_behaved(py::module& m) {
+    m.def(
+        "is_well_behaved",
+        [](const py::array_t<double>& arr) { return carma::is_well_behaved(arr); },
+        "Test is_well_behaved"
+    );
+}
