@@ -1,4 +1,3 @@
-#include <string>
 
 #include <pybind11/pybind11.h>
 // include numpy header for usage of array_t
@@ -9,6 +8,8 @@
 #include "test_mat_to_arr.h"
 #include "test_nparray.h"
 #include "test_type_caster.h"
+
+#include <string>
 
 namespace py = pybind11;
 
@@ -57,6 +58,7 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_is_c_contiguous(m);
     bind_test_set_not_owndata(m);
     bind_test_set_not_writeable(m);
+    bind_test_is_well_behaved(m);
 
     // type caster
     bind_test_tc_in_mat(m);
