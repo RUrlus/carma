@@ -18,6 +18,7 @@
 
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
+#include <carma_bits/cnumpy.h> // NOLINT
 namespace py = pybind11;
 
 #ifndef INCLUDE_CARMA_BITS_NPARRAY_H_
@@ -64,12 +65,8 @@ inline bool is_aligned(const py::array_t<T>& arr) {
 }
 
 template <typename T>
-inline bool requires_copy(const py::array_t<T>& arr) {
-#ifdef CARMA_DONT_REQUIRE_OWNDATA
-    return (!is_writeable(arr) || !is_aligned(arr));
-#else
-    return (!is_writeable(arr) || !is_owndata(arr) || !is_aligned(arr));
-#endif
+inline bool is_well_behaved(const py::array_t<T>& arr) {
+    return well_behaved(arr.ptr());
 }
 
 template <typename T>

@@ -16,17 +16,76 @@
 /* STD header */
 #include <limits>
 
+#include <armadillo> // NOLINT
+
 /* External */
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
-
 #include <carma_bits/numpyapi.h> // NOLINT
-
-#include <armadillo> // NOLINT
 
 namespace py = pybind11;
 
 extern "C" {
+/* well behaved is defined as:
+ *   - aligned
+ *   - writeable
+ *   - Fortran contiguous (column major)
+ *   - owndata (optional, on by default)
+ * The last check can be disabled by setting `-DCARMA_DONT_REQUIRE_OWNDATA`
+ */
+static inline bool well_behaved(PyObject* src) {
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
+#if defined CARMA_DONT_REQUIRE_OWNDATA && defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(
+        arr, NPY_ARRAY_ALIGNED | NPY_ARRAY_WRITEABLE
+    );
+#elif defined CARMA_DONT_REQUIRE_OWNDATA
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED| NPY_ARRAY_WRITEABLE | NPY_ARRAY_F_CONTIGUOUS
+    );
+#elif defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED| NPY_ARRAY_WRITEABLE | NPY_ARRAY_OWNDATA
+    );
+#else
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED| NPY_ARRAY_WRITEABLE | NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_OWNDATA
+    );
+#endif
+}
+
+/* well behaved is defined as:
+ *   - aligned
+ *   - writeable
+ *   - Fortran contiguous (column major)
+ *   - owndata (optional, on by default)
+ * The last check can be disabled by setting `-DCARMA_DONT_REQUIRE_OWNDATA`
+ */
+static inline bool well_behaved_arr(PyArrayObject* arr) {
+#if defined CARMA_DONT_REQUIRE_OWNDATA && defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(
+        arr, NPY_ARRAY_ALIGNED | NPY_ARRAY_WRITEABLE
+    );
+#elif defined CARMA_DONT_REQUIRE_OWNDATA
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED| NPY_ARRAY_WRITEABLE | NPY_ARRAY_F_CONTIGUOUS
+    );
+#elif defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED| NPY_ARRAY_WRITEABLE | NPY_ARRAY_OWNDATA
+    );
+#else
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED| NPY_ARRAY_WRITEABLE | NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_OWNDATA
+    );
+#endif
+}
 static inline void steal_memory(PyObject* src) {
     /* ---- steal_memory ----
      * The default behaviour is to replace the stolen array with an array containing
