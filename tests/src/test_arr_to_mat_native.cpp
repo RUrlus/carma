@@ -192,8 +192,8 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
             }
         }
 
-        INFO("requires_copy: ");
-        INFO(carma::requires_copy(arr));
+        INFO("is_well_behaved: ");
+        INFO(carma::is_well_behaved(arr));
         // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
         double mat_sum = arma::accu(M);
