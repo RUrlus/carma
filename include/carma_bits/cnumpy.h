@@ -7,6 +7,7 @@
 #ifndef INCLUDE_CARMA_BITS_CNUMPY_H_
 #define INCLUDE_CARMA_BITS_CNUMPY_H_
 #define NPY_NO_DEPRECATED_API NPY_1_14_API_VERSION
+
 /* C headers */
 #include <Python.h>
 #include <pymem.h>
@@ -16,6 +17,7 @@
 /* STD header */
 #include <limits>
 #include <iostream>
+#include <algorithm>
 
 #include <armadillo> // NOLINT
 
@@ -87,6 +89,9 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
     );
 #endif
 }
+}  // extern "C"
+
+namespace carma {
 
 /* ---- steal_memory ----
  * The default behaviour is to turn off the owndata flag, numpy will no longer
@@ -113,13 +118,15 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
  * NPY_1_8_API_VERSION or higher as required).
  * This struct will be moved to a private header in a future release"
  */
+template <typename T>
 static inline void steal_memory(PyObject* src) {
-#ifdef CARMA_DEBUG_STEAL
-    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src)
+#ifdef CARMA_EXTRA_DEBUG
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
     std::cout << "CARMA DEBUG INFO" << "\n";
-    std::cout << "Array with adress: " << PyArray_DATA(arr) << "is being stolen" << "\n";
+    T* data = reinterpret_cast<T*>(PyArray_DATA(arr));
+    std::cout << "Array with adress: " << data << "is being stolen" << "\n";
     int ndim = PyArray_NDIM(arr);
-    npy_int * dims = PyArray_DIMS(arr);
+    npy_intp * dims = PyArray_DIMS(arr);
     bool first = true;
     std::cout << "the array has shape: ";
     for (int i = 0; i < ndim; i++) {
@@ -127,7 +134,7 @@ static inline void steal_memory(PyObject* src) {
         first = false;
     }
     std::cout << ")" << "\n";
-    std::cout << "with first element: " << arr[0] << "\n";
+    std::cout << "with first element: " << data[0] << "\n";
 #endif
 #if defined CARMA_HARD_STEAL
     reinterpret_cast<PyArrayObject_fields *>(src)->data = nullptr;
@@ -157,71 +164,44 @@ static inline void steal_memory(PyObject* src) {
 #endif
 }  // steal_memory
 
-}  // extern "C"
-
-namespace carma {
 
 /* Use Numpy's api to account for stride, order and steal the memory */
+
 template <typename T>
-inline static T* steal_copy_array(PyObject* src0) {
-    PyArrayObject* src = reinterpret_cast<PyArrayObject*>(src0);
+inline static T* steal_copy_array(PyObject* obj) {
+    PyArrayObject* src = reinterpret_cast<PyArrayObject*>(obj);
     auto& api = carman::npy_api::get();
 
-#if WIN32
-    // must be false for WIN32 (cf https://devblogs.microsoft.com/oldnewthing/20060915-04/?p=29723)
-    const bool allow_foreign_allocator = false;
-#else /* WIN32 */
-    const bool allow_foreign_allocator = true;
-#endif
     PyArray_Descr* dtype = PyArray_DESCR(src);
+    // NewFromDescr steals a reference
     Py_INCREF(dtype);
-    int ndim = PyArray_NDIM(reinterpret_cast<PyArrayObject*>(src));
+    // dimension checks have been done prior so array should
+    // not have more than 3 dimensions
+    int ndim = PyArray_NDIM(src);
     npy_intp const* dims = PyArray_DIMS(src);
 
-    T* data = NULL;
-    npy_intp* strides = NULL;
-    const int subok = 1;
-
-    bool delegate_allocation = PyArray_FLAGS(src) & NPY_ARRAY_F_CONTIGUOUS && allow_foreign_allocator;
-
-    if (!delegate_allocation) {
-        // we allocate a new memory buffer
-        int buffsize = 1;
-        for (int d = 0; d < ndim; ++d)
-            buffsize *= dims[d];
-        data = arma::memory::acquire<T>(buffsize); // data will be freed by arma::memory::release<T>
-
-        strides = new npy_intp[NPY_MAXDIMS];
-        npy_intp stride = dtype->elsize;
-        for (int idim = 0; idim < ndim; ++idim) {
-            strides[idim] = stride;
-            stride *= dims[idim];
-        }
-    }
+    // data will be freed by arma::memory::release<T>
+    T* data = arma::memory::acquire<T>(api.PyArray_Size_(obj));
+    if (data == NULL) throw std::bad_alloc();
 
     // build an PyArray to do F-order copy
     PyArrayObject* dest = reinterpret_cast<PyArrayObject*>(api.PyArray_NewFromDescr_(
-        subok ? Py_TYPE(src) : &PyArray_Type,
+        Py_TYPE(src),
         dtype,
         ndim,
         dims,
-        strides,
+        NULL,
         data,
-        NPY_FORTRANORDER | ((data) ? ~NPY_ARRAY_OWNDATA : 0),  // | NPY_ARRAY_F_CONTIGUOUS /* | NPY_ARRAY_WRITEABLE*/,
-        subok ? reinterpret_cast<PyObject*>(src) : NULL));
+        NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_BEHAVED,
+        NULL
+    ));
 
     // copy the array to a well behaved F-order
     api.PyArray_CopyInto_(dest, src);
 
-    if (delegate_allocation) {
-        // we steal the memory
-        PyArrayObject_fields* arr = reinterpret_cast<PyArrayObject_fields*>(dest);
-        data = reinterpret_cast<T*>(std::exchange(arr->data, nullptr));
-    }
     // free the array
+    PyArray_CLEARFLAGS(dest, NPY_ARRAY_OWNDATA);
     api.PyArray_Free_(dest, static_cast<void*>(nullptr));
-    delete[] strides;
-
     return data;
 }  // steal_copy_array
 
