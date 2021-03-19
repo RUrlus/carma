@@ -62,6 +62,7 @@ arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
  * - writeable is false
  * - owndata is false
  * - memory is not aligned
+ * - NOTE if platform is windows
  *
  * If the array is 1D we create a column oriented matrix (N, 1)
  */
@@ -69,19 +70,8 @@ template <typename T>
 arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_mat<T>(info);
-    PyObject* obj = src.ptr();
-#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
-    // determine ordering, if c-contiguous memory we are going to copy below
-    if (is_c_contiguous_2d(src) || requires_copy(src)) {
-#else
-    if (requires_copy(src)) {
-#endif
-        // copy and ensure fortran order
-        data = steal_copy_array<T>(obj);
-    } else {
-        // remove control of memory from numpy
-        steal_memory(obj);
-    }
+    // steal memory and copy if needed
+    data = steal_andor_copy(src.ptr(), data);
     return p_arr_to_mat(info, data, true, false);
 } /* arr_to_mat */
 
@@ -102,14 +92,10 @@ template <typename T>
 arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_mat<T>(info);
-#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
-    // determine ordering, if c-contiguous memory we are going to copy below
-    if (is_c_contiguous_2d(src) || requires_copy(src) || copy) {
-#else
-    if (requires_copy(src) || copy) {
-#endif
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
-        data = steal_copy_array<T>(src.ptr());
+        data = steal_copy_array<T>(obj);
         return p_arr_to_mat(info, data, true, strict);
     }
     return p_arr_to_mat(info, data, false, strict);
@@ -136,19 +122,14 @@ arma::Col<T> arr_to_col(const py::array_t<T>& src) {
  * - writeable is false
  * - owndata is false
  * - memory is not aligned
+ * - NOTE if platform is windows
  */
 template <typename T>
 arma::Col<T> arr_to_col(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_col<T>(info);
-    PyObject* obj = src.ptr();
-    if (requires_copy(src)) {
-        // copy and ensure fortran order
-        data = steal_copy_array<T>(obj);
-    } else {
-        // remove control of memory from numpy
-        steal_memory(obj);
-    }
+    // steal memory and copy if needed
+    data = steal_andor_copy(src.ptr(), data);
     return p_arr_to_col(info, data, true, false);
 } /* arr_to_col */
 
@@ -166,9 +147,10 @@ template <typename T>
 arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_col<T>(info);
-    if (requires_copy(src) || copy) {
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
-        data = steal_copy_array<T>(src.ptr());
+        data = steal_copy_array<T>(obj);
         return p_arr_to_col(info, data, true, strict);
     }
     return p_arr_to_col(info, data, false, strict);
@@ -194,20 +176,15 @@ arma::Row<T> arr_to_row(const py::array_t<T>& src) {
  * - writeable is false
  * - owndata is false
  * - memory is not aligned
+ * - NOTE if platform is windows
  */
 template <typename T>
 arma::Row<T> arr_to_row(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_row<T>(info);
-    PyObject* obj = src.ptr();
-    if (requires_copy(src)) {
-        // copy and ensure fortran order
-        data = steal_copy_array<T>(obj);
-    } else {
-        // remove control of memory from numpy
-        steal_memory(obj);
-    }
-    return p_arr_to_row(obj, info, data, true, false);
+    // steal memory and copy if needed
+    data = steal_andor_copy(src.ptr(), data);
+    return p_arr_to_row(src, info, data, true, false);
 } /* arr_to_row */
 
 /* Convert numpy array to Armadillo Row
@@ -224,9 +201,10 @@ template <typename T>
 arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_row<T>(info);
-    if (requires_copy(src) || copy) {
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
-        data = steal_copy_array<T>(src.ptr());
+        data = steal_copy_array<T>(obj);
         return p_arr_to_row(info, data, true, strict);
     }
     return p_arr_to_row(info, data, false, strict);
@@ -254,6 +232,7 @@ arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
  * - writeable is false
  * - owndata is false
  * - memory is not aligned
+ * - NOTE if platform is windows
  * Note that the user set behaviour is overridden is one of the above conditions
  * is true
  */
@@ -262,20 +241,8 @@ arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
 
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_cube<T>(info);
-    PyObject* obj = src.ptr();
-
-#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
-    // determine ordering, if c-contiguous memory we are going to copy below
-    if (is_c_contiguous(src) || requires_copy(src)) {
-#else
-    if (requires_copy(src)) {
-#endif
-        // copy and ensure fortran order
-        data = steal_copy_array<T>(obj);
-    } else {
-        // remove control of memory from numpy
-        steal_memory(obj);
-    }
+    // steal memory and copy if needed
+    data = steal_andor_copy(src.ptr(), data);
     return p_arr_to_cube(info, data, true, false);
 } /* arr_to_cube */
 
@@ -294,14 +261,10 @@ template <typename T>
 arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = false) {
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_cube<T>(info);
-#ifndef CARMA_DONT_REQUIRE_F_CONTIGUOUS
-    // determine ordering, if c-contiguous memory we are going to copy below
-    if (is_c_contiguous(src) || requires_copy(src) || copy) {
-#else
-    if (requires_copy(src) || copy) {
-#endif
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
-        data = steal_copy_array<T>(src.ptr());
+        data = steal_copy_array<T>(obj);
         return p_arr_to_cube(info, data, true, strict);
     }
     return p_arr_to_cube(info, data, false, strict);
