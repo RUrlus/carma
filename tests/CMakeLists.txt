@@ -20,7 +20,6 @@ TARGET_INCLUDE_DIRECTORIES(${NATIVE_MODNAME}
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/python/include>
 )
 
-INCLUDE(CTest)
 INCLUDE(${PROJECT_SOURCE_DIR}/third_party/Catch2/contrib/Catch.cmake)
 catch_discover_tests(${NATIVE_MODNAME})
 
