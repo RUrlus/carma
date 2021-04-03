@@ -22,6 +22,8 @@
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 
+#include <carma_bits/config.h> // NOLINT
+
 namespace py = pybind11;
 
 #ifndef INCLUDE_CARMA_BITS_UTILS_H_
@@ -71,4 +73,4 @@ template <typename T>
 struct is_cube<arma::Cube<T>> : std::true_type {};
 
 }  // namespace carma
-#endif  // INCLUDE_CARMA_CARMA_UTILS_H_
+#endif  // INCLUDE_CARMA_BITS_UTILS_H_

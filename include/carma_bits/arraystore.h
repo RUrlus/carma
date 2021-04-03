@@ -18,6 +18,7 @@
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 #include <carma_bits/converters.h>  // NOLINT
+#include <carma_bits/config.h> // NOLINT
 
 namespace py = pybind11;
 

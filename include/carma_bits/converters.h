@@ -31,6 +31,7 @@
 #include <carma_bits/nparray.h>  // NOLINT
 #include <carma_bits/numpytoarma.h>  // NOLINT
 #include <carma_bits/armatonumpy.h>  // NOLINT
+#include <carma_bits/config.h> // NOLINT
 
 namespace py = pybind11;
 
