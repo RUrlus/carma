@@ -21,6 +21,7 @@
 #include <pymem.h>
 #include <numpy/arrayobject.h>
 #include <numpy/ndarraytypes.h>
+#include <carma_bits/config.h> // NOLINT
 
 #include <pybind11/pybind11.h>  // NOLINT
 
