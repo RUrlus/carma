@@ -15,6 +15,7 @@
  *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
  */
 
+#include <iostream>
 /* External headers */
 #include <armadillo>  // NOLINT
 #include <pybind11/buffer_info.h>  // NOLINT
@@ -44,12 +45,19 @@ struct conversion_error : std::exception {
 };
 
 template<typename T> inline void free_array(T* data) {
+#ifdef CARMA_EXTRA_DEBUG
+    std::cout << "Freeing data @" << data << "\n";
+#endif
     carman::npy_api::get().PyDataMem_FREE_(static_cast<void *>(data));
 }  // free_array
 
 template <typename T>
     inline T* steal_andor_copy(PyObject* obj, T* data) {
 #ifdef WIN32
+#ifdef CARMA_EXTRA_DEBUG
+    std::cout << "Copying data @" << data << "\n";
+    std::cout << "We can't steal data on Windows due to forign (de-)allocation"<< "\n";
+#endif
     // we must copy as foreign (de)allocators are not
     // allowed on windows and armadillo will own the memory
     // from this point onwards
@@ -57,6 +65,9 @@ template <typename T>
     data = steal_copy_array<T>(obj);
 #else
     if (!well_behaved(obj)) {
+#ifdef CARMA_EXTRA_DEBUG
+    std::cout << "Memory at @" << data << "is not well behaved, copying array" << "\n";
+#endif
         // copy and ensure fortran order
         data = steal_copy_array<T>(obj);
     } else {
@@ -110,6 +121,12 @@ inline arma::Mat<T> p_arr_to_mat(
      * not own it.
      */
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
+#ifdef CARMA_EXTRA_DEBUG
+    if (copy) {
+        std::cout << "Memory at @" << data << " will be copied.";
+        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+    }
+#endif
 
     arma::Mat<T> dest(data, nrows, ncols, copy, strict);
 
@@ -153,6 +170,12 @@ arma::Col<T> p_arr_to_col(
     uword nelem = src.size;
 
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
+#ifdef CARMA_EXTRA_DEBUG
+    if (copy) {
+        std::cout << "Memory at @" << data << " will be copied.";
+        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+    }
+#endif
     arma::Col<T> dest(data, nelem, copy, strict);
     // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
@@ -195,6 +218,12 @@ arma::Row<T> p_arr_to_row(
     uword nelem = src.size;
 
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
+#ifdef CARMA_EXTRA_DEBUG
+    if (copy) {
+        std::cout << "Memory at @" << data << " will be copied.";
+        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+    }
+#endif
     arma::Row<T> dest(data, nelem, copy, strict);
     // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
@@ -240,6 +269,12 @@ arma::Cube<T> p_arr_to_cube(
     uword nelem = src.size;
 
     bool copy = (nelem > arma::Cube_prealloc::mem_n_elem) ? false : true;
+#ifdef CARMA_EXTRA_DEBUG
+    if (copy) {
+        std::cout << "Memory at @" << data << " will be copied.";
+        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+    }
+#endif
     arma::Cube<T> dest(data, nrows, ncols, nslices, copy, strict);
     // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {

@@ -15,7 +15,6 @@
  *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
  */
 #include <utility>
-#include <iostream>
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 #include <carma_bits/converters.h>  // NOLINT
