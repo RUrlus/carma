@@ -9,7 +9,7 @@ on:
       - stable
       - unstable
   schedule:
-    - cron: '0 14 * * 1'
+    - cron: '0 23 * * 1'
 
 defaults:
   run:
@@ -60,13 +60,7 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install pytest cmake
           python -m pip install ${{ matrix.config.numpy }}
-          sudo apt install \
-            libxcursor-dev \
-            libxrandr-dev \
-            libxinerama-dev \
-            libxi-dev \
-            libglew-dev \
-            libopenblas-dev
+          sudo apt install -y libopenblas-dev
           ninja --version
           cmake --version
 

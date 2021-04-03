@@ -1,10 +1,6 @@
-name: CMake Build and Test Matrix
+name: Small CMake Build and Test Matrix
 
-on: 
-  pull_request:
-    branches:
-      - stable
-      - unstable
+on: push
 
 defaults:
   run:
@@ -12,12 +8,11 @@ defaults:
 
 jobs:
   build:
-    name: ${{ matrix.config.name }} Python ${{ matrix.python-version }}
+    name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9"]
         config: 
         - {
             name: "Windows (MSVC)",
@@ -65,7 +60,7 @@ jobs:
 
       - uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.8
 
       - uses: seanmiddleditch/gha-setup-ninja@master
 
