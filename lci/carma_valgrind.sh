@@ -7,5 +7,5 @@ docker run -it \
     -e COMPILER=gcc-7 \
     -e DEBUG=true \
     -e VALGRIND=true \
-    -e PYTHON_PREFIX_PATH=/usr/ \
+    -e PYTHON_PREFIX_PATH=/usr/bin/python3.7 \
     carma_valgrind:0.1
