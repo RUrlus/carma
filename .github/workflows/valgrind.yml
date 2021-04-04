@@ -99,6 +99,7 @@ jobs:
 
           cmake \
             ${{ matrix.config.options }}  \
+            -DDISABLE_RELEASE_FLAGS=ON\
             -DBUILD_TESTS=ON \
             -DVALGRIND_TEST_WRAPPER=on\
             -DCMAKE_C_COMPILER="gcc-9" \
