@@ -7,17 +7,6 @@ IF (ENABLE_COVERAGE)
     SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 ENDIF ()
 
-IF (VALGRIND_TEST_WRAPPER)
-    IF (WIN32)
-        MESSAGE(FATAL_ERROR "VALGRIND_TEST_WRAPPER is not supported in WIN32 environment")
-    ENDIF ()
-    FIND_PROGRAM(VALGRIND_EXECUTABLE valgrind)
-    IF (NOT VALGRIND_EXECUTABLE)
-        MESSAGE(FATAL_ERROR "VALGRIND_TEST_WRAPPER is requested but valgrind executable cannot be found")
-    ENDIF ()
-    MESSAGE(STATUS "Valgrind test mode enabled")
-ENDIF ()
-
 # ##############################################################################
 #                               Clang-format                                   #
 # ##############################################################################

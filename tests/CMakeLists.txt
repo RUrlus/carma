@@ -71,10 +71,21 @@ INSTALL(FILES ${PY_TEST_FILES} DESTINATION tests)
 #                                    TESTS                                     *
 # ******************************************************************************
 if (VALGRIND_TEST_WRAPPER)
+    IF (WIN32)
+        MESSAGE(FATAL_ERROR "VALGRIND_TEST_WRAPPER is not supported in WIN32 environment")
+    ENDIF ()
+    FIND_PROGRAM(VALGRIND_EXECUTABLE valgrind)
+    IF (NOT VALGRIND_EXECUTABLE)
+        MESSAGE(FATAL_ERROR "VALGRIND_TEST_WRAPPER is requested but valgrind executable cannot be found")
+    ENDIF ()
+    MESSAGE(STATUS "Valgrind test mode enabled")
+    MESSAGE(STATUS "Valgrind executable: ${VALGRIND_EXECUTABLE}")
+
     SET(VALGRIND_LOG_FILE /tmp/valgrind-output)
     ADD_TEST(NAME pytest
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            COMMAND ${VALGRIND_EXECUTABLE} --show-leak-kinds=definite --log-file=${VALGRIND_LOG_FILE} ${PYTHON_EXECUTABLE} -m pytest -vv --valgrind --valgrind-log=${VALGRIND_LOG_FILE})
+            COMMAND ${VALGRIND_EXECUTABLE} --show-leak-kinds=definite --log-file=${VALGRIND_LOG_FILE} ${Python3_EXECUTABLE} -m pytest -vv --valgrind --valgrind-log=${VALGRIND_LOG_FILE}
+    )
     SET_PROPERTY(TEST pytest APPEND PROPERTY ENVIRONMENT "PYTHONMALLOC=malloc")
 else()
     ADD_TEST(NAME pytest
