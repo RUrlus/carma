@@ -43,7 +43,7 @@ jobs:
             cxx: "g++-9",
             generators: "Ninja",
             target: "all",
-            options: "-DENABLE_CARMA_HARD_STEAL=ON"
+            options: "-DENABLE_CARMA_SOFT_STEAL=ON"
           }
         - {
             name: "Not own data",
@@ -111,8 +111,18 @@ jobs:
         run: |
             cd build
             cmake --build . --target all --config Debug
+
+      - name: Compute coverage
+        run: |
+            cd build
             cmake --build . --target coverage --config Debug
-            lcov --list build/coverage.info
+
+      - name: Collect coverage
+        run: |
+            mkdir coverage
+            mv build/*coverage* coverage/
+            cp coverage/coverage.info coverage/lcov.info
+            lcov --list coverage/coverage.info
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
