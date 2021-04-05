@@ -1,4 +1,4 @@
-name: Valgrind
+name: Valgrind Tests
 
 on: 
   pull_request:
@@ -24,7 +24,7 @@ jobs:
         - {
             name: "Default settings",
             os: ubuntu-latest,
-            build_type: "Release",
+            build_type: "Debug",
             cc: "gcc-9",
             cxx: "g++-9",
             generators: "Ninja",
@@ -34,7 +34,7 @@ jobs:
         - {
             name: "Hard steal",
             os: ubuntu-latest,
-            build_type: "Release",
+            build_type: "Debug",
             cc: "gcc-9",
             cxx: "g++-9",
             generators: "Ninja",
@@ -44,7 +44,7 @@ jobs:
         - {
             name: "Soft steal",
             os: ubuntu-latest,
-            build_type: "Release",
+            build_type: "Debug",
             cc: "gcc-9",
             cxx: "g++-9",
             generators: "Ninja",
@@ -54,7 +54,7 @@ jobs:
         - {
             name: "Not own data",
             os: ubuntu-latest,
-            build_type: "Release",
+            build_type: "Debug",
             cc: "gcc-9",
             cxx: "g++-9",
             generators: "Ninja",
@@ -102,12 +102,11 @@ jobs:
             -DDISABLE_RELEASE_FLAGS=ON\
             -DBUILD_TESTS=ON \
             -DVALGRIND_TEST_WRAPPER=on\
-            -DCMAKE_C_COMPILER="gcc-9" \
-            -DCMAKE_CXX_COMPILER="g++-9" \
+            -DCMAKE_C_COMPILER=${{ matrix.config.cc }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
             -DPython3_EXECUTABLE=${PY_CMD} \
-            -DCMAKE_BUILD_TYPE="Release" \
-            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             ..
 
       - name: Build
@@ -115,11 +114,12 @@ jobs:
             cd build
             cmake \
               --build . \
-              --config "Release"
+              --target ${{ matrix.config.target }} \
+              --config ${{ matrix.config.build_type }}
 
       - name: Test
         run: |
             cd build
             ctest \
-              -C "Release" \
+              -C ${{ matrix.config.build_type }} \
               -V --rerun-failed --output-on-failure
