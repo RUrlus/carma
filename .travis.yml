@@ -3,75 +3,6 @@ matrix:
   include:
   - os: linux
     dist: xenial
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7
-    name: Python 3.7, c++14, gcc 7
-    addons:
-      apt:
-        sources:
-          - deadsnakes
-          - ubuntu-toolchain-r-test
-        packages:
-          - g++-7
-          - python3.7-dev
-          - python3.7-venv
-  - os: linux
-    dist: xenial
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true
-    name: Python 3.7, c++14, gcc 7, debug
-    addons:
-      apt:
-        sources:
-          - deadsnakes
-          - ubuntu-toolchain-r-test
-        packages:
-          - g++-7
-          - python3.7-dev
-          - python3.7-venv
-  - os: linux
-    dist: xenial
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 NOWN=true
-    name: Python 3.7, c++14, gcc 7, NOT_OWN_DATA
-    addons:
-      apt:
-        sources:
-          - deadsnakes
-          - ubuntu-toolchain-r-test
-        packages:
-          - g++-7
-          - python3.7-dev
-          - python3.7-venv
-  - os: linux
-    dist: xenial
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=clang-7
-    name: Python 3.7, c++14, Clang 7
-    addons:
-      apt:
-        sources:
-          - deadsnakes
-          - llvm-toolchain-xenial-7
-        packages:
-          - python3.7-dev
-          - python3.7-venv
-          - clang-7
-          - libclang-7-dev
-          - llvm-7-dev
-          - lld-7
-          - libc++-7-dev
-          - libc++abi-7-dev
-  - os: linux
-    dist: bionic
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true VALGRIND=true PYTHON_PREFIX_PATH=/usr/bin
-    name: Python 3.7, c++14, gcc 7 Valgrind
-    addons:
-      apt:
-        packages:
-          - g++-7
-          - python3.7-dev
-          - python3.7-venv
-          - valgrind
-          # also required in the standard ubuntu:bionic: gcc, make
-  - os: linux
-    dist: xenial
     env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 SONAR=true
     name: Python 3.7, c++14, gcc 7 Sonar
     addons:
@@ -83,26 +14,6 @@ matrix:
           - g++-7
           - python3.7-dev
           - python3.7-venv
-  - os: linux
-    dist: bionic
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=gcc-7 DEBUG=true COVERAGE=true
-    name: Python 3.7, c++14, gcc 7 Coverage
-    addons:
-      apt:
-        packages:
-          - g++-7
-          - python3.7-dev
-          - python3.7-venv
-          - lcov
-          # also required in the standard ubuntu:bionic: gcc, make
-  - os: osx
-    osx_image: xcode11.5
-    env: PYTHON_VERSION=3.7 CPP=14 COMPILER=clang
-    name: MacOS Python 3.7, c++14, Apple Clang
-
-  - os: windows
-    name: Windows Python 3.7, c++14, Visual Studio, Debug
-    env: PYTHON_VERSION=3.7 CPP=14 DEBUG=true COMPILER=msvc PYTHON_PREFIX_PATH=/c/Python37 PYTHON_SUFFIX=
 
 env:
   global:
@@ -115,10 +26,6 @@ cache:
   - $HOME/.local/include
   - $HOME/Library/Python
 
-before_install:
-  # Add requirement for installation (Python)
-  - ${TRAVIS_BUILD_DIR}/.travis-ci/before_install.sh
-
 install:
   # Install dependencies
   - |
@@ -127,7 +34,7 @@ install:
     [[ "$DEBUG_CI" == true ]] && set -x
     . ${TRAVIS_BUILD_DIR}/.travis-ci/load_env.sh
     ${TRAVIS_BUILD_DIR}/.travis-ci/install.sh
-    if [[ "$SONAR" == true ]]; then ${TRAVIS_BUILD_DIR}/.travis-ci/install_sonar.sh; fi
+    ${TRAVIS_BUILD_DIR}/.travis-ci/install_sonar.sh; fi
 
 before_script:
   # report found build tools
@@ -138,14 +45,7 @@ script:
     #!/usr/bin/env bash
     set -e
     [[ "$DEBUG_CI" == true ]] && set -x
-    if [[ "$SONAR" == true ]]; then
-      ${TRAVIS_BUILD_DIR}/.travis-ci/sonar_analysis.sh
-    else
-      ${TRAVIS_BUILD_DIR}/.travis-ci/make_and_run.sh
-    fi
+    ${TRAVIS_BUILD_DIR}/.travis-ci/sonar_analysis.sh
 
 after_failure: 
   - cat tests/test_cmake_build/*.log*
-
-after_success:
-  - ${TRAVIS_BUILD_DIR}/.travis-ci/after_success.sh
