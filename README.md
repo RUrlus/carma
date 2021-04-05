@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/travis/rurlus/carma/master.svg?style=for-the-badge" alt="Build Status"/>
   </a>
   <!-- Coverage status -->
-  <a href="https://coveralls.io/github/RUrlus/carma?branch=master">
+  <a href="https://coveralls.io/github/RUrlus/carma?branch=stable">
     <img src="https://img.shields.io/coveralls/github/RUrlus/carma?style=for-the-badge" alt="Coveralls github" >
   </a>
   <!-- Documentation status -->

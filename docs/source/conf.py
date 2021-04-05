@@ -22,7 +22,7 @@ copyright = '2020, R. Urlus'
 author = 'R. Urlus'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = '0.3.0'
 
 
 # -- General configuration ---------------------------------------------------
