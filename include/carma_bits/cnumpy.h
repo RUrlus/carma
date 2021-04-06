@@ -123,7 +123,7 @@ template <typename T>
 static inline void steal_memory(PyObject* src) {
 #ifdef CARMA_EXTRA_DEBUG
     PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
-    std::cout << "CARMA DEBUG INFO" << "\n";
+    std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
     T* data = reinterpret_cast<T*>(PyArray_DATA(arr));
     std::cout << "Array with adress: " << data << "is being stolen" << "\n";
     int ndim = PyArray_NDIM(arr);
@@ -136,6 +136,7 @@ static inline void steal_memory(PyObject* src) {
     }
     std::cout << ")" << "\n";
     std::cout << "with first element: " << data[0] << "\n";
+    std::cout << "-----------" << "\n";
 #endif
 #if defined CARMA_HARD_STEAL
     reinterpret_cast<PyArrayObject_fields *>(src)->data = nullptr;

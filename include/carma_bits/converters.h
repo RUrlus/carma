@@ -94,6 +94,11 @@ arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = fa
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_mat<T>(info);
     PyObject* obj = src.ptr();
+#ifdef CARMA_EXTRA_DEBUG
+    if (!well_behaved(obj)) {
+        debug::print_copy_of_data<T>(data);
+    }
+#endif
     if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
         data = steal_copy_array<T>(obj);
@@ -149,6 +154,11 @@ arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = fa
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_col<T>(info);
     PyObject* obj = src.ptr();
+#ifdef CARMA_EXTRA_DEBUG
+    if (!well_behaved(obj)) {
+        debug::print_copy_of_data<T>(data);
+    }
+#endif
     if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
         data = steal_copy_array<T>(obj);
@@ -203,6 +213,11 @@ arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false, bool strict = fa
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_row<T>(info);
     PyObject* obj = src.ptr();
+#ifdef CARMA_EXTRA_DEBUG
+    if (!well_behaved(obj)) {
+        debug::print_copy_of_data<T>(data);
+    }
+#endif
     if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
         data = steal_copy_array<T>(obj);
@@ -263,6 +278,11 @@ arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = 
     py::buffer_info info = src.request();
     T* data = p_validate_from_array_cube<T>(info);
     PyObject* obj = src.ptr();
+#ifdef CARMA_EXTRA_DEBUG
+    if (!well_behaved(obj)) {
+        debug::print_copy_of_data<T>(data);
+    }
+#endif
     if (!well_behaved(obj) || copy) {
         // copy and ensure fortran order
         data = steal_copy_array<T>(obj);

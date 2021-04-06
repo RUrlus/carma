@@ -13,6 +13,7 @@
  *      arma_wrapper/arma_wrapper.h:
  *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
  */
+#include <string>
 #include <memory>
 #include <type_traits>
 #include <utility>
@@ -30,6 +31,8 @@ namespace py = pybind11;
 #define INCLUDE_CARMA_BITS_UTILS_H_
 
 namespace carma {
+
+using aconf =  arma::arma_config;
 
 // Mat catches Row and Col as well
 template <typename T>
@@ -71,6 +74,39 @@ template <typename T>
 struct is_cube : std::false_type {};
 template <typename T>
 struct is_cube<arma::Cube<T>> : std::true_type {};
+
+#ifdef CARMA_EXTRA_DEBUG
+namespace debug {
+
+inline void print_opening() {
+    static const std::string m = "\n-----------\nCARMA DEBUG\n-----------\n";
+    std::cout << m;
+}
+
+inline void print_closing() {
+    static const std::string m = "-----------\n";
+    std::cout << m;
+}
+
+template <typename T>
+inline void print_copy_of_data(T* data) {
+    print_opening();
+    std::cout << "Memory @" << data <<  " will be copied." << "\n";
+    std::cout << "It is not well behaved." << "\n";
+    print_closing();
+}
+
+template <typename T>
+inline void print_prealloc(T* data) {
+    static constexpr int pl = aconf::mat_prealloc;
+    print_opening();
+    std::cout << "Memory at @" << data << " will be copied." << "\n";
+    std::cout << "It is smaller than armadillo's preallocation limit: " << pl << "\n";
+    print_closing();
+}
+
+} // namespace debug
+#endif  // CARMA_EXTRA_DEBUG
 
 }  // namespace carma
 #endif  // INCLUDE_CARMA_BITS_UTILS_H_

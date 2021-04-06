@@ -34,8 +34,10 @@ inline py::capsule create_capsule(armaT* data) {
     return py::capsule(data, [](void* f) {
         armaT* mat = reinterpret_cast<armaT*>(f);
 #ifdef CARMA_EXTRA_DEBUG
+        std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
         // if in debug mode let us know what pointer is being freed
-        std::cerr << "freeing memory @ " << mat->memptr() << std::endl;
+        std::cerr << "Freeing memory @" << mat->memptr() << std::endl;
+        std::cout << "-----------" << "\n";
 #endif
         delete mat;
     });
@@ -45,8 +47,10 @@ template <typename T>
 inline py::capsule create_dummy_capsule(T* data) {
     return py::capsule(data, [](void* f) {
 #ifdef CARMA_EXTRA_DEBUG
+        std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
         // if in debug mode let us know what pointer is being freed
-        std::cerr << "destruct view on memory @ " << f << std::endl;
+        std::cerr << "Destructing view on memory @" << f << std::endl;
+        std::cout << "-----------" << "\n";
 #endif
     });
 } /* create_capsule */
