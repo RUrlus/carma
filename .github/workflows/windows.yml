@@ -89,5 +89,5 @@ jobs:
         run: |
             cd build
             ctest \
-              -C ${{ matrix.config.build_type }} \
-              -V --rerun-failed --output-on-failure
+              --verbose --rerun-failed --output-on-failure \
+              -C ${{ matrix.config.build_type }}

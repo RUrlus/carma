@@ -91,7 +91,8 @@ IF (VALGRIND_TEST_WRAPPER)
 ELSE()
     ADD_TEST(NAME pytest
              WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-             COMMAND ${PYTHON_EXECUTABLE} -m pytest)
+             COMMAND ${Python3_EXECUTABLE} -m pytest -vv -s
+    )
 ENDIF()
 
 IF (WIN32)
