@@ -47,7 +47,9 @@ struct conversion_error : std::exception {
 
 template<typename T> inline void free_array(T* data) {
 #ifdef CARMA_EXTRA_DEBUG
-    std::cout << "Freeing data @" << data << "\n";
+    debug::print_opening();
+    std::cout << "Freeing memory @" << data << " of stolen array\n";
+    debug::print_closing();
 #endif
     carman::npy_api::get().PyDataMem_FREE_(static_cast<void *>(data));
 }  // free_array
@@ -56,8 +58,10 @@ template <typename T>
     inline T* steal_andor_copy(PyObject* obj, T* data) {
 #ifdef WIN32
 #ifdef CARMA_EXTRA_DEBUG
+    debug::print_opening();
     std::cout << "Copying data @" << data << "\n";
     std::cout << "We can't steal data on Windows due to forign (de-)allocation"<< "\n";
+    debug::print_closing();
 #endif
     // we must copy as foreign (de)allocators are not
     // allowed on windows and armadillo will own the memory
@@ -67,7 +71,7 @@ template <typename T>
 #else
     if (!well_behaved(obj)) {
 #ifdef CARMA_EXTRA_DEBUG
-    std::cout << "Memory at @" << data << "is not well behaved, copying array" << "\n";
+        debug::print_copy_of_data(data);
 #endif
         // copy and ensure fortran order
         data = steal_copy_array<T>(obj);
@@ -124,8 +128,7 @@ inline arma::Mat<T> p_arr_to_mat(
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
 #ifdef CARMA_EXTRA_DEBUG
     if (copy) {
-        std::cout << "Memory at @" << data << " will be copied.";
-        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+        debug::print_prealloc<T>(data);
     }
 #endif
 
@@ -173,8 +176,7 @@ arma::Col<T> p_arr_to_col(
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
 #ifdef CARMA_EXTRA_DEBUG
     if (copy) {
-        std::cout << "Memory at @" << data << " will be copied.";
-        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+        debug::print_prealloc<T>(data);
     }
 #endif
     arma::Col<T> dest(data, nelem, copy, strict);
@@ -221,8 +223,7 @@ arma::Row<T> p_arr_to_row(
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
 #ifdef CARMA_EXTRA_DEBUG
     if (copy) {
-        std::cout << "Memory at @" << data << " will be copied.";
-        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+        debug::print_prealloc<T>(data);
     }
 #endif
     arma::Row<T> dest(data, nelem, copy, strict);
@@ -272,8 +273,7 @@ arma::Cube<T> p_arr_to_cube(
     bool copy = (nelem > arma::Cube_prealloc::mem_n_elem) ? false : true;
 #ifdef CARMA_EXTRA_DEBUG
     if (copy) {
-        std::cout << "Memory at @" << data << " will be copied.";
-        std::cout << "It smaller than armadillo's preallocation limit: " << aconf::mat_prealloc << "\n";
+        debug::print_prealloc<T>(data);
     }
 #endif
     arma::Cube<T> dest(data, nrows, ncols, nslices, copy, strict);
