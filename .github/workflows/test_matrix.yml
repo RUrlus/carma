@@ -104,6 +104,7 @@ jobs:
 
           cmake \
             -DBUILD_TESTS=ON \
+            -DDEV_DEBUG_MODE=ON \
             -DCMAKE_C_COMPILER=${{ matrix.config.cc }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
@@ -124,5 +125,5 @@ jobs:
         run: |
             cd build
             ctest \
-              -C ${{ matrix.config.build_type }} \
-              -V --rerun-failed --output-on-failure
+              --verbose --rerun-failed --output-on-failure \
+              -C ${{ matrix.config.build_type }}
