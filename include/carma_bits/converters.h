@@ -195,7 +195,7 @@ arma::Row<T> arr_to_row(py::array_t<T>&& src) {
     T* data = p_validate_from_array_row<T>(info);
     // steal memory and copy if needed
     data = steal_andor_copy(src.ptr(), data);
-    return p_arr_to_row(src, info, data, true, false);
+    return p_arr_to_row(info, data, true, false);
 } /* arr_to_row */
 
 /* Convert numpy array to Armadillo Row
@@ -311,7 +311,7 @@ struct p_to_arma {
 template <typename returnT>
 struct p_to_arma<returnT, typename is_row<returnT>::type> {
     /* Overload concept on return type; convert to row */
-    static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
         return arr_to_row<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
@@ -319,7 +319,7 @@ struct p_to_arma<returnT, typename is_row<returnT>::type> {
 template <typename returnT>
 struct p_to_arma<returnT, typename is_col<returnT>::type> {
     /* Overload concept on return type; convert to col */
-    static returnT from(py::array_t<typename returnT::elem_type> arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
         return arr_to_col<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
@@ -327,7 +327,7 @@ struct p_to_arma<returnT, typename is_col<returnT>::type> {
 template <typename returnT>
 struct p_to_arma<returnT, typename is_mat<returnT>::type> {
     /* Overload concept on return type; convert to matrix */
-    static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
         return arr_to_mat<typename returnT::elem_type>(arr, copy, strict);
     }
 }; /* to_arma */
@@ -335,8 +335,47 @@ struct p_to_arma<returnT, typename is_mat<returnT>::type> {
 template <typename returnT>
 struct p_to_arma<returnT, typename is_cube<returnT>::type> {
     /* Overload concept on return type; convert to cube */
-    static returnT from(py::array_t<typename returnT::elem_type>& arr, int copy, int strict) {
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
         return arr_to_cube<typename returnT::elem_type>(arr, copy, strict);
+    }
+}; /* to_arma */
+
+template <typename returnT, typename SFINAE = std::true_type>
+struct p_to_arma_steal {
+    static_assert(!SFINAE::value, "The general case is not defined.");
+    template <typename innerT>
+    static returnT from(innerT&&);
+}; /* to_arma */
+
+template <typename returnT>
+struct p_to_arma_steal<returnT, typename is_row<returnT>::type> {
+    /* Overload concept on return type; convert to row */
+    static returnT from(py::array_t<typename returnT::elem_type>&& arr, bool copy, bool strict) {
+        return arr_to_row<typename returnT::elem_type>(std::move(arr));
+    }
+}; /* to_arma */
+
+template <typename returnT>
+struct p_to_arma_steal<returnT, typename is_col<returnT>::type> {
+    /* Overload concept on return type; convert to col */
+    static returnT from(py::array_t<typename returnT::elem_type>&& arr, bool copy, bool strict) {
+        return arr_to_col<typename returnT::elem_type>(std::move(arr));
+    }
+}; /* to_arma */
+
+template <typename returnT>
+struct p_to_arma_steal<returnT, typename is_mat<returnT>::type> {
+    /* Overload concept on return type; convert to matrix */
+    static returnT from(py::array_t<typename returnT::elem_type>&& arr) {
+        return arr_to_mat<typename returnT::elem_type>(std::move(arr));
+    }
+}; /* to_arma */
+
+template <typename returnT>
+struct p_to_arma_steal<returnT, typename is_cube<returnT>::type> {
+    /* Overload concept on return type; convert to cube */
+    static returnT from(py::array_t<typename returnT::elem_type>&& arr) {
+        return arr_to_cube<typename returnT::elem_type>(std::move(arr));
     }
 }; /* to_arma */
 

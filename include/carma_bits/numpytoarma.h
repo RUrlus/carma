@@ -56,19 +56,6 @@ template<typename T> inline void free_array(T* data) {
 
 template <typename T>
     inline T* steal_andor_copy(PyObject* obj, T* data) {
-#ifdef WIN32
-#ifdef CARMA_EXTRA_DEBUG
-    debug::print_opening();
-    std::cout << "Copying data @" << data << "\n";
-    std::cout << "We can't steal data on Windows due to forign (de-)allocation"<< "\n";
-    debug::print_closing();
-#endif
-    // we must copy as foreign (de)allocators are not
-    // allowed on windows and armadillo will own the memory
-    // from this point onwards
-    // https://devblogs.microsoft.com/oldnewthing/20060915-04/?p=29723
-    data = steal_copy_array<T>(obj);
-#else
     if (!well_behaved(obj)) {
 #ifdef CARMA_EXTRA_DEBUG
         debug::print_copy_of_data(data);
@@ -79,7 +66,6 @@ template <typename T>
         // remove control of memory from numpy
         steal_memory<T>(obj);
     }
-#endif
     return data;
 }
 
@@ -157,7 +143,7 @@ inline T* p_validate_from_array_col(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[1] != 1)) {
-        throw conversion_error("Number of columns must <= 1");
+        throw conversion_error("CARMA: Number of columns must <= 1");
     }
     if (src.ptr == nullptr) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
@@ -203,11 +189,11 @@ inline T* p_validate_from_array_row(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[0] != 1)) {
-        throw conversion_error("Number of rows must <= 1");
+        throw conversion_error("CARMA: Number of rows must <= 1");
     }
 
     if (src.ptr == nullptr) {
-        throw conversion_error("armadillo matrix conversion failed, nullptr");
+        throw conversion_error("CARMA: armadillo matrix conversion failed, nullptr");
     }
     return data;
 }  // p_validate_to_array_row
@@ -250,7 +236,7 @@ inline T* p_validate_from_array_cube(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims != 3) {
-        throw conversion_error("Number of dimensions must be 3");
+        throw conversion_error("CARMA: Number of dimensions must be 3");
     }
     if (src.ptr == nullptr) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
