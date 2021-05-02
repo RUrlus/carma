@@ -71,15 +71,17 @@ def test_ArrayStore_steal():
 def test_ArrayStore_set_data():
     """Test ArrayStore class function set_data."""
     sample1 = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
+    og_sample1 = np.copy(sample1)
     sample2 = np.asarray(np.random.uniform(-1, 1, size=100), order='F')
+    og_sample2 = np.copy(sample2)
 
     arraystore = carma.dArrayStore(sample1, True)
     arr = arraystore.get_view(True)
-    np.testing.assert_allclose(arr.flatten(), sample1)
+    np.testing.assert_allclose(arr.flatten(), og_sample1)
 
     arraystore.set_array(sample2, False)
     arr = arraystore.get_view(True)
-    np.testing.assert_allclose(arr.flatten(), sample2)
+    np.testing.assert_allclose(arr.flatten(), og_sample2)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is True
 
@@ -94,7 +96,7 @@ def test_ArrayStore_set_data_flags():
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is True
 
-    arraystore.set_array(sample2, False)
+    arraystore.set_array(sample2, True)
     arr = arraystore.get_view(False)
     assert arr.flags['OWNDATA'] is False
     assert arr.flags['WRITEABLE'] is False

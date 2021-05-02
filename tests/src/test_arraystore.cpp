@@ -7,16 +7,14 @@ namespace tests {
 double test_ArrayStore_get_mat() {
     arma::mat mat_in = arma::ones(100, 1);
     ArrayStore<arma::mat> store = ArrayStore<arma::mat>(mat_in, true);
-    arma::mat mat_out = store.mat;
-    return std::fabs(arma::accu(mat_out) - arma::accu(mat_in));
+    return std::fabs(arma::accu(store.mat) - arma::accu(mat_in));
 } /* test_ArrayStore_get_mat */
 
 double test_ArrayStore_get_mat_rvalue() {
     arma::mat mat_in = arma::ones(100, 1);
     arma::mat ref_mat = arma::mat(mat_in.memptr(), 100, 1);
     ArrayStore<arma::mat> store = ArrayStore<arma::mat>(std::move(mat_in));
-    arma::mat mat_out = store.mat;
-    return std::fabs(arma::accu(mat_out) - arma::accu(ref_mat));
+    return std::fabs(arma::accu(store.mat) - arma::accu(ref_mat));
 } /* test_ArrayStore_get_mat */
 
 py::array_t<double> test_ArrayStore_get_view(bool writeable) {
