@@ -49,6 +49,43 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
         CHECK(_ptr == M.memptr());
     }
 
+    SECTION("F-contiguous; steal") {
+        int copy = 0;
+        int strict = 0;
+
+        py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+        size_t arr_S1 = arr.shape(1);
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+
+        // compute sum of array
+        double arr_sum = 0.0;
+        double * _ptr = reinterpret_cast<double*>(info.ptr);
+        auto ptr = arr.unchecked<2>();
+        for (size_t ic = 0; ic < arr_S1; ic++) {
+            for (size_t ir = 0; ir < arr_S0; ir++) {
+                arr_sum += ptr(ir, ic);
+            }
+        }
+
+        // call function to be tested
+        arma::Mat<double> M = carma::arr_to_mat<double>(std::move(arr));
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_rows);
+        CHECK(arr_S1 == M.n_cols);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(_ptr == M.memptr());
+    }
+
     SECTION("C-contiguous; no copy; no strict") {
         int copy = 0;
         int strict = 0;
@@ -74,6 +111,48 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // call function to be tested
         arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_rows);
+        CHECK(arr_S1 == M.n_cols);
+        INFO("is c-contiguous " << carma::is_c_contiguous(arr));
+        INFO("is f-contiguous " << carma::is_f_contiguous(arr));
+        INFO("is aligned " << carma::is_aligned(arr));
+        INFO("mat_sum is  " << mat_sum);
+        INFO("arr_sum is  " << arr_sum);
+        INFO("M " << M);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(info.ptr != M.memptr());
+    }
+
+    SECTION("C-contiguous; steal") {
+        int copy = 0;
+        int strict = 0;
+
+        py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2));
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+        size_t arr_S1 = arr.shape(1);
+        auto arr_p = arr.unchecked<2>();
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+
+        // compute sum of array
+        double arr_sum = 0;
+        for (size_t ci = 0; ci < arr_S1; ci++) {
+            for (size_t ri = 0; ri < arr_S0; ri++) {
+                arr_sum += arr_p(ri, ci);
+            }
+        }
+
+        // call function to be tested
+        arma::Mat<double> M = carma::arr_to_mat<double>(std::move(arr));
 
         double mat_sum = arma::accu(M);
 
@@ -301,6 +380,37 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
         CHECK(info.ptr == M.memptr());
     }
 
+    SECTION("F-contiguous; steal") {
+        bool copy = false;
+        bool strict = false;
+
+        py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, 100));
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
+
+        // compute sum of array
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
+
+        // // call function to be tested
+        arma::Row<double> M = carma::arr_to_row<double>(std::move(arr));
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_cols);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(info.ptr == M.memptr());
+    }
+
     SECTION("2D; no copy; no strict") {
         bool copy = false;
         bool strict = false;
@@ -388,6 +498,37 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         // // call function to be tested
         arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_cols);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(info.ptr == M.memptr());
+    }
+
+    SECTION("C-contiguous; steal") {
+        bool copy = false;
+        bool strict = false;
+
+        py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
+
+        // compute sum of array
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
+
+        // // call function to be tested
+        arma::Row<double> M = carma::arr_to_row<double>(std::move(arr));
 
         double mat_sum = arma::accu(M);
 
@@ -549,6 +690,37 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
         CHECK(info.ptr == M.memptr());
     }
 
+    SECTION("F-contiguous; steal") {
+        bool copy = false;
+        bool strict = false;
+
+        py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, 100));
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
+
+        // compute sum of array
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
+
+        // // call function to be tested
+        arma::Col<double> M = carma::arr_to_col<double>(std::move(arr));
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_rows);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(info.ptr == M.memptr());
+    }
+
     SECTION("2D; no copy; no strict") {
         bool copy = false;
         bool strict = false;
@@ -636,6 +808,37 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         // // call function to be tested
         arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_rows);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(info.ptr == M.memptr());
+    }
+
+    SECTION("C-contiguous; steal") {
+        bool copy = false;
+        bool strict = false;
+
+        py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+        const double* ptr = reinterpret_cast<double*>(info.ptr);
+
+        // compute sum of array
+        double arr_sum = 0.0;
+        for (size_t i = 0; i < static_cast<size_t>(arr.size()); i++)
+            arr_sum += ptr[i];
+
+        // // call function to be tested
+        arma::Col<double> M = carma::arr_to_col<double>(std::move(arr));
 
         double mat_sum = arma::accu(M);
 
@@ -806,6 +1009,46 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
         CHECK(info.ptr == M.memptr());
     }
 
+    SECTION("F-contiguous; steal") {
+        bool copy = false;
+        bool strict = false;
+
+        py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+        size_t arr_S1 = arr.shape(1);
+        size_t arr_S2 = arr.shape(2);
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+
+        // compute sum of array
+        double arr_sum = 0.0;
+        auto ptr = arr.unchecked<3>();
+        for (size_t is = 0; is < arr_S2; is++) {
+            for (size_t ic = 0; ic < arr_S1; ic++) {
+                for (size_t ir = 0; ir < arr_S0; ir++) {
+                    arr_sum += ptr(ir, ic, is);
+                }
+            }
+        }
+
+        // call function to be tested
+        arma::Cube<double> M = carma::arr_to_cube<double>(std::move(arr));
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_rows);
+        CHECK(arr_S1 == M.n_cols);
+        CHECK(arr_S2 == M.n_slices);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(info.ptr == M.memptr());
+    }
+
     SECTION("C-contiguous; no copy; no strict") {
         bool copy = false;
         bool strict = false;
@@ -834,6 +1077,52 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         // call function to be tested
         arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
+
+        double mat_sum = arma::accu(M);
+
+        // variable for test status
+        CHECK(arr_N == M.n_elem);
+        CHECK(arr_S0 == M.n_rows);
+        CHECK(arr_S1 == M.n_cols);
+        CHECK(arr_S2 == M.n_slices);
+        INFO("is c-contiguous " << carma::is_c_contiguous(arr));
+        INFO("is f-contiguous " << carma::is_f_contiguous(arr));
+        INFO("is aligned " << carma::is_aligned(arr));
+        INFO("mat_sum is  " << mat_sum);
+        INFO("arr_sum is  " << arr_sum);
+        INFO("M " << M);
+        CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
+        CHECK(info.ptr != M.memptr());
+    }
+
+    SECTION("C-contiguous; steal") {
+        bool copy = false;
+        bool strict = false;
+
+        py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2));
+
+        // attributes of the numpy array
+        size_t arr_N = arr.size();
+        size_t arr_S0 = arr.shape(0);
+        size_t arr_S1 = arr.shape(1);
+        size_t arr_S2 = arr.shape(2);
+        auto arr_p = arr.unchecked<3>();
+
+        // get buffer for raw pointer
+        py::buffer_info info = arr.request();
+
+        // compute sum of array
+        double arr_sum = 0;
+        for (size_t si = 0; si < arr_S2; si++) {
+            for (size_t ci = 0; ci < arr_S1; ci++) {
+                for (size_t ri = 0; ri < arr_S0; ri++) {
+                    arr_sum += arr_p(ri, ci, si);
+                }
+            }
+        }
+
+        // call function to be tested
+        arma::Cube<double> M = carma::arr_to_cube<double>(std::move(arr));
 
         double mat_sum = arma::accu(M);
 
