@@ -94,6 +94,28 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
 
 namespace carma {
 
+#ifdef CARMA_EXTRA_DEBUG
+namespace debug {
+
+template <typename T>
+inline void print_array_info(PyObject* src) {
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
+    T* data = reinterpret_cast<T*>(PyArray_DATA(arr));
+    int ndim = PyArray_NDIM(arr);
+    npy_intp * dims = PyArray_DIMS(arr);
+    bool first = true;
+    std::cout << "\nThe array has shape: ";
+    for (int i = 0; i < ndim; i++) {
+        std::cout << (first ? "(" : ", ") << dims[i];
+        first = false;
+    }
+    std::cout << ")" << "\n";
+    std::cout << "with first element: " << data[0] << "\n";
+}  // print_array_info
+
+}  // namespace debug
+#endif  // CARMA_EXTRA_DEBUG
+
 /* ---- steal_memory ----
  * The default behaviour is to turn off the owndata flag, numpy will no longer
  * free the allocated resources.
@@ -125,11 +147,11 @@ static inline void steal_memory(PyObject* src) {
     PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
     std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
     T* data = reinterpret_cast<T*>(PyArray_DATA(arr));
-    std::cout << "Array with adress: " << data << "is being stolen" << "\n";
+    std::cout << "Array with data adress: " << data << " will be stolen." << "\n";
     int ndim = PyArray_NDIM(arr);
     npy_intp * dims = PyArray_DIMS(arr);
     bool first = true;
-    std::cout << "the array has shape: ";
+    std::cout << "\nThe array has shape: ";
     for (int i = 0; i < ndim; i++) {
         std::cout << (first ? "(" : ", ") << dims[i];
         first = false;

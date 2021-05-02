@@ -24,6 +24,7 @@
 #include <pybind11/pybind11.h>  // NOLINT
 
 #include <carma_bits/config.h> // NOLINT
+#include <carma_bits/cnumpy.h> // NOLINT
 
 namespace py = pybind11;
 
@@ -97,11 +98,47 @@ inline void print_copy_of_data(T* data) {
 }
 
 template <typename T>
+inline void print_copy_of_data(T* data, PyObject* obj) {
+    print_opening();
+    std::cout << "Memory @" << data <<  " will be copied." << "\n";
+    std::cout << "It is not well behaved." << "\n";
+    print_array_info<T>(obj);
+    print_closing();
+}
+
+template <typename T>
+inline void print_cannot_steal(T* data) {
+    print_opening();
+    std::cout << "Memory @" << data <<  " cannot be stolen and will be copied." << "\n";
+    std::cout << "It is not well behaved." << "\n";
+    print_closing();
+}
+
+template <typename T>
+inline void print_cannot_steal(T* data, PyObject* obj) {
+    print_opening();
+    std::cout << "Memory @" << data <<  " cannot be stolen and will be copied." << "\n";
+    std::cout << "It is not well behaved." << "\n";
+    print_array_info<T>(obj);
+    print_closing();
+}
+
+template <typename T>
 inline void print_prealloc(T* data) {
     static constexpr int pl = aconf::mat_prealloc;
     print_opening();
     std::cout << "Memory at @" << data << " will be copied." << "\n";
     std::cout << "It is smaller than armadillo's preallocation limit: " << pl << "\n";
+    print_closing();
+}
+
+template <typename T>
+inline void print_prealloc(T* data, PyObject* obj) {
+    static constexpr int pl = aconf::mat_prealloc;
+    print_opening();
+    std::cout << "Memory at @" << data << " will be copied." << "\n";
+    std::cout << "It is smaller than armadillo's preallocation limit: " << pl << "\n";
+    print_array_info<T>(obj);
     print_closing();
 }
 
