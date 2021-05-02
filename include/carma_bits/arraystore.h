@@ -33,7 +33,6 @@ class ArrayStore {
 
  protected:
     constexpr static ssize_t tsize = sizeof(T);
-    bool p_copy;
     py::capsule p_base;
 
  public:
@@ -41,16 +40,16 @@ class ArrayStore {
 
  public:
     ArrayStore(py::array_t<T>& arr, bool copy) :
-    p_copy{copy}, mat{p_to_arma<armaT>::from(arr, copy, false)} {
+    mat{p_to_arma<armaT>::from(arr, copy, false)} {
         p_base = create_dummy_capsule(mat.memptr());
     }
 
-    explicit ArrayStore(const armaT& src) : p_copy{true}, mat{armaT(src)} {
+    explicit ArrayStore(const armaT& src) : mat{armaT(src)} {
         p_base = create_dummy_capsule(mat.memptr());
     }
 
-    ArrayStore(arma::Mat<T>& src, bool copy) : p_copy{copy} {
-        if (p_copy) {
+    ArrayStore(arma::Mat<T>& src, bool copy) {
+        if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
         } else {
             mat = std::move(src);
@@ -58,8 +57,8 @@ class ArrayStore {
         p_base = create_dummy_capsule(mat.memptr());
     }
 
-    ArrayStore(arma::Cube<T>& src, bool copy) : p_copy{copy} {
-        if (p_copy) {
+    ArrayStore(arma::Cube<T>& src, bool copy) {
+        if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
         } else {
             mat = std::move(src);
@@ -70,8 +69,8 @@ class ArrayStore {
     // SFINAE by adding additional parameter as
     // to avoid shadowing the class template
     template <typename U = armaT>
-    ArrayStore(armaT& src, bool copy, is_Vec<U>) : p_copy{copy} {
-        if (p_copy) {
+    ArrayStore(armaT& src, bool copy, is_Vec<U>) {
+        if (copy) {
             mat = armaT(src.memptr(), src.n_elem, true);
         } else {
             mat = std::move(src);
@@ -79,23 +78,27 @@ class ArrayStore {
         p_base = create_dummy_capsule(mat.memptr());
     }
 
-    explicit ArrayStore(armaT&& src) noexcept : p_copy{false}, mat{std::move(src)} { p_base = create_dummy_capsule(mat.memptr()); }
+    explicit ArrayStore(armaT&& src) noexcept : mat{std::move(src)} {
+        p_base = create_dummy_capsule(mat.memptr());
+    }
 
     // Function requires different name than set_data
     // as overload could not be resolved without
     void set_array(py::array_t<T>& arr, bool copy) {
-        p_copy = copy;
-        mat = p_to_arma<armaT>::from(arr, copy, false);
+        if (copy) {
+            mat = p_to_arma<armaT>::from(arr, true, false);
+        } else {
+            mat = p_to_arma_steal<armaT>::from(std::move(arr));
+        }
+        p_base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(const armaT& src) {
-        p_copy = true;
         mat = armaT(src);
         p_base = create_dummy_capsule(mat.memptr());
     }
 
     void set_data(arma::Mat<T>& src, bool copy) {
-        p_copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, true);
         } else {
@@ -108,7 +111,6 @@ class ArrayStore {
     // to avoid shadowing the class template
     template <typename U = armaT>
     void set_data(armaT& src, bool copy, is_Vec<U>) {
-        p_copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_elem, true);
         } else {
@@ -118,7 +120,6 @@ class ArrayStore {
     }
 
     void set_data(arma::Cube<T>& src, bool copy) {
-        p_copy = copy;
         if (copy) {
             mat = armaT(src.memptr(), src.n_rows, src.n_cols, src.n_slices, true);
         } else {
@@ -128,7 +129,6 @@ class ArrayStore {
     }
 
     void set_data(armaT&& src) {
-        p_copy = false;
         mat = std::move(src);
         p_base = create_dummy_capsule(mat.memptr());
     }
