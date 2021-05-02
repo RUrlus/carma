@@ -96,7 +96,7 @@ arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = fa
     PyObject* obj = src.ptr();
 #ifdef CARMA_EXTRA_DEBUG
     if (!well_behaved(obj)) {
-        debug::print_copy_of_data<T>(data);
+        debug::print_copy_of_data<T>(data, obj);
     }
 #endif
     if (!well_behaved(obj) || copy) {
@@ -156,7 +156,7 @@ arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = fa
     PyObject* obj = src.ptr();
 #ifdef CARMA_EXTRA_DEBUG
     if (!well_behaved(obj)) {
-        debug::print_copy_of_data<T>(data);
+        debug::print_copy_of_data<T>(data, obj);
     }
 #endif
     if (!well_behaved(obj) || copy) {
@@ -215,7 +215,7 @@ arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false, bool strict = fa
     PyObject* obj = src.ptr();
 #ifdef CARMA_EXTRA_DEBUG
     if (!well_behaved(obj)) {
-        debug::print_copy_of_data<T>(data);
+        debug::print_copy_of_data<T>(data, obj);
     }
 #endif
     if (!well_behaved(obj) || copy) {
@@ -280,7 +280,7 @@ arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = 
     PyObject* obj = src.ptr();
 #ifdef CARMA_EXTRA_DEBUG
     if (!well_behaved(obj)) {
-        debug::print_copy_of_data<T>(data);
+        debug::print_copy_of_data<T>(data, obj);
     }
 #endif
     if (!well_behaved(obj) || copy) {
