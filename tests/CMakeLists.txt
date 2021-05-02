@@ -7,9 +7,10 @@ SET(NATIVE_MODNAME "test_carma_native")
 # ##############################################################################
 ADD_EXECUTABLE(${NATIVE_MODNAME}
     src/test_main.cpp
-    src/test_arr_to_mat_native.cpp
-    src/test_mat_to_arr_native.cpp
-    src/test_arraystore_native.cpp
+    src/test_native_arr_to_mat.cpp
+    src/test_native_mat_to_arr.cpp
+    src/test_native_arraystore.cpp
+    src/test_native_roundtrip.cpp
 )
 
 TARGET_LINK_LIBRARIES(${NATIVE_MODNAME} PUBLIC carma Catch2::Catch2 pybind11::embed)
