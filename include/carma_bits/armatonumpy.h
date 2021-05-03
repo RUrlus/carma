@@ -109,13 +109,15 @@ inline py::array_t<T> p_construct_array(arma::Cube<T>* data) {
     ssize_t ncols = static_cast<ssize_t>(data->n_cols);
     ssize_t nslices = static_cast<ssize_t>(data->n_slices);
 
-    py::capsule base = create_capsule<arma::Cube<T>>(data);
-
     return py::array_t<T>(
-        {nslices, nrows, ncols},                        // shape
-        {tsize * nrows * ncols, tsize, nrows * tsize},  // F-style contiguous strides
-        data->memptr(),                                 // the data pointer
-        base                                            // numpy array references this parent
+        // shape
+        {nrows, ncols, nslices},
+        // F-style contiguous strides
+        {tsize, nrows * tsize, tsize * nrows * ncols},
+        // the data pointer
+        data->memptr(),
+        // numpy array references this parent
+        create_capsule<arma::Cube<T>>(data)
     );
 } /* p_construct_array */
 
