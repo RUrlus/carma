@@ -8,6 +8,7 @@
 #include "test_mat_to_arr.h"
 #include "test_nparray.h"
 #include "test_type_caster.h"
+#include "test_roundtrip.h"
 
 #include <string>
 
@@ -82,4 +83,10 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_ArrayStore_get_mat(m);
     bind_test_ArrayStore_get_mat_rvalue(m);
     bind_test_ArrayStore_get_view(m);
+
+    // roundtrip
+    bind_test_mat_roundtrip(m);
+    bind_test_row_roundtrip(m);
+    bind_test_col_roundtrip(m);
+    bind_test_cube_roundtrip(m);
 }
