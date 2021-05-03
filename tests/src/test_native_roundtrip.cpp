@@ -240,9 +240,9 @@ TEST_CASE("Test roundtrip with cube", "[roundtrip_cube]") {
 
     // variable for test status
     CHECK(arr_out_N == arr_N);
-    CHECK(arr_out_S0 == arr_S2);
-    CHECK(arr_out_S1 == arr_S0);
-    CHECK(arr_out_S2 == arr_S1);
+    CHECK(arr_out_S0 == arr_S0);
+    CHECK(arr_out_S1 == arr_S1);
+    CHECK(arr_out_S2 == arr_S2);
     CHECK(std::abs(arr_sum - arr_out_sum) < 1e-6);
     CHECK(info_out.ptr == info.ptr);
 } /* TEST_CASE ROUNDTRIP_CUBE */
