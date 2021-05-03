@@ -91,5 +91,6 @@ IF(BUILD_EXAMPLES)
     ADD_SUBDIRECTORY(examples)
 ENDIF()
 #------------------------------------------------------
+INCLUDE(ClearOptions)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
 UNSET(CMAKE_MODULE_PATH_SAVED)

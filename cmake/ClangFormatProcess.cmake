@@ -4,6 +4,7 @@ if(PROJECT_SOURCE_DIR AND CLANG_FORMAT)
     # get C++ sources file list (ignoring packages)
     file(GLOB_RECURSE ALL_SOURCE_FILES
             ${PROJECT_SOURCE_DIR}/include/**.h
+            ${PROJECT_SOURCE_DIR}/include/carma_bits/**.h
             ${PROJECT_SOURCE_DIR}/tests/src/**.cpp
             ${PROJECT_SOURCE_DIR}/tests/src/**.h
             ${PROJECT_SOURCE_DIR}/examples/src/**.cpp
