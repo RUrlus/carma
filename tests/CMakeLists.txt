@@ -38,10 +38,11 @@ pybind11_add_module(${MODNAME}
     MODULE
         src/bindings.cpp
         src/test_nparray.cpp
+        src/test_roundtrip.cpp
         src/test_arr_to_mat.cpp
         src/test_mat_to_arr.cpp
-        src/test_type_caster.cpp
         src/test_arraystore.cpp
+        src/test_type_caster.cpp
 )
 TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma)
 
