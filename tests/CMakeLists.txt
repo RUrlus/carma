@@ -44,7 +44,7 @@ pybind11_add_module(${MODNAME}
         src/test_arraystore.cpp
         src/test_type_caster.cpp
 )
-TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma)
+TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma armadillo)
 
 TARGET_INCLUDE_DIRECTORIES(${MODNAME}
     PUBLIC

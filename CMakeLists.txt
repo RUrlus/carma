@@ -44,16 +44,27 @@ ENDIF ()
 # ##############################################################################
 #                                   TARGET                                     #
 # ##############################################################################
+# Carma v1.0.0 must use a modified version of armadillo to enable consistent
+# behaviour across platforms. A pull request has been opened to include the
+# changes in the upstream repository
+
+# We download the fork and create a custom target
+INCLUDE(GetArmadillo)
+ADD_LIBRARY(carma_armadillo INTERFACE)
+TARGET_INCLUDE_DIRECTORIES(carma_armadillo INTERFACE
+    ${PROJECT_SOURCE_DIR}/extern/armadillo-code/include
+)
+# ---------------------------------------------------------------------------------
 ADD_LIBRARY(carma INTERFACE)
 
 TARGET_COMPILE_DEFINITIONS(carma INTERFACE VERSION_INFO=${CARMA_VERSION_INFO})
 
 TARGET_LINK_LIBRARIES(carma
     INTERFACE
-    armadillo
-    pybind11::headers
-    Python3::Module
-    Python3::NumPy
+        carma_armadillo
+        pybind11::headers
+        Python3::Module
+        Python3::NumPy
 )
 TARGET_INCLUDE_DIRECTORIES(carma
     INTERFACE
