@@ -264,8 +264,7 @@ def test_cube_to_arr_plus_one():
         order='F'
     )
     mat = carma.cube_to_arr_plus_one(sample, False)
-    sw_mat = np.moveaxis(mat, [0, 1, 2], [2, 0, 1])
-    assert np.allclose(sw_mat, 1 + sample)
+    assert np.allclose(mat, 1 + sample)
 
 
 def test_cube_to_arr_plus_one_copy():
@@ -277,8 +276,7 @@ def test_cube_to_arr_plus_one_copy():
         order='F'
     )
     mat = carma.cube_to_arr_plus_one(sample, True)
-    sw_mat = np.moveaxis(mat, [0, 1, 2], [2, 0, 1])
-    assert np.allclose(sw_mat, 1 + sample)
+    assert np.allclose(mat, 1 + sample)
 
 
 def test_update_array_cube():

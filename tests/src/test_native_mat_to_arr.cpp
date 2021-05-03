@@ -569,9 +569,9 @@ TEST_CASE("Test cube_to_arr", "[cube_to_arr]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M_ptr);
     }
@@ -604,9 +604,9 @@ TEST_CASE("Test cube_to_arr", "[cube_to_arr]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M_ptr);
     }
@@ -639,9 +639,9 @@ TEST_CASE("Test cube_to_arr", "[cube_to_arr]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr == M_ptr);
     }
@@ -669,9 +669,9 @@ TEST_CASE("Test cube_to_arr", "[cube_to_arr]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum) > 1e-12);
     }
 
@@ -704,9 +704,9 @@ TEST_CASE("Test cube_to_arr", "[cube_to_arr]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M_ptr);
     }
@@ -740,9 +740,9 @@ TEST_CASE("Test cube_to_arr", "[cube_to_arr]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr == M_ptr);
     }
@@ -1333,9 +1333,9 @@ TEST_CASE("Test to_numpy Cube", "[to_numpy<Cube>]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M_ptr);
     }
@@ -1368,9 +1368,9 @@ TEST_CASE("Test to_numpy Cube", "[to_numpy<Cube>]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M_ptr);
     }
@@ -1398,9 +1398,9 @@ TEST_CASE("Test to_numpy Cube", "[to_numpy<Cube>]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum) > 1e-12);
     }
 
@@ -1433,9 +1433,9 @@ TEST_CASE("Test to_numpy Cube", "[to_numpy<Cube>]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr != M_ptr);
     }
@@ -1469,9 +1469,9 @@ TEST_CASE("Test to_numpy Cube", "[to_numpy<Cube>]") {
         }
         // variable for test status
         CHECK(arr_N == 800);
-        CHECK(arr_S0 == 4);
-        CHECK(arr_S1 == 100);
-        CHECK(arr_S2 == 2);
+        CHECK(arr_S0 == 100);
+        CHECK(arr_S1 == 2);
+        CHECK(arr_S2 == 4);
         CHECK(std::abs(arr_sum - mat_sum) < 1e-12);
         CHECK(info.ptr == M_ptr);
     }

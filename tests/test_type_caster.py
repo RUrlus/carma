@@ -117,13 +117,11 @@ def test_type_caster_out_cube():
     """Test type caster input handling of matrix."""
     sample = np.asarray(np.random.normal(size=(25, 3, 2)), order='F')
     mat = carma.tc_out_cube(sample)
-    sw_mat = np.moveaxis(mat, [0, 1, 2], [2, 0, 1])
-    assert np.allclose(sw_mat, 1 + sample)
+    assert np.allclose(mat, 1 + sample)
 
 
 def test_type_caster_out_cube_rvalue():
     """Test type caster input handling of matrix."""
     sample = np.asarray(np.random.normal(size=(25, 3, 2)), order='F')
     mat = carma.tc_out_cube_rvalue(sample)
-    sw_mat = np.moveaxis(mat, [0, 1, 2], [2, 0, 1])
-    assert np.allclose(sw_mat, 1 + sample)
+    assert np.allclose(mat, 1 + sample)
