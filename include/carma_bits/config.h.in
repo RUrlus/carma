@@ -26,9 +26,11 @@
 // When stealing the data of an array set nullptr
 // NOTE this will cause a segfault when accessing the original array's data
 // The default approach when staling is to only set the OWNDATA flag to False
-#if !defined(CARMA_HARD_STEAL) and !defined(CARMA_SOFT_STEAL)
+#if !defined(CARMA_HARD_STEAL)
+#if !defined(CARMA_SOFT_STEAL)
 #cmakedefine ENABLE_CARMA_HARD_STEAL
 #cmakedefine CARMA_HARD_STEAL "@CARMA_HARD_STEAL@"
+#endif
 #endif
 
 // -- REQUIRE_OWNDATA --
