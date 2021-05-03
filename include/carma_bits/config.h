@@ -2,7 +2,7 @@
 #define INCLUDE_CARMA_BITS_CONFIG_H_
 // CARMA Configuration
 //
-// This is the configuration module for carma set the option to ON in carma_config to enable the setting.
+// This is the configuration header for carma, set the option to ON in carma_config.cmake to enable the setting.
 // Please see the documentation for details: https://carma.readthedocs.io/en/latest/configuration.html
 
 //-- ENABLE_CARMA_EXTRA_DEBUG --
