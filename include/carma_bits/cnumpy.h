@@ -148,16 +148,7 @@ static inline void steal_memory(PyObject* src) {
     std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
     T* db_data = reinterpret_cast<T*>(PyArray_DATA(db_arr));
     std::cout << "Array with data adress: " << db_data << " will be stolen." << "\n";
-    int db_ndim = PyArray_NDIM(db_arr);
-    npy_intp * db_dims = PyArray_DIMS(db_arr);
-    bool first = true;
-    std::cout << "\nThe array has shape: ";
-    for (int i = 0; i < db_ndim; i++) {
-        std::cout << (first ? "(" : ", ") << db_dims[i];
-        first = false;
-    }
-    std::cout << ")" << "\n";
-    std::cout << "with first element: " << db_data[0] << "\n";
+    debug::print_array_info<T>(src);
     std::cout << "-----------" << "\n";
 #endif
 #if defined CARMA_HARD_STEAL
@@ -193,8 +184,13 @@ static inline void steal_memory(PyObject* src) {
 template <typename T>
 inline static T* steal_copy_array(PyObject* obj) {
     PyArrayObject* src = reinterpret_cast<PyArrayObject*>(obj);
-    auto& api = carman::npy_api::get();
-
+#ifdef CARMA_EXTRA_DEBUG
+    std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
+    T* db_data = reinterpret_cast<T*>(PyArray_DATA(src));
+    std::cout << "A copy of array with data adress @" << db_data << " will be stolen\n";
+    debug::print_array_info<T>(obj);
+    std::cout << "-----------" << "\n";
+#endif
     PyArray_Descr* dtype = PyArray_DESCR(src);
     // NewFromDescr steals a reference
     Py_INCREF(dtype);
@@ -203,9 +199,9 @@ inline static T* steal_copy_array(PyObject* obj) {
     int ndim = PyArray_NDIM(src);
     npy_intp const* dims = PyArray_DIMS(src);
 
-    // data will be freed by arma::memory::release<T>
+    auto& api = carman::npy_api::get();
+    // data will be freed by arma::memory::release
     T* data = arma::memory::acquire<T>(api.PyArray_Size_(obj));
-    if (data == NULL) throw std::bad_alloc();
 
     // build an PyArray to do F-order copy
     auto dest = reinterpret_cast<PyArrayObject*>(api.PyArray_NewFromDescr_(
@@ -222,8 +218,10 @@ inline static T* steal_copy_array(PyObject* obj) {
     // copy the array to a well behaved F-order
     api.PyArray_CopyInto_(dest, src);
 
-    // free the array
+    // set OWNDATA to false such that the newly create
+    // memory is not freed when the array is cleared
     PyArray_CLEARFLAGS(dest, NPY_ARRAY_OWNDATA);
+    // free the array but not the memory
     api.PyArray_Free_(dest, static_cast<void*>(nullptr));
     return data;
 }  // steal_copy_array
