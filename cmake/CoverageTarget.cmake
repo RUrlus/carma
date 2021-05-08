@@ -16,7 +16,7 @@ IF (ENABLE_COVERAGE)
     #endif (NOT SED)
 
     # Don't forget '' around each pattern
-    SET(LCOV_EXCLUDE_PATTERN "'${PROJECT_SOURCE_DIR}/third_party/*'")
+    SET(LCOV_EXCLUDE_PATTERN "'${PROJECT_SOURCE_DIR}/third_party/*' '${PROJECT_SOURCE_DIR}/extern/*'")
 
     ADD_CUSTOM_TARGET(coverage
         # Cleanup previously generated profiling data
