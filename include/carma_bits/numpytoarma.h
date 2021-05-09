@@ -51,7 +51,7 @@ template<typename T> inline void free_array(T* data) {
     std::cout << "Freeing memory @" << data << " of stolen array\n";
     debug::print_closing();
 #endif
-    carman::npy_api::get().PyDataMem_FREE_(static_cast<void *>(data));
+    arma::memory::release<T>(data);
 }  // free_array
 
 template <typename T>
