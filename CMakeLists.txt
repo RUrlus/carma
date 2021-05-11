@@ -50,12 +50,15 @@ ENDIF ()
 
 # We download the fork and create a custom target
 INCLUDE(GetArmadillo)
-ADD_DEFINITIONS(-DARMA_USE_NPY_ALLOC)
 ADD_LIBRARY(carma_armadillo INTERFACE)
 TARGET_INCLUDE_DIRECTORIES(carma_armadillo INTERFACE
     ${PROJECT_SOURCE_DIR}/extern/armadillo-code/include
 )
+TARGET_COMPILE_DEFINITIONS(
+    carma_armadillo INTERFACE ARMA_USE_NUMPY_ALLOC=true
+)
 # ---------------------------------------------------------------------------------
+
 ADD_LIBRARY(carma INTERFACE)
 
 TARGET_COMPILE_DEFINITIONS(carma INTERFACE VERSION_INFO=${CARMA_VERSION_INFO})
