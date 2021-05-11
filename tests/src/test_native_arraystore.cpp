@@ -531,9 +531,9 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         size_t out_S2 = out.shape(2);
 
         CHECK(in.n_elem == out_N);
-        CHECK(in.n_rows == out_S1);
-        CHECK(in.n_cols == out_S2);
-        CHECK(in.n_slices == out_S0);
+        CHECK(in.n_rows == out_S0);
+        CHECK(in.n_cols == out_S1);
+        CHECK(in.n_slices == out_S1);
         CHECK(in.memptr() != ptr);
         CHECK(std::abs(arma::accu(in) - out_sum) < 1e-12);
         CHECK(carma::is_owndata(out) == false);
@@ -559,9 +559,9 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         size_t out_S2 = out.shape(2);
 
         CHECK(in.n_elem == out_N);
-        CHECK(in.n_rows == out_S1);
-        CHECK(in.n_cols == out_S2);
-        CHECK(in.n_slices == out_S0);
+        CHECK(in.n_rows == out_S0);
+        CHECK(in.n_cols == out_S1);
+        CHECK(in.n_slices == out_S2);
         CHECK(in.memptr() != ptr);
         CHECK(std::abs(arma::accu(in) - out_sum) < 1e-12);
         CHECK(carma::is_owndata(out) == false);
@@ -582,8 +582,8 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
             out_sum += ptr[i];
         }
 
-        CHECK(2 == out.shape(0));
-        CHECK(100 == out.shape(1));
+        CHECK(100 == out.shape(0));
+        CHECK(2 == out.shape(1));
         CHECK(2 == out.shape(2));
         CHECK(std::abs(in_sum - out_sum) < 1e-12);
         CHECK(carma::is_owndata(out) == false);
@@ -602,8 +602,8 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
             out_sum += ptr[i];
         }
 
-        CHECK(2 == out.shape(0));
-        CHECK(100 == out.shape(1));
+        CHECK(100 == out.shape(0));
+        CHECK(2 == out.shape(1));
         CHECK(2 == out.shape(2));
         CHECK(std::abs(out_sum) > 1e-12);
         CHECK(carma::is_owndata(out) == false);
@@ -632,9 +632,9 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         size_t out_S2 = out.shape(2);
 
         CHECK(sec.n_elem == out_N);
-        CHECK(sec.n_rows == out_S1);
-        CHECK(sec.n_cols == out_S2);
-        CHECK(sec.n_slices == out_S0);
+        CHECK(sec.n_rows == out_S0);
+        CHECK(sec.n_cols == out_S1);
+        CHECK(sec.n_slices == out_S2);
         CHECK(sec.memptr() != ptr);
         CHECK(std::abs(arma::accu(sec) - out_sum) < 1e-12);
         CHECK(carma::is_owndata(out) == false);
@@ -663,9 +663,9 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         size_t out_S2 = out.shape(2);
 
         CHECK(sec.n_elem == out_N);
-        CHECK(sec.n_rows == out_S1);
-        CHECK(sec.n_cols == out_S2);
-        CHECK(sec.n_slices == out_S0);
+        CHECK(sec.n_rows == out_S0);
+        CHECK(sec.n_cols == out_S1);
+        CHECK(sec.n_slices == out_S2);
         CHECK(sec.memptr() != ptr);
         CHECK(std::abs(arma::accu(sec) - out_sum) < 1e-12);
         CHECK(carma::is_owndata(out) == false);
@@ -694,8 +694,8 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         size_t out_S2 = out.shape(2);
 
         CHECK(800 == out_N);
-        CHECK(2 == out_S0);
-        CHECK(200 == out_S1);
+        CHECK(200 == out_S0);
+        CHECK(2 == out_S1);
         CHECK(2 == out_S2);
         CHECK(std::abs(out_sum) > 1e-12);
         CHECK(carma::is_owndata(out) == false);
@@ -716,8 +716,8 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
             out_sum += ptr[i];
         }
 
-        CHECK(2 == out.shape(0));
-        CHECK(200 == out.shape(1));
+        CHECK(200 == out.shape(0));
+        CHECK(2 == out.shape(1));
         CHECK(2 == out.shape(2));
         CHECK(std::abs(out_sum) > 1e-12);
         CHECK(carma::is_owndata(out) == false);
