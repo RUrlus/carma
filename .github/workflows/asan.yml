@@ -8,14 +8,10 @@ defaults:
 
 jobs:
   build:
-    name: "Asan (Clang-9)"
+    name: "Asan Python (Clang-9)"
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
-      matrix:
-        config: 
-        - {
-          }
+      fail-fast: True
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -54,6 +50,8 @@ jobs:
 
           cmake \
             -DBUILD_TESTS=ON \
+            -DBUILD_NATIVE_TESTS=OFF \
+            -DBUILD_PYTHON_TESTS=ON \
             -DCMAKE_C_COMPILER=clang-9 \
             -DCMAKE_CXX_COMPILER=clang++-9 \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
