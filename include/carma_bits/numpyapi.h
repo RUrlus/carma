@@ -29,14 +29,6 @@ namespace py = pybind11;
 
 namespace carman {
 
-inline void * NPy_Malloc(size_t size) {
-    return PyMem_RawMalloc(size);
-}
-
-inline void NPy_free(void *ptr) {
-    PyMem_RawFree(ptr);
-}
-
 inline npy_intp* NPyDimMem_NEW(int nd) {
     return static_cast<npy_intp*>(PyMem_RawMalloc(nd * sizeof(npy_intp)));
 }
