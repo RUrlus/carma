@@ -110,7 +110,7 @@ class ArrayStore {
     // SFINAE by adding additional parameter as
     // to avoid shadowing the class template
     template <typename U = armaT>
-    void set_data(armaT& src, bool copy, is_Vec<U>) {
+    void set_data(armaT& src, bool copy, p_is_Vec<U>) {
         if (copy) {
             mat = armaT(src.memptr(), src.n_elem, true);
         } else {
@@ -146,8 +146,9 @@ class ArrayStore {
         if (rc_elem != nelem) {
             nslices = nelem / rc_elem;
             arr = py::array_t<T>(
-                {nslices, nrows, ncols},                        // shape
-                {tsize * nrows * ncols, tsize, nrows * tsize},  // F-style contiguous strides
+                {nrows, ncols, nslices},
+                // F-style contiguous strides
+                {tsize, nrows * tsize, tsize * nrows * ncols},
                 mat.memptr(),                                   // the data pointer
                 p_base                                           // numpy array references this parent
             );
