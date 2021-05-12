@@ -1,4 +1,4 @@
-name: Linux Build and Test Matrix
+name: Linux Build
 
 on: 
   pull_request:

@@ -1,4 +1,4 @@
-name: MacOS Build and Test Matrix
+name: MacOS Build
 
 on: 
   pull_request:
