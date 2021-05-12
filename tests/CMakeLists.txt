@@ -22,8 +22,7 @@ IF (NOT DEFINED BUILD_NATIVE_TESTS OR BUILD_NATIVE_TESTS)
             $<INSTALL_INTERFACE:include>
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/python/include>
     )
-    
-    INCLUDE(${PROJECT_SOURCE_DIR}/third_party/Catch2/contrib/Catch.cmake)
+    INCLUDE(${PROJECT_SOURCE_DIR}/extern/Catch2/contrib/Catch.cmake)
     catch_discover_tests(${NATIVE_MODNAME})
 
     INSTALL(TARGETS ${NAIVE_MODNAME} RUNTIME DESTINATION tests)
@@ -48,7 +47,7 @@ IF (NOT DEFINED BUILD_PYTHON_TESTS OR BUILD_PYTHON_TESTS)
             src/test_arraystore.cpp
             src/test_type_caster.cpp
     )
-    TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma armadillo)
+    TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma)
 
     TARGET_INCLUDE_DIRECTORIES(${MODNAME}
         PUBLIC
