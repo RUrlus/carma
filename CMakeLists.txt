@@ -58,6 +58,14 @@ TARGET_INCLUDE_DIRECTORIES(carma_armadillo INTERFACE
 TARGET_COMPILE_DEFINITIONS(
     carma_armadillo INTERFACE ARMA_USE_NUMPY_ALLOC=true
 )
+
+INSTALL(
+    DIRECTORY "${PROJECT_SOURCE_DIR}/extern/armadillo/include"
+    DESTINATION carma_armadillo
+    FILES_MATCHING
+        PATTERN "*.hpp"
+        PATTERN "armadillo"
+)
 # ---------------------------------------------------------------------------------
 
 ADD_LIBRARY(carma INTERFACE)
@@ -86,6 +94,7 @@ INSTALL(
         PATTERN "*.h"
         PATTERN "carma"
 )
+
 # ##############################################################################
 #                              TEST TARGETS                                    #
 # ##############################################################################

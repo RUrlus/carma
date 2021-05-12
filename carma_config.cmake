@@ -5,6 +5,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 # This is the configuration module for carma set the option to ON in carma_config to enable the setting.
 # Please see the documentation for details: https://carma.readthedocs.io/en/latest/configuration.html
 
+# -- Armadillo version --
+# Set which version of Armadillo to use
+# Supported versions are:
+#     - 10.5.x
+#     - 10.4.x
+# OPTION(USE_ARMA_VERSION "Which version of Armadillo to use" 10.5.x)
+
 # -- ENABLE_CARMA_EXTRA_DEBUG --
 # This option enables additional debuggin statements
 OPTION(ENABLE_CARMA_EXTRA_DEBUG "Enable CARMA_EXTRA_DEBUG" OFF)
