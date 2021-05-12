@@ -15,7 +15,13 @@ IF (NOT DEFINED BUILD_NATIVE_TESTS OR BUILD_NATIVE_TESTS)
         src/test_native_roundtrip.cpp
     )
 
-    TARGET_LINK_LIBRARIES(${NATIVE_MODNAME} PUBLIC carma Catch2::Catch2 pybind11::embed)
+    TARGET_LINK_LIBRARIES(
+        ${NATIVE_MODNAME} PUBLIC
+        carma
+        Catch2::Catch2
+        pybind11::embed
+        Python3::Python
+    )
 
     TARGET_INCLUDE_DIRECTORIES(${NATIVE_MODNAME}
         PUBLIC

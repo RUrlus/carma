@@ -21,7 +21,7 @@ FetchContent_GetProperties(Pybind11Repo)
 
 STRING(TOLOWER "Pybind11Repo" lcName)
 IF (NOT ${lcName}_POPULATED)
-  MESSAGE(STATUS "carma: collecting Pybind11")
+  MESSAGE(STATUS "carma: collecting Pybind11 ${USE_PYBIND11_VERSION}")
   # Fetch the content using previously declared details
   FetchContent_Populate(Pybind11Repo)
 ENDIF ()

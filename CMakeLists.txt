@@ -75,7 +75,7 @@ TARGET_COMPILE_DEFINITIONS(carma INTERFACE VERSION_INFO=${CARMA_VERSION_INFO})
 TARGET_LINK_LIBRARIES(carma
     INTERFACE
         carma_armadillo
-        pybind11::headers
+        pybind11::pybind11
         Python3::Module
         Python3::NumPy
 )
