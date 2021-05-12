@@ -118,7 +118,7 @@ def test_ArrayStore_get_view_float():
 def test_ArrayStore_get_view_long():
     """Tests for ArrayStore class.get_view()."""
     sample = np.asarray(
-        np.random.randint(-10, 10, size=100).astype(np.int),
+        np.random.randint(-10, 10, size=100).astype(np.int64),
         order='F'
     )
     arraystore = carma.lArrayStore(sample, True)
@@ -130,7 +130,7 @@ def test_ArrayStore_get_view_long():
 def test_ArrayStore_get_view_int():
     """Tests for ArrayStore class.get_view()."""
     sample = np.asarray(
-        np.random.randint(-10, 10, size=100).astype(np.int),
+        np.random.randint(-10, 10, size=100).astype(np.int32),
         order='F',
         dtype=np.int32
     )

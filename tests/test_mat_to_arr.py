@@ -46,7 +46,7 @@ def test_mat_to_arr_plus_one():
     """Test mat_to_arr with c++ addition."""
     sample = np.asarray(
         np.random.normal(size=(20, 2)),
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.mat_to_arr_plus_one(sample, False)
@@ -57,7 +57,7 @@ def test_mat_to_arr_plus_one_copy():
     """Test mat_to_arr with c++ addition."""
     sample = np.asarray(
         np.random.normal(size=(20, 2)),
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.mat_to_arr_plus_one(sample, True)
@@ -66,7 +66,7 @@ def test_mat_to_arr_plus_one_copy():
 
 def test_update_array_mat():
     """Test update_array."""
-    arr = np.asarray(np.random.normal(size=(20, 2)), dtype=np.float, order='F')
+    arr = np.asarray(np.random.normal(size=(20, 2)), dtype=np.float64, order='F')
     og_sum = arr.sum()
     carma.update_array_mat(arr, 2)
     assert arr.shape == (20, 4)
@@ -115,7 +115,7 @@ def test_row_to_arr_plus_one():
     """Test row_to_arr with c++ addition."""
     sample = np.asarray(
         np.random.normal(size=(20)),
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.row_to_arr_plus_one(sample, False)
@@ -126,7 +126,7 @@ def test_row_to_arr_plus_one_copy():
     """Test row_to_arr with c++ addition."""
     sample = np.asarray(
         np.random.normal(size=(20)),
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.row_to_arr_plus_one(sample, True)
@@ -136,7 +136,7 @@ def test_row_to_arr_plus_one_copy():
 def test_update_array_row():
     """Test update_array."""
     arr = np.asarray(
-        np.random.normal(size=(1, 20)), dtype=np.float, order='F'
+        np.random.normal(size=(1, 20)), dtype=np.float64, order='F'
     )
     og_sum = arr.sum()
     carma.update_array_row(arr, 2)
@@ -187,7 +187,7 @@ def test_col_to_arr_plus_one():
     """Test col_to_arr with c++ addition."""
     sample = np.asarray(
         np.random.normal(size=(20, 1)),
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.col_to_arr_plus_one(sample, False)
@@ -198,7 +198,7 @@ def test_col_to_arr_plus_one_copy():
     """Test col_to_arr with c++ addition."""
     sample = np.asarray(
         np.random.normal(size=(20, 1)),
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.col_to_arr_plus_one(sample, True)
@@ -208,7 +208,7 @@ def test_col_to_arr_plus_one_copy():
 def test_update_array_col():
     """Test update_array."""
     arr = np.asarray(
-        np.random.normal(size=(20, 1)), dtype=np.float, order='F'
+        np.random.normal(size=(20, 1)), dtype=np.float64, order='F'
     )
     og_sum = arr.sum()
     carma.update_array_col(arr, 2)
@@ -260,7 +260,7 @@ def test_cube_to_arr_plus_one():
     or_sample = np.random.normal(size=(20, 3, 2))
     sample = np.asarray(
         or_sample,
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.cube_to_arr_plus_one(sample, False)
@@ -272,7 +272,7 @@ def test_cube_to_arr_plus_one_copy():
     or_sample = np.random.normal(size=(20, 3, 2))
     sample = np.asarray(
         or_sample,
-        dtype=np.float,
+        dtype=np.float64,
         order='F'
     )
     mat = carma.cube_to_arr_plus_one(sample, True)
@@ -282,7 +282,7 @@ def test_cube_to_arr_plus_one_copy():
 def test_update_array_cube():
     """Test update_array."""
     arr = np.asarray(
-        np.random.normal(size=(20, 2, 2)), dtype=np.float, order='F'
+        np.random.normal(size=(20, 2, 2)), dtype=np.float64, order='F'
     )
     og_sum = arr.sum()
     carma.update_array_cube(arr, 2)
