@@ -1,4 +1,4 @@
-name: Windows Build and Test Matrix
+name: Windows Build
 
 on: 
   pull_request:
