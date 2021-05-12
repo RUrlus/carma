@@ -36,14 +36,16 @@ namespace py = pybind11;
 
 namespace carma {
 
+struct conversion_error : std::exception {
+    const char* message;
+    explicit conversion_error(const char* message) : message(message) {}
+    const char* what() const throw() { return message; }
+};
+
+namespace details {
+
 using uword = arma::uword;
 using aconf =  arma::arma_config;
-
-struct conversion_error : std::exception {
-    const char* p_message;
-    explicit conversion_error(const char* message) : p_message(message) {}
-    const char* what() const throw() { return p_message; }
-};
 
 template<typename T> inline void free_array(T* data) {
 #ifdef CARMA_EXTRA_DEBUG
@@ -71,7 +73,7 @@ template <typename T>
 
 
 template <typename T>
-inline T* p_validate_from_array_mat(py::buffer_info& src) {
+inline T* validate_from_array_mat(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims < 1 || dims > 2) {
@@ -81,10 +83,10 @@ inline T* p_validate_from_array_mat(py::buffer_info& src) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
-}  // p_validate_to_array_mat
+}  // validate_to_array_mat
 
 template <typename T>
-inline arma::Mat<T> p_arr_to_mat(
+inline arma::Mat<T> arr_to_mat(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -136,10 +138,10 @@ inline arma::Mat<T> p_arr_to_mat(
     arma::access::rw(dest.n_alloc) = nelem;
     arma::access::rw(dest.mem_state) = 0;
     return dest;
-} /* p_arr_to_mat */
+} /* arr_to_mat */
 
 template <typename T>
-inline T* p_validate_from_array_col(py::buffer_info& src) {
+inline T* validate_from_array_col(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[1] != 1)) {
@@ -149,10 +151,10 @@ inline T* p_validate_from_array_col(py::buffer_info& src) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
-}  // p_validate_to_array_col
+}  // validate_to_array_col
 
 template <typename T>
-arma::Col<T> p_arr_to_col(
+arma::Col<T> arr_to_col(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -182,10 +184,10 @@ arma::Col<T> p_arr_to_col(
     arma::access::rw(dest.n_alloc) = nelem;
     arma::access::rw(dest.mem_state) = 0;
     return dest;
-} /* p_arr_to_col */
+} /* arr_to_col */
 
 template <typename T>
-inline T* p_validate_from_array_row(py::buffer_info& src) {
+inline T* validate_from_array_row(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[0] != 1)) {
@@ -196,10 +198,10 @@ inline T* p_validate_from_array_row(py::buffer_info& src) {
         throw conversion_error("CARMA: armadillo matrix conversion failed, nullptr");
     }
     return data;
-}  // p_validate_to_array_row
+}  // validate_to_array_row
 
 template <typename T>
-arma::Row<T> p_arr_to_row(
+arma::Row<T> arr_to_row(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -229,10 +231,10 @@ arma::Row<T> p_arr_to_row(
     arma::access::rw(dest.n_alloc) = nelem;
     arma::access::rw(dest.mem_state) = 0;
     return dest;
-} /* p_arr_to_Row */
+} /* arr_to_Row */
 
 template <typename T>
-inline T* p_validate_from_array_cube(py::buffer_info& src) {
+inline T* validate_from_array_cube(py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims != 3) {
@@ -242,10 +244,10 @@ inline T* p_validate_from_array_cube(py::buffer_info& src) {
         throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
-}  // p_validate_to_array_cube
+}  // validate_to_array_cube
 
 template <typename T>
-arma::Cube<T> p_arr_to_cube(
+arma::Cube<T> arr_to_cube(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
 
@@ -279,8 +281,9 @@ arma::Cube<T> p_arr_to_cube(
     arma::access::rw(dest.n_alloc) = nelem;
     arma::access::rw(dest.mem_state) = 0;
     return dest;
-} /* p_arr_to_cube */
+} /* arr_to_cube */
 
+}  // namespace details
 }  // namespace carma
 
 #endif  // INCLUDE_CARMA_BITS_NUMPYTOARMA_H_

@@ -116,6 +116,8 @@ inline void print_array_info(PyObject* src) {
 }  // namespace debug
 #endif  // CARMA_EXTRA_DEBUG
 
+namespace details {
+
 /* ---- steal_memory ----
  * The default behaviour is to turn off the owndata flag, numpy will no longer
  * free the allocated resources.
@@ -226,6 +228,7 @@ inline static T* steal_copy_array(PyObject* obj) {
     return data;
 }  // steal_copy_array
 
+}  // namespace details
 }  // namespace carma
 
 #endif  // INCLUDE_CARMA_BITS_CNUMPY_H_
