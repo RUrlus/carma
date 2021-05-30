@@ -27,7 +27,6 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_to_arma_col(m);
     bind_test_to_arma_row(m);
     bind_test_to_arma_cube(m);
-    bind_debug_arr_to_mat(m);
 
     // mat_to_arr
     bind_test_mat_to_arr(m);
@@ -44,12 +43,6 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_to_numpy_row(m);
     bind_test_to_numpy_col(m);
     bind_test_to_numpy_cube(m);
-
-    // update_array
-    bind_test_update_array_mat(m);
-    bind_test_update_array_row(m);
-    bind_test_update_array_col(m);
-    bind_test_update_array_cube(m);
 
     // nparray
     bind_test_is_owndata(m);

@@ -3,7 +3,7 @@
 namespace carma {
 namespace tests {
 
-int test_arr_to_mat_double(py::array_t<double>& arr, bool copy, bool strict) {
+int test_arr_to_mat_double(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
@@ -22,7 +22,7 @@ int test_arr_to_mat_double(py::array_t<double>& arr, bool copy, bool strict) {
     }
 
     // call function to be tested
-    arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
+    arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -41,7 +41,7 @@ int test_arr_to_mat_double(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_mat_double */
 
-int test_arr_to_mat_long(py::array_t<int64_t>& arr, bool copy, bool strict) {
+int test_arr_to_mat_long(py::array_t<int64_t>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
@@ -60,7 +60,7 @@ int test_arr_to_mat_long(py::array_t<int64_t>& arr, bool copy, bool strict) {
     }
 
     // call function to be tested
-    arma::Mat<int64_t> M = carma::arr_to_mat<int64_t>(arr, copy, strict);
+    arma::Mat<int64_t> M = carma::arr_to_mat<int64_t>(arr, copy);
 
     // ---------------------------------------------------------------
     int64_t mat_sum = arma::accu(M);
@@ -79,7 +79,7 @@ int test_arr_to_mat_long(py::array_t<int64_t>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_mat_long */
 
-int test_arr_to_mat_double_copy(py::array_t<double> arr) {
+int test_arr_to_mat_double_copy(const py::array_t<double>& arr) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
@@ -98,7 +98,7 @@ int test_arr_to_mat_double_copy(py::array_t<double> arr) {
     }
 
     // call function to be tested
-    arma::Mat<double> M = carma::arr_to_mat<double>(arr, true, false);
+    arma::Mat<double> M = carma::arr_to_mat<double>(arr);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -117,7 +117,7 @@ int test_arr_to_mat_double_copy(py::array_t<double> arr) {
     return 0;
 } /* arr_to_mat_double_copy */
 
-int test_arr_to_mat_1d(py::array_t<double>& arr, bool copy, bool strict) {
+int test_arr_to_mat_1d(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     auto arr_p = arr.unchecked<1>();
@@ -131,7 +131,7 @@ int test_arr_to_mat_1d(py::array_t<double>& arr, bool copy, bool strict) {
         arr_sum += arr_p[i];
 
     // call function to be tested
-    arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy, strict);
+    arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -143,7 +143,7 @@ int test_arr_to_mat_1d(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_mat_1d */
 
-int test_arr_to_col(py::array_t<double>& arr, bool copy, bool strict) {
+int test_arr_to_col(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     auto arr_p = arr.unchecked();
@@ -157,7 +157,7 @@ int test_arr_to_col(py::array_t<double>& arr, bool copy, bool strict) {
         arr_sum += arr_p[i];
 
     // call function to be tested
-    arma::Col<double> M = carma::arr_to_col<double>(arr, copy, strict);
+    arma::Col<double> M = carma::arr_to_col<double>(arr, copy);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -172,7 +172,7 @@ int test_arr_to_col(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_col */
 
-int test_arr_to_row(py::array_t<double>& arr, bool copy, bool strict) {
+int test_arr_to_row(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     auto arr_p = arr.unchecked();
@@ -191,7 +191,7 @@ int test_arr_to_row(py::array_t<double>& arr, bool copy, bool strict) {
     }
 
     // call function to be tested
-    arma::Row<double> M = carma::arr_to_row<double>(arr, copy, strict);
+    arma::Row<double> M = carma::arr_to_row<double>(arr, copy);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -206,7 +206,7 @@ int test_arr_to_row(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_col_double */
 
-int test_arr_to_cube(py::array_t<double>& arr, bool copy, bool strict) {
+int test_arr_to_cube(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
@@ -229,7 +229,7 @@ int test_arr_to_cube(py::array_t<double>& arr, bool copy, bool strict) {
     }
 
     // call function to be tested
-    arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy, strict);
+    arma::Cube<double> M = carma::arr_to_cube<double>(arr, copy);
 
     // ---------------------------------------------------------------
     double cube_sum = arma::accu(M);
@@ -250,7 +250,7 @@ int test_arr_to_cube(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_cube_double */
 
-int test_to_arma_mat(py::array_t<double>& arr, bool copy, bool strict) {
+int test_to_arma_mat(py::array_t<double>& arr, bool copy) {
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
     size_t arr_S1 = arr.shape(1);
@@ -268,7 +268,7 @@ int test_to_arma_mat(py::array_t<double>& arr, bool copy, bool strict) {
     }
 
     // call function to be tested
-    arma::Mat<double> M = carma::to_arma<arma::Mat<double>>::from(arr, copy, strict);
+    arma::Mat<double> M = carma::to_arma<arma::Mat<double>>::from(arr, copy);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -287,7 +287,7 @@ int test_to_arma_mat(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_arma_mat */
 
-int test_to_arma_cube(py::array_t<double>& arr, bool copy, bool strict) {
+int test_to_arma_cube(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     size_t arr_S0 = arr.shape(0);
@@ -310,7 +310,7 @@ int test_to_arma_cube(py::array_t<double>& arr, bool copy, bool strict) {
     }
 
     // call function to be tested
-    arma::Cube<double> M = carma::to_arma<arma::Cube<double>>::from(arr, copy, strict);
+    arma::Cube<double> M = carma::to_arma<arma::Cube<double>>::from(arr, copy);
 
     // ---------------------------------------------------------------
     double cube_sum = arma::accu(M);
@@ -331,7 +331,7 @@ int test_to_arma_cube(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_arma_cube */
 
-int test_to_arma_col(py::array_t<double>& arr, bool copy, bool strict) {
+int test_to_arma_col(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     auto arr_p = arr.unchecked();
@@ -345,7 +345,7 @@ int test_to_arma_col(py::array_t<double>& arr, bool copy, bool strict) {
         arr_sum += arr_p[i];
 
     // call function to be tested
-    arma::Col<double> M = carma::to_arma<arma::Col<double>>::from(arr, copy, strict);
+    arma::Col<double> M = carma::to_arma<arma::Col<double>>::from(arr, copy);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -360,7 +360,7 @@ int test_to_arma_col(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_arma_col */
 
-int test_to_arma_row(py::array_t<double>& arr, bool copy, bool strict) {
+int test_to_arma_row(py::array_t<double>& arr, bool copy) {
     // attributes of the numpy array
     size_t arr_N = arr.size();
     auto arr_p = arr.unchecked();
@@ -374,7 +374,7 @@ int test_to_arma_row(py::array_t<double>& arr, bool copy, bool strict) {
         arr_sum += arr_p[i];
 
     // call function to be tested
-    arma::Row<double> M = carma::to_arma<arma::Row<double>>::from(arr, copy, strict);
+    arma::Row<double> M = carma::to_arma<arma::Row<double>>::from(arr, copy);
 
     // ---------------------------------------------------------------
     double mat_sum = arma::accu(M);
@@ -389,11 +389,11 @@ int test_to_arma_row(py::array_t<double>& arr, bool copy, bool strict) {
     return 0;
 } /* arr_to_arma_row */
 
-py::array_t<double> debug_arr_to_mat(py::array_t<double>& arr, int copy, int strict) {
+py::array_t<double> debug_arr_to_mat(py::array_t<double>& arr, int copy) {
     if (copy < 0) {
         return carma::mat_to_arr(carma::arr_to_mat<double>(std::move(arr)));
     }
-    return carma::mat_to_arr(carma::arr_to_mat<double>(arr, copy, strict));
+    return carma::mat_to_arr(carma::arr_to_mat<double>(arr, copy));
 }
 
 
@@ -442,8 +442,4 @@ void bind_test_to_arma_col(py::module& m) {
 
 void bind_test_to_arma_row(py::module& m) {
     m.def("to_arma_row", &carma::tests::test_to_arma_row, "Test to_arma");
-}
-
-void bind_debug_arr_to_mat(py::module& m) {
-    m.def("debug_arr_to_mat", &carma::tests::debug_arr_to_mat, "Test return mat");
 }
