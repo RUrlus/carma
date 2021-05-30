@@ -42,7 +42,7 @@ class ArrayStore {
 
  public:
     ArrayStore(py::array_t<T>& arr, bool copy) :
-    mat{to_arma<armaT>::from(arr, copy, false)} {
+    mat{to_arma<armaT>::from(arr, copy)} {
         base = details::create_dummy_capsule(mat.memptr());
     }
 
@@ -88,9 +88,9 @@ class ArrayStore {
     // as overload could not be resolved without
     void set_array(py::array_t<T>& arr, bool copy) {
         if (copy) {
-            mat = to_arma<armaT>::from(arr, true, false);
+            mat = to_arma<armaT>::from(arr, true);
         } else {
-            mat = to_arma_steal<armaT>::from(std::move(arr));
+            mat = to_arma<armaT>::from(std::move(arr));
         }
         base = details::create_dummy_capsule(mat.memptr());
     }
