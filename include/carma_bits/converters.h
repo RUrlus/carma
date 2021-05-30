@@ -100,7 +100,7 @@ arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false) {
     if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_mat(info, data, true, true);
+        return details::arr_to_mat(info, data, true, false);
     }
     if (!well_behaved(obj)) {
         // copy and ensure fortran order and swap with src array
@@ -164,7 +164,7 @@ arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false) {
     if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_col(info, data, true, true);
+        return details::arr_to_col(info, data, true, false);
     }
     if (!well_behaved(obj)) {
         // copy and ensure fortran order and swap with src array
@@ -227,7 +227,7 @@ arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false) {
     if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_row(info, data, true, true);
+        return details::arr_to_row(info, data, true, false);
     }
     if (!well_behaved(obj)) {
         // copy and ensure fortran order and swap with src array
@@ -296,7 +296,7 @@ arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false) {
     if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_cube(info, data, true, true);
+        return details::arr_to_cube(info, data, true, false);
     }
     if (!well_behaved(obj)) {
         // copy and ensure fortran order and swap with src array
@@ -324,69 +324,54 @@ struct to_arma {
 template <typename returnT>
 struct to_arma<returnT, typename is_row<returnT>::type> {
     /* Overload concept on return type; convert to row */
-    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
-        return arr_to_row<typename returnT::elem_type>(arr, copy, strict);
+    static returnT from(const py::array_t<typename returnT::elem_type>& arr) {
+        return arr_to_row<typename returnT::elem_type>(arr, true, false);
     }
-}; /* to_arma */
-
-template <typename returnT>
-struct to_arma<returnT, typename is_col<returnT>::type> {
-    /* Overload concept on return type; convert to col */
-    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
-        return arr_to_col<typename returnT::elem_type>(arr, copy, strict);
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy) {
+        return arr_to_row<typename returnT::elem_type>(arr, copy);
     }
-}; /* to_arma */
-
-template <typename returnT>
-struct to_arma<returnT, typename is_mat<returnT>::type> {
-    /* Overload concept on return type; convert to matrix */
-    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
-        return arr_to_mat<typename returnT::elem_type>(arr, copy, strict);
-    }
-}; /* to_arma */
-
-template <typename returnT>
-struct to_arma<returnT, typename is_cube<returnT>::type> {
-    /* Overload concept on return type; convert to cube */
-    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy, bool strict) {
-        return arr_to_cube<typename returnT::elem_type>(arr, copy, strict);
-    }
-}; /* to_arma */
-
-template <typename returnT, typename SFINAE = std::true_type>
-struct to_arma_steal {
-    static_assert(!SFINAE::value, "The general case is not defined.");
-    template <typename innerT>
-    static returnT from(innerT&&);
-}; /* to_arma */
-
-template <typename returnT>
-struct to_arma_steal<returnT, typename is_row<returnT>::type> {
-    /* Overload concept on return type; convert to row */
     static returnT from(py::array_t<typename returnT::elem_type>&& arr) {
         return arr_to_row<typename returnT::elem_type>(std::move(arr));
     }
 }; /* to_arma */
 
 template <typename returnT>
-struct to_arma_steal<returnT, typename is_col<returnT>::type> {
+struct to_arma<returnT, typename is_col<returnT>::type> {
     /* Overload concept on return type; convert to col */
+    static returnT from(const py::array_t<typename returnT::elem_type>& arr) {
+        return arr_to_col<typename returnT::elem_type>(arr, true, false);
+    }
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy) {
+        return arr_to_col<typename returnT::elem_type>(arr, copy);
+    }
     static returnT from(py::array_t<typename returnT::elem_type>&& arr) {
         return arr_to_col<typename returnT::elem_type>(std::move(arr));
     }
 }; /* to_arma */
 
 template <typename returnT>
-struct to_arma_steal<returnT, typename is_mat<returnT>::type> {
+struct to_arma<returnT, typename is_mat<returnT>::type> {
     /* Overload concept on return type; convert to matrix */
+    static returnT from(const py::array_t<typename returnT::elem_type>& arr) {
+        return arr_to_mat<typename returnT::elem_type>(arr, true, false);
+    }
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy) {
+        return arr_to_mat<typename returnT::elem_type>(arr, copy);
+    }
     static returnT from(py::array_t<typename returnT::elem_type>&& arr) {
         return arr_to_mat<typename returnT::elem_type>(std::move(arr));
     }
 }; /* to_arma */
 
 template <typename returnT>
-struct to_arma_steal<returnT, typename is_cube<returnT>::type> {
+struct to_arma<returnT, typename is_cube<returnT>::type> {
     /* Overload concept on return type; convert to cube */
+    static returnT from(const py::array_t<typename returnT::elem_type>& arr) {
+        return arr_to_cube<typename returnT::elem_type>(arr, true, false);
+    }
+    static returnT from(py::array_t<typename returnT::elem_type>& arr, bool copy) {
+        return arr_to_cube<typename returnT::elem_type>(arr, copy);
+    }
     static returnT from(py::array_t<typename returnT::elem_type>&& arr) {
         return arr_to_cube<typename returnT::elem_type>(std::move(arr));
     }
@@ -436,26 +421,8 @@ inline py::array_t<T> row_to_arr(arma::Row<T>* src, int copy = false) {
     return details::construct_array<T>(data);
 } /* row_to_arr */
 
-template <typename T>
-inline void update_array(arma::Row<T>& src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src.n_elem)}, false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Row<T>&& src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arma::Row<T> row = std::move(src);
-    arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(row.n_elem)}, false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Row<T>* src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(1), static_cast<ssize_t>(src->n_elem)}, false);
-} /* update_array */
-
 /* ######################################## Col ######################################## */
+
 template <typename T>
 inline py::array_t<T> col_to_arr(const arma::Col<T>& src) {
     /* Convert armadillo col to numpy array */
@@ -494,26 +461,8 @@ inline py::array_t<T> col_to_arr(arma::Col<T>* src, int copy = 0) {
     return details::construct_array<T>(data);
 } /* col_to_arr */
 
-template <typename T>
-inline void update_array(arma::Col<T>& src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(src.n_elem), static_cast<ssize_t>(1)}, false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Col<T>&& src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arma::Col<T> col = std::move(src);
-    arr.resize({static_cast<ssize_t>(col.n_elem), static_cast<ssize_t>(1)}, false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Col<T>* src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(src->n_elem), static_cast<ssize_t>(1)}, false);
-} /* update_array */
-
 /* ######################################## Mat ######################################## */
+
 template <typename T>
 inline py::array_t<T> mat_to_arr(const arma::Mat<T>& src) {
     return details::construct_array<T>(new arma::Mat<T>(src));
@@ -544,26 +493,8 @@ inline py::array_t<T> mat_to_arr(arma::Mat<T>* src, int copy = 0) {
     );
 } /* mat_to_arr */
 
-template <typename T>
-inline void update_array(arma::Mat<T>&& src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arma::Mat<T> mat(std::move(src));
-    arr.resize({static_cast<ssize_t>(mat.n_rows), static_cast<ssize_t>(mat.n_cols)}, false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Mat<T>& src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols)}, false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Mat<T>* src, py::array_t<T>& arr) {
-    /* Update underlying numpy array */
-    arr.resize({static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols)}, false);
-} /* update_array */
-
 /* ######################################## Cube ######################################## */
+
 template <typename T>
 inline py::array_t<T> cube_to_arr(const arma::Cube<T>& src) {
     arma::Cube<T>* data = new arma::Cube<T>(src);
@@ -597,28 +528,6 @@ inline py::array_t<T> cube_to_arr(arma::Cube<T>* src, int copy = 0) {
     }
     return details::construct_array<T>(data);
 } /* cube_to_arr */
-
-template <typename T>
-inline void update_array(arma::Cube<T>&& src, py::array_t<T>& arr) {
-    arma::Cube<T> cube = std::move(src);
-    arr.resize(
-        {static_cast<ssize_t>(cube.n_rows), static_cast<ssize_t>(cube.n_cols), static_cast<ssize_t>(cube.n_slices)},
-        false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Cube<T>& src, py::array_t<T>& arr) {
-    arr.resize(
-        {static_cast<ssize_t>(src.n_rows), static_cast<ssize_t>(src.n_cols), static_cast<ssize_t>(src.n_slices)},
-        false);
-} /* update_array */
-
-template <typename T>
-inline void update_array(arma::Cube<T>* src, py::array_t<T>& arr) {
-    arr.resize(
-        {static_cast<ssize_t>(src->n_rows), static_cast<ssize_t>(src->n_cols), static_cast<ssize_t>(src->n_slices)},
-        false);
-} /* update_array */
 
 /* ---------------------------------- to_numpy ---------------------------------- */
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
@@ -744,7 +653,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         if (!buffer) {
             throw carma::conversion_error("invalid object passed");
         }
-        value = carma::to_arma<armaT>::from(buffer, 0, 1);
+        value = carma::to_arma<armaT>::from(buffer, false);
         return true;
     }
 
