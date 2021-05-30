@@ -26,7 +26,8 @@
 #include <pybind11/pybind11.h>  // NOLINT
 
 /* carma headers */
-#include <carma_bits/utils.h>  // NOLINT
+#include <carma_bits/debug.h>  // NOLINT
+#include <carma_bits/typecheck.h>  // NOLINT
 #include <carma_bits/cnumpy.h>  // NOLINT
 #include <carma_bits/nparray.h>  // NOLINT
 #include <carma_bits/numpytoarma.h>  // NOLINT
