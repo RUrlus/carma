@@ -25,11 +25,11 @@ jobs:
             target: "ALL_BUILD"
           }
         - {
-            name: "Ubuntu (Clang-9)",
+            name: "Ubuntu (Clang-10)",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "clang-9",
-            cxx: "clang++-9",
+            cc: "clang-10",
+            cxx: "clang++-10",
             generators: "Ninja",
             target: "all"
           }

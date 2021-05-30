@@ -8,7 +8,7 @@ defaults:
 
 jobs:
   build:
-    name: "Asan Python (Clang-9)"
+    name: "Asan Python (Clang-10)"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: True
@@ -52,8 +52,8 @@ jobs:
             -DBUILD_TESTS=ON \
             -DBUILD_NATIVE_TESTS=OFF \
             -DBUILD_PYTHON_TESTS=ON \
-            -DCMAKE_C_COMPILER=clang-9 \
-            -DCMAKE_CXX_COMPILER=clang++-9 \
+            -DCMAKE_C_COMPILER=clang-10 \
+            -DCMAKE_CXX_COMPILER=clang++-10 \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
             -DPython3_EXECUTABLE=${PY_CMD} \
             -DCMAKE_BUILD_TYPE=Asan \

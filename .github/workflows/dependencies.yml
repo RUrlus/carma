@@ -61,8 +61,8 @@ jobs:
             -DBUILD_TESTS=ON \
             -DUSE_ARMA_VERSION=${{ matrix.armadillo }} \
             -DUSE_PYBIND11_VERSION=${{ matrix.pybind }} \
-            -DCMAKE_C_COMPILER=clang-9 \
-            -DCMAKE_CXX_COMPILER=clang++-9 \
+            -DCMAKE_C_COMPILER=clang-10 \
+            -DCMAKE_CXX_COMPILER=clang++-10 \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
             -DPython3_EXECUTABLE=${PY_CMD} \
             -DCMAKE_BUILD_TYPE=Release \
