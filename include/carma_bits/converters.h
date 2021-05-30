@@ -46,8 +46,7 @@ namespace carma {
  *****************************************************************************************/
 
 /* Convert numpy array to Armadillo Matrix with copy
- * If the array is 1D we create a column oriented matrix (N, 1)
- */
+ * If the array is 1D we create a column oriented matrix (N, 1) */
 template <typename T>
 arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
@@ -61,13 +60,11 @@ arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
  *
  * We copy the array if:
  * - ndim == 2 && (optional) not F contiguous memory
- * - writeable is false
- * - owndata is false
  * - memory is not aligned
- * - NOTE if platform is windows
+ * - writeable is false
+ * - owndata is false (optional)
  *
- * If the array is 1D we create a column oriented matrix (N, 1)
- */
+ * If the array is 1D we create a column oriented matrix (N, 1) */
 template <typename T>
 arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
@@ -81,17 +78,17 @@ arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
  *
  * The default behaviour is to borrow the array, we copy if:
  * - copy is true
- * - ndim == 2 && (optional) not F contiguous memory
  * - writeable is false
- * - owndata is false
  * - memory is not aligned
+ * - ndim == 2 && (optional) not F contiguous memory
+ * - owndata is false (optional)
+ *
  * Note that the user set behaviour is overridden is one of the above conditions
  * is true
  *
- * If the array is 1D we create a column oriented matrix (N, 1)
- */
+ * If the array is 1D we create a column oriented matrix (N, 1) */
 template <typename T>
-arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = false) {
+arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_mat<T>(info);
     PyObject* obj = src.ptr();
@@ -100,12 +97,16 @@ arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false, bool strict = fa
         debug::print_copy_of_data<T>(data, obj);
     }
 #endif
-    if (!well_behaved(obj) || copy) {
+    if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_mat(info, data, true, strict);
+        return details::arr_to_mat(info, data, true, true);
     }
-    return details::arr_to_mat(info, data, false, strict);
+    if (!well_behaved(obj)) {
+        // copy and ensure fortran order and swap with src array
+        data = details::swap_copy_array<T>(obj);
+    }
+    return details::arr_to_mat(info, data, false, true);
 } /* arr_to_mat */
 
 
@@ -151,7 +152,7 @@ arma::Col<T> arr_to_col(py::array_t<T>&& src) {
  * is true
  */
 template <typename T>
-arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = false) {
+arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_col<T>(info);
     PyObject* obj = src.ptr();
@@ -160,12 +161,16 @@ arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false, bool strict = fa
         debug::print_copy_of_data<T>(data, obj);
     }
 #endif
-    if (!well_behaved(obj) || copy) {
+    if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_col(info, data, true, strict);
+        return details::arr_to_col(info, data, true, true);
     }
-    return details::arr_to_col(info, data, false, strict);
+    if (!well_behaved(obj)) {
+        // copy and ensure fortran order and swap with src array
+        data = details::swap_copy_array<T>(obj);
+    }
+    return details::arr_to_col(info, data, false, true);
 } /* arr_to_col */
 
 // #########################################################################
@@ -210,7 +215,7 @@ arma::Row<T> arr_to_row(py::array_t<T>&& src) {
  * is true
  */
 template <typename T>
-arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false, bool strict = false) {
+arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_row<T>(info);
     PyObject* obj = src.ptr();
@@ -219,12 +224,16 @@ arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false, bool strict = fa
         debug::print_copy_of_data<T>(data, obj);
     }
 #endif
-    if (!well_behaved(obj) || copy) {
+    if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_row(info, data, true, strict);
+        return details::arr_to_row(info, data, true, true);
     }
-    return details::arr_to_row(info, data, false, strict);
+    if (!well_behaved(obj)) {
+        // copy and ensure fortran order and swap with src array
+        data = details::swap_copy_array<T>(obj);
+    }
+    return details::arr_to_row(info, data, false, true);
 } /* arr_to_row */
 
 // #########################################################################
@@ -275,7 +284,7 @@ arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
  * is true
  */
 template <typename T>
-arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = false) {
+arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
     PyObject* obj = src.ptr();
@@ -284,12 +293,16 @@ arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false, bool strict = 
         debug::print_copy_of_data<T>(data, obj);
     }
 #endif
-    if (!well_behaved(obj) || copy) {
+    if (copy) {
         // copy and ensure fortran order
         data = details::steal_copy_array<T>(obj);
-        return details::arr_to_cube(info, data, true, strict);
+        return details::arr_to_cube(info, data, true, true);
     }
-    return details::arr_to_cube(info, data, false, strict);
+    if (!well_behaved(obj)) {
+        // copy and ensure fortran order and swap with src array
+        data = details::swap_copy_array<T>(obj);
+    }
+    return details::arr_to_cube(info, data, false, true);
 } /* arr_to_cube */
 
 // #########################################################################
