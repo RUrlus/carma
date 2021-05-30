@@ -6,26 +6,28 @@
 
 #ifndef INCLUDE_CARMA_BITS_CNUMPY_H_
 #define INCLUDE_CARMA_BITS_CNUMPY_H_
+#include <object.h>
 #define NPY_NO_DEPRECATED_API NPY_1_14_API_VERSION
 
-/* C headers */
 #include <Python.h>
 #include <pymem.h>
 #include <numpy/arrayobject.h>
 #include <numpy/ndarraytypes.h>
 
-/* STD header */
+#include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
+
+#include <carma_bits/config.h>
+#include <carma_bits/numpyapi.h>
+#include <carma_bits/debug.h>
+#include <carma_bits/typecheck.h>
+
 #include <limits>
 #include <iostream>
 #include <algorithm>
+#include <utility>
 
 #include <armadillo> // NOLINT
-
-/* External */
-#include <pybind11/numpy.h>  // NOLINT
-#include <pybind11/pybind11.h>  // NOLINT
-#include <carma_bits/numpyapi.h> // NOLINT
-#include <carma_bits/config.h> // NOLINT
 
 namespace py = pybind11;
 
@@ -93,30 +95,13 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
 }  // extern "C"
 
 namespace carma {
-
-#ifdef CARMA_EXTRA_DEBUG
-namespace debug {
-
-template <typename T>
-inline void print_array_info(PyObject* src) {
-    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
-    T* data = reinterpret_cast<T*>(PyArray_DATA(arr));
-    int ndim = PyArray_NDIM(arr);
-    npy_intp * dims = PyArray_DIMS(arr);
-    bool first = true;
-    std::cout << "\nThe array has shape: ";
-    for (int i = 0; i < ndim; i++) {
-        std::cout << (first ? "(" : ", ") << dims[i];
-        first = false;
-    }
-    std::cout << ")" << "\n";
-    std::cout << "with first element: " << data[0] << "\n";
-}  // print_array_info
-
-}  // namespace debug
-#endif  // CARMA_EXTRA_DEBUG
-
 namespace details {
+
+struct not_writeable_error : std::exception {
+    const char* message;
+    explicit not_writeable_error(const char* message) : message(message) {}
+    const char* what() const throw() { return message; }
+};
 
 /* ---- steal_memory ----
  * The default behaviour is to turn off the owndata flag, numpy will no longer
@@ -182,7 +167,6 @@ static inline void steal_memory(PyObject* src) {
 }  // steal_memory
 
 /* Use Numpy's api to account for stride, order and steal the memory */
-
 template <typename T>
 inline static T* steal_copy_array(PyObject* obj) {
     PyArrayObject* src = reinterpret_cast<PyArrayObject*>(obj);
@@ -227,6 +211,60 @@ inline static T* steal_copy_array(PyObject* obj) {
     api.PyArray_Free_(dest, static_cast<void*>(nullptr));
     return data;
 }  // steal_copy_array
+
+/* Use Numpy's api to account for stride, order and steal the memory */
+template <typename T>
+inline static T* swap_copy_array(PyObject* obj) {
+    PyArrayObject* src = reinterpret_cast<PyArrayObject*>(obj);
+#ifdef CARMA_EXTRA_DEBUG
+    std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
+    T* db_data = reinterpret_cast<T*>(PyArray_DATA(src));
+    std::cout << "A copy of array with data adress @" << db_data << " will be swapped in place\n";
+    debug::print_array_info<T>(obj);
+    std::cout << "-----------" << "\n";
+#endif
+    if (!PyArray_CHKFLAGS(src, NPY_ARRAY_WRITEABLE)) {
+        throw not_writeable_error("carma: Array is not writeable and cannot be swapped");
+    }
+    PyArray_Descr* dtype = PyArray_DESCR(src);
+    // NewFromDescr steals a reference
+    Py_INCREF(dtype);
+    // dimension checks have been done prior so array should
+    // not have more than 3 dimensions
+    int ndim = PyArray_NDIM(src);
+    npy_intp const* dims = PyArray_DIMS(src);
+
+    auto& api = carman::npy_api::get();
+
+    // build an PyArray to do F-order copy, memory will be freed by arma::memory::release
+    auto tmp = reinterpret_cast<PyArrayObject*>(api.PyArray_NewFromDescr_(
+        Py_TYPE(src),
+        dtype,
+        ndim,
+        dims,
+        NULL,
+        arma::memory::acquire<T>(api.PyArray_Size_(obj)),
+        NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_BEHAVED,
+        NULL
+    ));
+
+    // copy the array to a well behaved F-order
+    int ret_code = api.PyArray_CopyInto_(tmp, src);
+    // swap copy into the original array
+    auto tmp_of = reinterpret_cast<PyArrayObject_fields *>(tmp);
+    auto src_of = reinterpret_cast<PyArrayObject_fields *>(src);
+    std::swap(src_of->data, tmp_of->data);
+    std::swap(src_of->strides, tmp_of->strides);
+
+    if (PyArray_CHKFLAGS(src, NPY_ARRAY_OWNDATA)) {
+        PyArray_ENABLEFLAGS(tmp, NPY_ARRAY_OWNDATA);
+    }
+    PyArray_ENABLEFLAGS(src, NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_BEHAVED | NPY_ARRAY_OWNDATA);
+    PyArray_CLEARFLAGS(src, NPY_ARRAY_C_CONTIGUOUS);
+
+    Py_DECREF(tmp);
+    return reinterpret_cast<T*>(PyArray_DATA(src));
+}  // swap_copy_array
 
 }  // namespace details
 }  // namespace carma
