@@ -21,12 +21,6 @@ py::array_t<double> test_mat_to_arr_plus_one(const py::array_t<double>& arr, boo
     return mat_to_arr<double>(out, copy);
 } /* test_mat_to_arr_plus_one */
 
-void test_update_array_mat(py::array_t<double>& arr, int cols) {
-    arma::mat mat = arr_to_mat<double>(arr, false, false);
-    mat.insert_cols(0, cols, true);
-    update_array(mat, arr);
-}
-
 // ------------------------------ Row -----------------------------------------
 py::array_t<double> test_row_to_arr(bool copy) {
     arma::Row<double> mat = arma::Row<double>(20, arma::fill::randu);
@@ -44,12 +38,6 @@ py::array_t<double> test_row_to_arr_plus_one(const py::array_t<double>& arr, boo
     arma::Row<double> out = ones + mat;
     return row_to_arr<double>(out, copy);
 } /* test_row_to_arr_plus_one */
-
-void test_update_array_row(py::array_t<double>& arr, int cols) {
-    arma::Row<double> mat = arr_to_row<double>(arr, false, false);
-    mat.insert_cols(0, cols, true);
-    update_array(mat, arr);
-}
 
 // ------------------------------ Col -----------------------------------------
 py::array_t<double> test_col_to_arr(bool copy) {
@@ -69,12 +57,6 @@ py::array_t<double> test_col_to_arr_plus_one(const py::array_t<double>& arr, boo
     return col_to_arr<double>(out, copy);
 } /* test_col_to_arr_plus_one */
 
-void test_update_array_col(py::array_t<double>& arr, int cols) {
-    arma::Col<double> mat = arr_to_col<double>(arr, false, false);
-    mat.insert_rows(0, cols, true);
-    update_array(mat, arr);
-}
-
 // ------------------------------ Cube ----------------------------------------
 py::array_t<double> test_cube_to_arr(bool copy) {
     arma::Cube<double> mat = arma::Cube<double>(100, 2, 4, arma::fill::randu);
@@ -93,11 +75,6 @@ py::array_t<double> test_cube_to_arr_plus_one(const py::array_t<double>& arr, bo
     return cube_to_arr<double>(out, copy);
 } /* test_mat_to_arr_plus_one */
 
-void test_update_array_cube(py::array_t<double>& arr, int cols) {
-    arma::Cube<double> mat = arr_to_cube<double>(arr, false, false);
-    mat.insert_cols(0, cols, true);
-    update_array(mat, arr);
-}
 }  // namespace tests
 }  // namespace carma
 
@@ -131,22 +108,6 @@ void bind_test_to_numpy_col(py::module& m) {
 
 void bind_test_to_numpy_cube(py::module& m) {
     m.def("to_numpy_cube", &carma::tests::test_to_numpy_cube, "Test to_numpy");
-}
-
-void bind_test_update_array_mat(py::module& m) {
-    m.def("update_array_mat", &carma::tests::test_update_array_mat, "Test update_array");
-}
-
-void bind_test_update_array_cube(py::module& m) {
-    m.def("update_array_cube", &carma::tests::test_update_array_cube, "Test update_array");
-}
-
-void bind_test_update_array_row(py::module& m) {
-    m.def("update_array_row", &carma::tests::test_update_array_row, "Test update_array");
-}
-
-void bind_test_update_array_col(py::module& m) {
-    m.def("update_array_col", &carma::tests::test_update_array_col, "Test update_array");
 }
 
 void bind_test_mat_to_arr_plus_one(py::module& m) {

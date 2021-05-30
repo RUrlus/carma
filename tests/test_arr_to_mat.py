@@ -1,5 +1,6 @@
 """Test numpy array to matrix conversion function."""
 import numpy as np
+import pytest
 
 import test_carma as carma
 
@@ -17,7 +18,7 @@ def test_arr_to_mat_double():
     sample = np.asarray(
         np.random.normal(size=(50, 2)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_mat_double(sample, False, False)
+    flag = carma.arr_to_mat_double(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -26,7 +27,7 @@ def test_arr_to_mat_double_large():
     sample = np.asarray(
         np.random.normal(size=(1000, 1000)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_mat_double(sample, False, False)
+    flag = carma.arr_to_mat_double(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -35,7 +36,7 @@ def test_arr_to_mat_double_small():
     sample = np.asarray(
         np.random.normal(size=(3, 3)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_mat_double(sample, False, False)
+    flag = carma.arr_to_mat_double(sample, False)
     assert flag == 5, test_flags[flag]
 
 
@@ -44,27 +45,27 @@ def test_arr_to_mat_long():
     sample = np.asarray(
         np.random.normal(size=(50, 2)), dtype=np.int64, order='F'
     )
-    flag = carma.arr_to_mat_long(sample, False, False)
+    flag = carma.arr_to_mat_long(sample, False)
     assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_mat_double_c_contiguous():
     """Test arr_to_mat."""
     sample = np.asarray(np.random.normal(size=(50, 2)), dtype=np.float64)
-    flag = carma.arr_to_mat_double(sample, False, False)
+    flag = carma.arr_to_mat_double(sample, False)
     assert flag == 5, test_flags[flag]
 
 def test_arr_to_mat_double_c_contiguous_large():
     """Test arr_to_mat."""
     sample = np.asarray(np.random.normal(size=(1000, 1000)), dtype=np.float64)
-    flag = carma.arr_to_mat_double(sample, False, False)
+    flag = carma.arr_to_mat_double(sample, False)
     assert flag == 5, test_flags[flag]
 
 
 def test_arr_to_mat_long_c_contiguous():
     """Test arr_to_mat."""
     sample = np.asarray(np.random.normal(size=(50, 2)), dtype=np.int64)
-    flag = carma.arr_to_mat_long(sample, False, False)
+    flag = carma.arr_to_mat_long(sample, False)
     assert flag == 5, test_flags[flag]
 
 
@@ -85,6 +86,23 @@ def test_arr_to_mat_double_copy_c_contiguous():
     flag = carma.arr_to_mat_double_copy(sample)
     assert flag == 0, test_flags[flag]
 
+def test_arr_to_mat_writeable():
+    """Test arr_to_mat."""
+    sample = np.asarray(
+        np.random.normal(size=(50, 2)), dtype=np.float64, order='C'
+    )
+    sample.setflags(write=0)
+    with pytest.raises(RuntimeError):
+        flag = carma.arr_to_mat_double(sample, False)
+
+def test_arr_to_mat_writeable_copy():
+    """Test arr_to_mat."""
+    sample = np.asarray(
+        np.random.normal(size=(50, 2)), dtype=np.float64, order='C'
+    )
+    sample.setflags(write=0)
+    flag = carma.arr_to_mat_double(sample, True)
+    assert flag == 5, test_flags[flag]
 
 # #############################################################################
 #                                   N-DIM 1                                   #
@@ -94,7 +112,7 @@ def test_arr_to_mat_1d():
     sample = np.asarray(
         np.random.normal(size=(100)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_mat_1d(sample, False, False)
+    flag = carma.arr_to_mat_1d(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -103,7 +121,7 @@ def test_arr_to_mat_1d_small():
     sample = np.asarray(
         np.random.normal(size=5), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_mat_1d(sample, False, False)
+    flag = carma.arr_to_mat_1d(sample, False)
     assert flag == 5, test_flags[flag]
 
 
@@ -112,21 +130,21 @@ def test_arr_to_mat_1d_copy():
     sample = np.asarray(
         np.random.normal(size=(100)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_mat_1d(sample, True, False)
+    flag = carma.arr_to_mat_1d(sample, True)
     assert flag == 5, test_flags[flag]
 
 
 def test_arr_to_col():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
-    flag = carma.arr_to_col(sample, False, False)
+    flag = carma.arr_to_col(sample, False)
     assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_col_small():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=5), dtype=np.float64, order='F')
-    flag = carma.arr_to_col(sample, False, False)
+    flag = carma.arr_to_col(sample, False)
     assert flag == 5, test_flags[flag]
 
 
@@ -135,14 +153,14 @@ def test_arr_to_col_2d():
     sample = np.asarray(
         np.random.normal(size=(100, 1)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_col(sample, False, False)
+    flag = carma.arr_to_col(sample, False)
     assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_col_C():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='C')
-    flag = carma.arr_to_col(sample, False, False)
+    flag = carma.arr_to_col(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -150,35 +168,41 @@ def test_arr_to_col_writeable():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
     sample.setflags(write=0)
-    flag = carma.arr_to_col(sample, False, False)
-    assert flag == 5, test_flags[flag]
+    with pytest.raises(RuntimeError):
+        flag = carma.arr_to_col(sample, False)
 
+def test_arr_to_col_writeable_copy():
+    """Test arr_to_col."""
+    sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
+    sample.setflags(write=0)
+    flag = carma.arr_to_col(sample, True)
+    assert flag == 5, test_flags[flag]
 
 def test_arr_to_col_copy():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
-    flag = carma.arr_to_col(sample, True, False)
+    flag = carma.arr_to_col(sample, True)
     assert flag == 5, test_flags[flag]
 
 
 def test_arr_to_col_copy_C():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='C')
-    flag = carma.arr_to_col(sample, True, False)
+    flag = carma.arr_to_col(sample, True)
     assert flag == 5, test_flags[flag]
 
 
 def test_arr_to_row():
     """Test arr_to_row."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
-    flag = carma.arr_to_row(sample, False, False)
+    flag = carma.arr_to_row(sample, False)
     assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_row_small():
     """Test arr_to_row."""
     sample = np.asarray(np.random.normal(size=5), dtype=np.float64, order='F')
-    flag = carma.arr_to_row(sample, False, False)
+    flag = carma.arr_to_row(sample, False)
     assert flag == 5, test_flags[flag]
 
 
@@ -187,14 +211,14 @@ def test_arr_to_row_2d():
     sample = np.asarray(
         np.random.normal(size=(1, 100)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_row(sample, False, False)
+    flag = carma.arr_to_row(sample, False)
     assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_row_C():
     """Test arr_to_row."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='C')
-    flag = carma.arr_to_row(sample, False, False)
+    flag = carma.arr_to_row(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -202,21 +226,27 @@ def test_arr_to_row_writeable():
     """Test arr_to_row."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
     sample.setflags(write=0)
-    flag = carma.arr_to_row(sample, False, False)
-    assert flag == 5, test_flags[flag]
+    with pytest.raises(RuntimeError):
+        flag = carma.arr_to_row(sample, False)
 
+def test_arr_to_row_writeable_copy():
+    """Test arr_to_row."""
+    sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
+    sample.setflags(write=0)
+    flag = carma.arr_to_row(sample, True)
+    assert flag == 5, test_flags[flag]
 
 def test_arr_to_row_copy():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
-    flag = carma.arr_to_row(sample, True, False)
+    flag = carma.arr_to_row(sample, True)
     assert flag == 5, test_flags[flag]
 
 
 def test_arr_to_row_copy_C():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='C')
-    flag = carma.arr_to_row(sample, True, False)
+    flag = carma.arr_to_row(sample, True)
     assert flag == 5, test_flags[flag]
 
 
@@ -225,7 +255,7 @@ def test_arr_to_mat_cube():
     sample = np.asarray(
         np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_cube(sample, False, False)
+    flag = carma.arr_to_cube(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -234,32 +264,50 @@ def test_arr_to_mat_cube_small():
     sample = np.asarray(
         np.random.normal(size=(2, 2, 2)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_cube(sample, False, False)
+    flag = carma.arr_to_cube(sample, False)
     assert flag == 5, test_flags[flag]
 
 
 def test_arr_to_cube_double_c_contiguous():
     """Test arr_to_mat."""
     sample = np.asarray(np.random.normal(size=(25, 2, 2)), dtype=np.float64)
-    flag = carma.arr_to_cube(sample, False, False)
+    flag = carma.arr_to_cube(sample, False)
     assert flag == 5, test_flags[flag]
 
 
-def test_arr_to_mat_cube_copy():
+def test_arr_to_cube_copy():
     """Test arr_to_cube."""
     sample = np.asarray(
         np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
     )
-    flag = carma.arr_to_cube(sample, True, False)
+    flag = carma.arr_to_cube(sample, True)
     assert flag == 5, test_flags[flag]
 
+
+def test_arr_to_cube_writeable():
+    """Test arr_to_mat."""
+    sample = np.asarray(
+        np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
+    )
+    sample.setflags(write=0)
+    with pytest.raises(RuntimeError):
+        flag = carma.arr_to_cube(sample, False)
+
+def test_arr_to_mat_writeable_copy():
+    """Test arr_to_mat."""
+    sample = np.asarray(
+        np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
+    )
+    sample.setflags(write=0)
+    flag = carma.arr_to_cube(sample, True)
+    assert flag == 5, test_flags[flag]
 
 def test_to_arma_mat():
     """Test private implementation of to_arma for matrix."""
     sample = np.asarray(
         np.random.normal(size=(50, 2)), dtype=np.float64, order='F'
     )
-    flag = carma.to_arma_mat(sample, False, False)
+    flag = carma.to_arma_mat(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -268,7 +316,7 @@ def test_to_arma_cube():
     sample = np.asarray(
         np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
     )
-    flag = carma.to_arma_cube(sample, False, False)
+    flag = carma.to_arma_cube(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -277,7 +325,7 @@ def test_to_arma_col():
     sample = np.asarray(
         np.random.normal(size=100), dtype=np.float64, order='F'
     )
-    flag = carma.to_arma_col(sample, False, False)
+    flag = carma.to_arma_col(sample, False)
     assert flag == 0, test_flags[flag]
 
 
@@ -286,5 +334,5 @@ def test_to_arma_row():
     sample = np.asarray(
         np.random.normal(size=100), dtype=np.float64, order='F'
     )
-    flag = carma.to_arma_row(sample, False, False)
+    flag = carma.to_arma_row(sample, False)
     assert flag == 0, test_flags[flag]
