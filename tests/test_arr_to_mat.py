@@ -250,7 +250,7 @@ def test_arr_to_row_copy_C():
     assert flag == 5, test_flags[flag]
 
 
-def test_arr_to_mat_cube():
+def test_arr_to_cube():
     """Test arr_to_cube."""
     sample = np.asarray(
         np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
@@ -259,7 +259,7 @@ def test_arr_to_mat_cube():
     assert flag == 0, test_flags[flag]
 
 
-def test_arr_to_mat_cube_small():
+def test_arr_to_cube_small():
     """Test arr_to_cube."""
     sample = np.asarray(
         np.random.normal(size=(2, 2, 2)), dtype=np.float64, order='F'
@@ -293,7 +293,7 @@ def test_arr_to_cube_writeable():
     with pytest.raises(RuntimeError):
         flag = carma.arr_to_cube(sample, False)
 
-def test_arr_to_mat_writeable_copy():
+def test_arr_to_cube_writeable_copy():
     """Test arr_to_mat."""
     sample = np.asarray(
         np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
