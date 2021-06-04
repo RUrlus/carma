@@ -74,7 +74,7 @@ template <typename T>
 
 
 template <typename T>
-inline T* validate_from_array_mat(py::buffer_info& src) {
+inline T* validate_from_array_mat(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims < 1 || dims > 2) {
@@ -88,7 +88,7 @@ inline T* validate_from_array_mat(py::buffer_info& src) {
 
 template <typename T>
 inline arma::Mat<T> arr_to_mat(
-    py::buffer_info& src, T* data, bool stolen, bool strict
+    const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
     ssize_t dims = src.ndim;
@@ -142,7 +142,7 @@ inline arma::Mat<T> arr_to_mat(
 } /* arr_to_mat */
 
 template <typename T>
-inline T* validate_from_array_col(py::buffer_info& src) {
+inline T* validate_from_array_col(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[1] != 1)) {
@@ -156,7 +156,7 @@ inline T* validate_from_array_col(py::buffer_info& src) {
 
 template <typename T>
 inline arma::Col<T> arr_to_col(
-    py::buffer_info& src, T* data, bool stolen, bool strict
+    const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
     ssize_t dims = src.ndim;
@@ -188,7 +188,7 @@ inline arma::Col<T> arr_to_col(
 } /* arr_to_col */
 
 template <typename T>
-inline T* validate_from_array_row(py::buffer_info& src) {
+inline T* validate_from_array_row(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[0] != 1)) {
@@ -203,7 +203,7 @@ inline T* validate_from_array_row(py::buffer_info& src) {
 
 template <typename T>
 inline arma::Row<T> arr_to_row(
-    py::buffer_info& src, T* data, bool stolen, bool strict
+    const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
     ssize_t dims = src.ndim;
@@ -235,7 +235,7 @@ inline arma::Row<T> arr_to_row(
 } /* arr_to_Row */
 
 template <typename T>
-inline T* validate_from_array_cube(py::buffer_info& src) {
+inline T* validate_from_array_cube(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims != 3) {
@@ -249,7 +249,7 @@ inline T* validate_from_array_cube(py::buffer_info& src) {
 
 template <typename T>
 inline arma::Cube<T> arr_to_cube(
-    py::buffer_info& src, T* data, bool stolen, bool strict
+    const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
     ssize_t dims = src.ndim;
