@@ -56,6 +56,20 @@ inline arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
     return details::arr_to_mat(info, data, true, false);
 } /* arr_to_mat */
 
+/* Convert numpy array to Armadillo Matrix as view
+ * If the array is 1D we create a column oriented matrix (N, 1) */
+template <typename T>
+inline const arma::Mat<T> arr_to_mat_view(const py::array_t<T>& src) {
+    py::buffer_info info = src.request();
+    T* data = details::validate_from_array_mat<T>(info);
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj)) {
+        data = details::steal_copy_array<T>(obj);
+        return details::arr_to_mat(info, data, true, true);
+    }
+    return details::arr_to_mat(info, data, false, true);
+} /* arr_to_mat_view */
+
 /* Convert numpy array to Armadillo Matrix by stealing the data
  *
  * We copy the array if:
@@ -124,6 +138,20 @@ inline arma::Col<T> arr_to_col(const py::array_t<T>& src) {
     return details::arr_to_col(info, data, true, false);
 } /* arr_to_col */
 
+/* Convert numpy array to Armadillo Col as view
+ * If the array is 1D we create a column oriented matrix (N, 1) */
+template <typename T>
+inline const arma::Col<T> arr_to_col_view(const py::array_t<T>& src) {
+    py::buffer_info info = src.request();
+    T* data = details::validate_from_array_col<T>(info);
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj)) {
+        data = details::steal_copy_array<T>(obj);
+        return details::arr_to_col(info, data, true, true);
+    }
+    return details::arr_to_col(info, data, false, true);
+} /* arr_to_col_view */
+
 /* Convert numpy array to Armadillo Column by stealing the data
  *
  * We copy the array if:
@@ -187,6 +215,20 @@ inline arma::Row<T> arr_to_row(const py::array_t<T>& src) {
     return details::arr_to_row(info, data, true, false);
 } /* arr_to_row */
 
+/* Convert numpy array to Armadillo Row as view
+ * If the array is 1D we create a column oriented matrix (N, 1) */
+template <typename T>
+inline const arma::Row<T> arr_to_row_view(const py::array_t<T>& src) {
+    py::buffer_info info = src.request();
+    T* data = details::validate_from_array_row<T>(info);
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj)) {
+        data = details::steal_copy_array<T>(obj);
+        return details::arr_to_row(info, data, true, true);
+    }
+    return details::arr_to_row(info, data, false, true);
+} /* arr_to_row_view */
+
 /* Convert numpy array to Armadillo Row by stealing the data
  *
  * We copy the array if:
@@ -243,13 +285,26 @@ inline arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false) {
 /* Convert numpy array to Armadillo Cube with copy */
 template <typename T>
 inline arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
-
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
     // copy and ensure fortran order
     data = details::steal_copy_array<T>(src.ptr());
     return details::arr_to_cube(info, data, true, false);
 } /* arr_to_cube */
+
+/* Convert numpy array to Armadillo Cube as view
+ * If the array is 1D we create a column oriented matrix (N, 1) */
+template <typename T>
+inline const arma::Cube<T> arr_to_cube_view(const py::array_t<T>& src) {
+    py::buffer_info info = src.request();
+    T* data = details::validate_from_array_cube<T>(info);
+    PyObject* obj = src.ptr();
+    if (!well_behaved(obj)) {
+        data = details::steal_copy_array<T>(obj);
+        return details::arr_to_cube(info, data, true, true);
+    }
+    return details::arr_to_cube(info, data, false, true);
+} /* arr_to_cube_view */
 
 /* Convert numpy array to Armadillo Cube by stealing
  *
@@ -264,7 +319,6 @@ inline arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
  */
 template <typename T>
 inline arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
-
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
     // steal memory and copy if needed
