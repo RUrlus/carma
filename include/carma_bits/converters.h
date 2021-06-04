@@ -48,7 +48,7 @@ namespace carma {
 /* Convert numpy array to Armadillo Matrix with copy
  * If the array is 1D we create a column oriented matrix (N, 1) */
 template <typename T>
-arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
+inline arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_mat<T>(info);
     // copy and ensure fortran order
@@ -66,7 +66,7 @@ arma::Mat<T> arr_to_mat(const py::array_t<T>& src) {
  *
  * If the array is 1D we create a column oriented matrix (N, 1) */
 template <typename T>
-arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
+inline arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_mat<T>(info);
     // steal memory and copy if needed
@@ -88,7 +88,7 @@ arma::Mat<T> arr_to_mat(py::array_t<T>&& src) {
  *
  * If the array is 1D we create a column oriented matrix (N, 1) */
 template <typename T>
-arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false) {
+inline arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_mat<T>(info);
     PyObject* obj = src.ptr();
@@ -116,7 +116,7 @@ arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false) {
 
 /* Convert numpy array to Armadillo Column with copy */
 template <typename T>
-arma::Col<T> arr_to_col(const py::array_t<T>& src) {
+inline arma::Col<T> arr_to_col(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_col<T>(info);
     // copy and ensure fortran order
@@ -133,7 +133,7 @@ arma::Col<T> arr_to_col(const py::array_t<T>& src) {
  * - NOTE if platform is windows
  */
 template <typename T>
-arma::Col<T> arr_to_col(py::array_t<T>&& src) {
+inline arma::Col<T> arr_to_col(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_col<T>(info);
     // steal memory and copy if needed
@@ -152,7 +152,7 @@ arma::Col<T> arr_to_col(py::array_t<T>&& src) {
  * is true
  */
 template <typename T>
-arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false) {
+inline arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_col<T>(info);
     PyObject* obj = src.ptr();
@@ -179,7 +179,7 @@ arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false) {
 
 /* Convert numpy array to Armadillo Row with copy */
 template <typename T>
-arma::Row<T> arr_to_row(const py::array_t<T>& src) {
+inline arma::Row<T> arr_to_row(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_row<T>(info);
     // copy and ensure fortran order
@@ -196,7 +196,7 @@ arma::Row<T> arr_to_row(const py::array_t<T>& src) {
  * - NOTE if platform is windows
  */
 template <typename T>
-arma::Row<T> arr_to_row(py::array_t<T>&& src) {
+inline arma::Row<T> arr_to_row(py::array_t<T>&& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_row<T>(info);
     // steal memory and copy if needed
@@ -215,7 +215,7 @@ arma::Row<T> arr_to_row(py::array_t<T>&& src) {
  * is true
  */
 template <typename T>
-arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false) {
+inline arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_row<T>(info);
     PyObject* obj = src.ptr();
@@ -242,7 +242,7 @@ arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false) {
 
 /* Convert numpy array to Armadillo Cube with copy */
 template <typename T>
-arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
+inline arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
 
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
@@ -263,7 +263,7 @@ arma::Cube<T> arr_to_cube(const py::array_t<T>& src) {
  * is true
  */
 template <typename T>
-arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
+inline arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
 
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
@@ -284,7 +284,7 @@ arma::Cube<T> arr_to_cube(py::array_t<T>&& src) {
  * is true
  */
 template <typename T>
-arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false) {
+inline arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
     PyObject* obj = src.ptr();

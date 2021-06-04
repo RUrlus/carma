@@ -155,7 +155,7 @@ inline T* validate_from_array_col(py::buffer_info& src) {
 }  // validate_to_array_col
 
 template <typename T>
-arma::Col<T> arr_to_col(
+inline arma::Col<T> arr_to_col(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -202,7 +202,7 @@ inline T* validate_from_array_row(py::buffer_info& src) {
 }  // validate_to_array_row
 
 template <typename T>
-arma::Row<T> arr_to_row(
+inline arma::Row<T> arr_to_row(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
@@ -248,10 +248,9 @@ inline T* validate_from_array_cube(py::buffer_info& src) {
 }  // validate_to_array_cube
 
 template <typename T>
-arma::Cube<T> arr_to_cube(
+inline arma::Cube<T> arr_to_cube(
     py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
-
     // extract buffer information
     ssize_t dims = src.ndim;
     uword nrows = src.shape[0];
