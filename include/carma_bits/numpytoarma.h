@@ -120,13 +120,20 @@ inline arma::Mat<T> arr_to_mat(
         debug::print_prealloc<T>(data);
     }
 #endif
-
-    arma::Mat<T> dest(data, nrows, ncols, copy, strict);
-
+// rvalue return due to lack of NRVO on MSVC
+#ifdef _WIN32
     // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
+        return arma::Mat<T> (data, nrows, ncols, copy, strict);
+    }
+    arma::Mat<T> dest(data, nrows, ncols, copy, strict);
+#else
+    arma::Mat<T> dest(data, nrows, ncols, copy, strict);
+    if (!stolen) {
+        // rvalue return due to lack of NRVO on MSVC
         return dest;
     }
+#endif
     // we have stolen, numpy no longer owns the memory.
     // but we have copied into the matrix, hence we have to free the memory
     if (copy) {
@@ -168,11 +175,20 @@ inline arma::Col<T> arr_to_col(
         debug::print_prealloc<T>(data);
     }
 #endif
-    arma::Col<T> dest(data, nelem, copy, strict);
+// rvalue return due to lack of NRVO on MSVC
+#ifdef _WIN32
     // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
+        return arma::Col<T>(data, nelem, copy, strict);
+    }
+    arma::Col<T> dest(data, nelem, copy, strict);
+#else
+    arma::Col<T> dest(data, nelem, copy, strict);
+    if (!stolen) {
+        // rvalue return due to lack of NRVO on MSVC
         return dest;
     }
+#endif
     // we have stolen, numpy no longer owns the memory.
     // but we have copied into the matrix, hence we have to free the memory
     if (copy) {
@@ -215,11 +231,22 @@ inline arma::Row<T> arr_to_row(
         debug::print_prealloc<T>(data);
     }
 #endif
+// rvalue return due to lack of NRVO on MSVC
+#ifdef _WIN32
+    // not stolen means numpy owns the memory and Arma borrows the memory
+    if (!stolen) {
+        // rvalue return due to lack of NRVO on MSVC
+        return arma::Row<T>(data, nelem, copy, strict);
+    }
+    arma::Row<T> dest(data, nelem, copy, strict);
+#else
     arma::Row<T> dest(data, nelem, copy, strict);
     // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
+        // rvalue return due to lack of NRVO on MSVC
         return dest;
     }
+#endif
     // we have stolen, numpy no longer owns the memory.
     // but we have copied into the matrix, hence we have to free the memory
     if (copy) {
@@ -264,11 +291,22 @@ inline arma::Cube<T> arr_to_cube(
         debug::print_prealloc<T>(data);
     }
 #endif
+// rvalue return due to lack of NRVO on MSVC
+#ifdef _WIN32
+    // not stolen means numpy owns the memory and Arma borrows the memory
+    if (!stolen) {
+        // rvalue return due to lack of NRVO on MSVC
+        return arma::Cube<T>(data, nrows, ncols, nslices, copy, strict);
+    }
+    arma::Cube<T> dest(data, nrows, ncols, nslices, copy, strict);
+#else
     arma::Cube<T> dest(data, nrows, ncols, nslices, copy, strict);
     // not stolen means numpy owns the memory and Arma borrows the memory
     if (!stolen) {
+        // rvalue return due to lack of NRVO on MSVC
         return dest;
     }
+#endif
     // we have stolen, numpy no longer owns the memory.
     // but we have copied into the matrix, hence we have to free the memory
     if (copy) {
