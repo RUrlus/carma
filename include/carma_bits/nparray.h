@@ -38,14 +38,6 @@ inline bool is_c_contiguous(const py::array_t<T>& arr) {
 }
 
 template <typename T>
-inline bool is_c_contiguous_2d(const py::array_t<T>& arr) {
-    if (arr.ndim() > 1) {
-        return py::detail::check_flags(arr.ptr(), py::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_);
-    }
-    return false;
-}
-
-template <typename T>
 inline bool is_contiguous(const py::array_t<T>& arr) {
     return is_f_contiguous(arr) || is_c_contiguous(arr);
 }
@@ -88,16 +80,6 @@ inline void set_writeable(py::array_t<T>& arr) {
 template <typename T>
 inline void set_not_writeable(py::array_t<T>& arr) {
     py::detail::array_proxy(arr.ptr())->flags &= ~py::detail::npy_api::NPY_ARRAY_WRITEABLE_;
-}
-
-template <typename T>
-inline void set_f_contiguous(py::array_t<T>& arr) {
-    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_;
-}
-
-template <typename T>
-inline void set_c_contiguous(py::array_t<T>& arr) {
-    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
 }
 
 }  // namespace carma
