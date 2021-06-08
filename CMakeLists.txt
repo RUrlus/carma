@@ -45,7 +45,7 @@ ENDIF ()
 # ##############################################################################
 #                                   TARGET                                     #
 # ##############################################################################
-# Carma v1.0.0 must use a modified version of armadillo to enable consistent
+# Carma >= v0.5.0 must use a modified version of armadillo to enable consistent
 # behaviour across platforms. A pull request has been opened to include the
 # changes in the upstream repository
 
@@ -54,10 +54,10 @@ INCLUDE(GetArmadillo)
 ADD_LIBRARY(carma_armadillo INTERFACE)
 TARGET_INCLUDE_DIRECTORIES(carma_armadillo INTERFACE
     ${PROJECT_SOURCE_DIR}/extern/armadillo-code/include
+    ${PROJECT_SOURCE_DIR}/cnalloc/include/
 )
-TARGET_COMPILE_DEFINITIONS(
-    carma_armadillo INTERFACE ARMA_USE_NUMPY_ALLOC=true
-)
+TARGET_LINK_LIBRARIES(carma_armadillo INTERFACE Python3::NumPy)
+TARGET_COMPILE_DEFINITIONS(carma_armadillo INTERFACE ARMA_USE_ALIEN_MEM_FUNCTION=1)
 
 INSTALL(
     DIRECTORY "${PROJECT_SOURCE_DIR}/extern/armadillo/include"
@@ -68,23 +68,24 @@ INSTALL(
 )
 # ---------------------------------------------------------------------------------
 
+# ##############################################################################
+#                                  EXECUTABLE                                  #
+# ##############################################################################
 ADD_LIBRARY(carma INTERFACE)
-
 TARGET_COMPILE_DEFINITIONS(carma INTERFACE VERSION_INFO=${CARMA_VERSION_INFO})
-
-TARGET_LINK_LIBRARIES(carma
-    INTERFACE
-        carma_armadillo
-        pybind11::pybind11
-        Python3::Module
-        Python3::NumPy
-)
 TARGET_INCLUDE_DIRECTORIES(carma
     INTERFACE
     # path of the headers after installation
     $<INSTALL_INTERFACE:include> # <prefix>/include/carma
     # path of the headers before installation
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+)
+TARGET_LINK_LIBRARIES(carma
+    INTERFACE
+        carma_armadillo
+        pybind11::pybind11
+        Python3::Module
+        Python3::NumPy
 )
 
 INSTALL(
