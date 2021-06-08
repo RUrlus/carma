@@ -8,8 +8,7 @@
 Configuration
 #############
 
-CARMA offers a number of compile-time settings that determine when the input
-array's memory is not considered well-behaved and how to handle stealing the
+CARMA offers a number of compile-time settings that determine when the input array's memory is not considered well-behaved and how to handle stealing the
 memory of an incoming array
 
 You can find the configuration file, ``carma_config.cmake``, in the root of the repository where you can enable or disable the various settings.
@@ -23,20 +22,25 @@ As detailed in the section :ref:`Well behaved` input arrays are copied when they
     
     OPTION(ENABLE_CARMA_DONT_REQUIRE_OWNDATA "Enable CARMA_DONT_REQUIRE_OWNDATA" ON)
 
-Do **not** copy arrays if the data is not owned by Numpy, default behaviour is to copy when OWNDATA is False. Note this will lead to segfaults when the array's data is stolen or otherwise aliased by Armadillo. Is useful when you want to pass back and forth arrays previously converted by CARMA.
+.. warning::
+    
+    When using this option you have make sure that the memory of the input array can be safely freed using Numpy's deallocator (``PyDataMem_FREE``) as this is used to manage the memory after transfering ownership to Armadillo.
+
+Do **not** copy arrays if the data is not owned by Numpy, default behaviour is to copy when OWNDATA is False.
+Note this will lead to ``segfaults`` when the array's data is stolen or otherwise aliased by Armadillo.
+Is useful when you want to pass back and forth arrays previously converted by CARMA.
 
 .. code-block:: cmake
     
     OPTION(ENABLE_CARMA_DONT_REQUIRE_F_CONTIGUOUS "Enable CARMA_DONT_REQUIRE_F_CONTIGUOUS" ON)
 
-Do **not** copy C-contiguous arrays, default behaviour is to copy C-contiguous arrays to Fortran order as this is what Armadillo is optimised for. Note that on the conversion back it is assumed that the memory of a Armadillo object has Fortran order layout.
+Do **not** copy C-contiguous arrays, default behaviour is to copy C-contiguous arrays to Fortran order as this is what Armadillo is optimised for.
+Note that on the conversion back, it is assumed that the memory of the Armadillo object has Fortran order layout.
 
 Stealing
 --------
 
-The default behaviour is only to set ``OWNDATA=false`` when stealing
-the data of an array. This is fast and leaves the array usable.
-
+The default behaviour is to only set ``OWNDATA=false`` when stealing the data of an array. This is fast and leaves the array usable.
 However, two additional options exists that make it clearer when an array has been stolen.
 
 .. code-block:: cmake
@@ -49,7 +53,8 @@ When stealing the data of an array replace it with an array containing a single 
     
     OPTION(ENABLE_CARMA_HARD_STEAL "Enable CARMA_HARD_STEAL" ON)
 
-When stealing the data of an array set nullptr in place of the memory. Note this will cause a segfault when accessing the original array's data. This ensures stolen arrays are not accidently used later on.
+When stealing the data of an array CARMA sets a ``nullptr`` in place of the pointer to the memory.
+Note this will cause a ``segfault`` when accessing the original array's data. However, this ensures stolen arrays are not accidentally used later on.
 
 Debugging
 ---------
@@ -59,10 +64,8 @@ Debugging
     OPTION(ENABLE_CARMA_EXTRA_DEBUG "Enable CARMA_EXTRA_DEBUG" ON)
     OPTION(ENABLE_ARMA_EXTRA_DEBUG "Enable ARMA_EXTRA_DEBUG" ON)
 
-Turn this setting on if you want to debug conversions. Debug prints are
-generated that specify when arrays are not well-behaved, stolen or swapped in
-place. Note that the additional debugging information from Armadillo can be
-enabled using the second setting.
+Turn this setting on if you want to debug conversions. Debug prints are generated that specify when arrays are not well-behaved, stolen or swapped in
+place. Note that the additional debugging information from Armadillo can be enabled using the second setting.
 
 
 Developer settings

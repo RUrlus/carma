@@ -8,9 +8,9 @@ Manual conversion
 -----------------
 
 The easiest way to use CARMA is manual conversion, it gives you the most control over when to copy or not.
-You pass a Numpy array as an argument and/or as the return type and call the respective conversion function.
+You pass a Numpy array as an input and/or as the return type and call the respective conversion function.
 
-.. warning:: Carma will avoid copying by default so make sure not to return the memory of the input array without copying.  If you don't copy out the memory is aliased by both the input and output which will cause a segfault.
+.. warning:: Carma will avoid copying by default so make sure not to return the memory of the input array without copying. If you don't copy out, the memory is aliased by both the input and output arrays which will cause a segfault.
 
 Borrow
 ******
@@ -108,7 +108,7 @@ There are use-cases where you would want to keep the data in C++ and only return
 For example, you write an Ordinary Least Squares (OLS) class and you want to store the residuals, covariance matrix, ... in C++ for when additional tests need to be run on the values without converting back and forth.
 
 ArrayStore is a convenience class that provides conversion methods back and forth.
-It is intended to used as an attribute such as below:
+It is intended to be used as an attribute as below:
 
 .. warning::
     
@@ -124,15 +124,15 @@ It is intended to used as an attribute such as below:
     
     class ExampleClass {
         private:
-            carma::ArrayStore<double> _x;
-            carma::ArrayStore<double> _y;
+            carma::ArrayStore<arma::Mat<double>> _x;
+            carma::ArrayStore<arma::Mat<double>> _y;
     
         public:
             ExampleClass(py::array_t<double> & x, py::array_t<double> & y) :
-            // steal the arrayand store it as an Armadillo matrix
-            _x{carma::ArrayStore<double>(x, true)},
-            // copy the arrayand store it as an Armadillo matrix
-            _y{carma::ArrayStore<double>(y, false)} {}
+            // copy the array and store it as an Armadillo matrix
+            _x{carma::ArrayStore<arma::Mat<double>>(x, true)},
+            // steal the array and store it as an Armadillo matrix
+            _y{carma::ArrayStore<arma::Mat<double>>(y, false)},
     
             py::array_t<double> member_func() {
                 // normallly you would something useful here

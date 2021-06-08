@@ -51,14 +51,16 @@ To install `carma`, you have to define
 
 (default value is ``/usr/local``)
 
-Installation directory contains
+The installation directory contains
 
-.. code-block::
+.. code-block:: bash
 
     include                  # carma headers
     extern/armadillo-code    # fork of armadillo required by carma
     tests                    # carma tests with python module (if enabled using -DBUILD_TESTS=on)
     examples                 # carma python examples with python module (if enabled using -DBUILD_EXAMPLES=on)
+
+See section :ref:`Examples` for an overview of the conversion approaches.
 
 Design Patterns
 ###############
@@ -69,25 +71,23 @@ Borrow
 ------
 
 You can borrow the underlying memory of a Numpy array using the ``arr_to_*(py::array_t<T>, copy=false)``. The Armadillo object should not be returned without a copy out. Use this when you want to modify the memory in-place.
-If the array is not well behaved, see :ref:`Well behaved`, the data is copied to well-behaved memory and swapped in place of the input array. If ``copy=true`` is equivalent to the copy approach below.
+If the array is not well behaved, see :ref:`Well behaved`, the data is copied to well-behaved memory and swapped in place of the input array. If ``copy=true`` this is equivalent to the copy approach below.
 
-.. note:: the size of the Armadillo object is not allowed change when you borrow.
+.. note:: the size of the Armadillo object is not allowed change when you borrow, i.e. ``strict=true``.
 
 Transfer ownership
 ------------------
 
 You can transfer ownership to Armadillo using steal or copy.
+After transferring ownership of the memory, Armadillo behaves as if it has allocated the memory itself, hence it will also free the memory upon destruction using Numpy's deallocator.
 
 Steal
 *****
 
 If you want to take ownership of the underlying memory but don't want to copy the
-data you can steal the array. The Armadillo object can be safely returned out without a copy. There are multiple compile time definitions on how the memory is stolen, see :doc:`Configuration <configuration>` for details. If the memory of the
-array is not well-behaved a copy of the memory is stolen.
+data you can steal the array. The Armadillo object can be safely returned out without a copy. There are multiple compile time definitions on how the memory is stolen, see :doc:`Configuration <configuration>` for details. If the memory of the array is not well-behaved a copy of the memory is stolen.
 
-After stealing the Armadillo behaves as if has allocated the memory itself, hence it will also clean the memory upon destruction.
-
-.. note:: the size of the Armadillo object is allowed change after stealing.
+.. note:: the size of the Armadillo object is allowed change after stealing, ``strict=false``.
 
 Copy
 ****
@@ -99,4 +99,4 @@ If you want to give Armadillo full control of underlying memory but also want to
 View
 ----
 
-If you want to have a read-only view on the underlying memory you can use ``arr_to_*_view``. If the underlying memory is not well-behaved it will be copied.
+If you want to have a read-only view on the underlying memory you can use ``arr_to_*_view``. If the underlying memory is not well-behaved, excluding writeable, it will be copied.
