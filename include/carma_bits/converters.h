@@ -63,7 +63,7 @@ inline const arma::Mat<T> arr_to_mat_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_mat<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved(obj)) {
+    if (!well_behaved_view(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_mat(info, data, true, true);
     }
@@ -145,7 +145,7 @@ inline const arma::Col<T> arr_to_col_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_col<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved(obj)) {
+    if (!well_behaved_view(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_col(info, data, true, true);
     }
@@ -222,7 +222,7 @@ inline const arma::Row<T> arr_to_row_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_row<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved(obj)) {
+    if (!well_behaved_view(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_row(info, data, true, true);
     }
@@ -299,7 +299,7 @@ inline const arma::Cube<T> arr_to_cube_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved(obj)) {
+    if (!well_behaved_view(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_cube(info, data, true, true);
     }
