@@ -10,17 +10,17 @@
 
 class ExampleClass {
     private:
-        carma::ArrayStore<double> _x;
-        carma::ArrayStore<double> _y;
+        carma::ArrayStore<arma::Mat<double>> _x;
+        carma::ArrayStore<arma::Mat<double>> _y;
 
     public:
         ExampleClass(py::array_t<double> & x, py::array_t<double> & y) :
         // steal the array, mark it mutable and store it as an
         // Armadillo array
-        _x{carma::ArrayStore<double>(x, true)},
+        _x{carma::ArrayStore<arma::Mat<double>>(x, true)},
         // copy the array, mark it read-only and store it as an
         // Armadillo array
-        _y{carma::ArrayStore<double>(y, false)} {}
+        _y{carma::ArrayStore<arma::Mat<double>>(y, false)} {}
 
         py::array_t<double> member_func() {
             // normallly you would something useful here

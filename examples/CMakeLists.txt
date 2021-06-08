@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 SET(MODNAME "example_carma")
 
@@ -7,6 +7,7 @@ SET(MODNAME "example_carma")
 # ##############################################################################
 pybind11_add_module(${MODNAME}
     MODULE
+        ols.cpp
         arraystore.cpp
         example_bindings.cpp
         manual_conversion.cpp
@@ -34,8 +35,8 @@ TARGET_COMPILE_DEFINITIONS(${MODNAME}
 #                                   INSTALL                                    #
 # ##############################################################################
 INSTALL(TARGETS ${MODNAME} DESTINATION examples)
-FILE(GLOB PY_TEST_FILES "${PROJECT_SOURCE_DIR}/examples/*.py")
-INSTALL(FILES ${PY_TEST_FILES} DESTINATION examples)
+FILE(GLOB PY_EXAMPLE_FILES "${PROJECT_SOURCE_DIR}/examples/*.py")
+INSTALL(FILES ${PY_EXAMPLE_FILES} DESTINATION examples)
 
 # ##############################################################################
 #                                  EXAMPLES                                    #
