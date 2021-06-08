@@ -22,7 +22,7 @@ copyright = '2020, R. Urlus'
 author = 'R. Urlus'
 
 # The full version, including alpha/beta/rc tags
-release = '0.3.0'
+release = '0.5.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,7 +35,8 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.coverage',
     'sphinx.ext.ifconfig',
-    'sphinxcontrib.napoleon'
+    'sphinxcontrib.napoleon',
+    'sphinx.ext.autosectionlabel',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -64,7 +65,7 @@ html_show_sourcelink = True
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 master_doc = 'index'
 
 # -- Extension configuration -------------------------------------------------

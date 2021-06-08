@@ -15,6 +15,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 # -- ENABLE_CARMA_EXTRA_DEBUG --
 # This option enables additional debuggin statements
 OPTION(ENABLE_CARMA_EXTRA_DEBUG "Enable CARMA_EXTRA_DEBUG" OFF)
+OPTION(ENABLE_ARMA_EXTRA_DEBUG "Enable ARMA_EXTRA_DEBUG" OFF)
 
 # -- ENABLE_CARMA_SOFT_STEAL --
 # When stealing the data of an array replace it with
@@ -35,5 +36,6 @@ OPTION(ENABLE_CARMA_HARD_STEAL "Enable CARMA_HARD_STEAL" OFF)
 OPTION(ENABLE_CARMA_DONT_REQUIRE_OWNDATA "Enable CARMA_DONT_REQUIRE_OWNDATA" OFF)
 
 # -- REQUIRE_F_CONTIGUOUS --
-# Do NOT copy c-style arrays, default behaviour is to copy c-style arrays
+# Do NOT copy C-contiguous arrays, default behaviour is to copy C-contiguous arrays to Fortran order as this is what Armadillo is optimised for.
+# Note that on the conversion back it is assumed that the memory of a Armadillo object has Fortran order layout.
 OPTION(ENABLE_CARMA_DONT_REQUIRE_F_CONTIGUOUS "Enable CARMA_DONT_REQUIRE_F_CONTIGUOUS" OFF)
