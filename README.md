@@ -16,7 +16,7 @@
 [![Linux Build Status](https://github.com/RUrlus/carma/actions/workflows/linux.yml/badge.svg?branch=stable)](https://github.com/RUrlus/carma/actions/workflows/linux.yml)
 [![MacOS Build Status](https://github.com/RUrlus/carma/actions/workflows/macos.yml/badge.svg?branch=stable)](https://github.com/RUrlus/carma/actions/workflows/macos.yml)
 [![Windows Build Status](https://github.com/RUrlus/carma/actions/workflows/windows.yml/badge.svg?branch=stable)](https://github.com/RUrlus/carma/actions/workflows/windows.yml)
-[![Coverage Status](https://coveralls.io/repos/github/RUrlus/carma/badge.svg?branch=master)](https://coveralls.io/github/RUrlus/carma?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/RUrlus/carma/badge.svg?branch=stable)](https://coveralls.io/github/RUrlus/carma?branch=stable)
 [![Documentation Status](https://readthedocs.org/projects/carma/badge/?version=latest)](https://carma.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/github/license/RUrlus/carma)](https://github.com/RUrlus/carma/blob/stable/LICENSE)
 [![Release](https://img.shields.io/github/v/release/rurlus/carma)](https://github.com/RUrlus/carma/releases)
