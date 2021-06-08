@@ -2,7 +2,7 @@
 #                               Clang-format                                   #
 # ##############################################################################
 ## search for clang-format and add target
-IF(NOT DEFINED CARMA_DEV_TARGET OR CARMA_DEV_TARGET)
+IF(DEFINED CARMA_DEV_TARGET)
     FIND_PROGRAM(CLANG_FORMAT clang-format)
     IF (CLANG_FORMAT)
         EXEC_PROGRAM(
