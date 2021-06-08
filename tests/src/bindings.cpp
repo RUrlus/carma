@@ -7,8 +7,8 @@
 #include "test_arraystore.h"
 #include "test_mat_to_arr.h"
 #include "test_nparray.h"
-#include "test_type_caster.h"
 #include "test_roundtrip.h"
+#include "test_type_caster.h"
 
 #include <string>
 

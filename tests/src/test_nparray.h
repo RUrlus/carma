@@ -15,4 +15,4 @@ void bind_test_set_not_owndata(py::module& m);
 void bind_test_set_not_writeable(py::module& m);
 void bind_test_is_well_behaved(py::module& m);
 
-#endif //  TESTS_SRC_TEST_NPARRAY_H_
+#endif  //  TESTS_SRC_TEST_NPARRAY_H_

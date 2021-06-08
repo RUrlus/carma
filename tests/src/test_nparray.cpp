@@ -45,6 +45,5 @@ void bind_test_is_well_behaved(py::module& m) {
     m.def(
         "is_well_behaved",
         [](const py::array_t<double>& arr) { return carma::is_well_behaved(arr); },
-        "Test is_well_behaved"
-    );
+        "Test is_well_behaved");
 }

@@ -1,7 +1,7 @@
-#include <carma>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <armadillo>
+#include <carma>
 
 namespace py = pybind11;
 
