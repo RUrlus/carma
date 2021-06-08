@@ -68,7 +68,8 @@ CARMA was designed with three patterns in mind: borrow, transfer ownership and v
 Borrow
 ------
 
-You can borrow the underlying memory of a Numpy array using the ``arr_to_*(py::array_t<T>, copy=false)``. The Armadillo object should not be returned without a copy out. Use this when you want to modify the memory in-place. If the array is not well behaved, see :doc:`Memory Management -- well behaved <well_behaved>`, the data is copied to a well-behaved memory and swapped in place of the input array. If ``copy=true`` is equivalent to the copy approach below.
+You can borrow the underlying memory of a Numpy array using the ``arr_to_*(py::array_t<T>, copy=false)``. The Armadillo object should not be returned without a copy out. Use this when you want to modify the memory in-place.
+If the array is not well behaved, see :ref:`Well behaved`, the data is copied to well-behaved memory and swapped in place of the input array. If ``copy=true`` is equivalent to the copy approach below.
 
 .. note:: the size of the Armadillo object is not allowed change when you borrow.
 
