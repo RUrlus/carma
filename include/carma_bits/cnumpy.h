@@ -63,6 +63,30 @@ static inline bool well_behaved(PyObject* src) {
 #endif
 }
 
+static inline bool well_behaved_view(PyObject* src) {
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
+#if defined CARMA_DONT_REQUIRE_OWNDATA && defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(
+        arr, NPY_ARRAY_ALIGNED
+    );
+#elif defined CARMA_DONT_REQUIRE_OWNDATA
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED | NPY_ARRAY_F_CONTIGUOUS
+    );
+#elif defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED|  NPY_ARRAY_OWNDATA
+    );
+#else
+    return PyArray_CHKFLAGS(
+        arr,
+        NPY_ARRAY_ALIGNED|  NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_OWNDATA
+    );
+#endif
+}
+
 /* well behaved is defined as:
  *   - aligned
  *   - writeable
