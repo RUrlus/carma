@@ -137,9 +137,12 @@ int test_arr_to_mat_1d(py::array_t<double>& arr, bool copy) {
     double mat_sum = arma::accu(M);
 
     // variable for test status
-    if (arr_N != M.n_elem) return 1;
-    if (std::abs(arr_sum - mat_sum) > 1e-8) return 4;
-    if (info.ptr != M.memptr()) return 5;
+    if (arr_N != M.n_elem)
+        return 1;
+    if (std::abs(arr_sum - mat_sum) > 1e-8)
+        return 4;
+    if (info.ptr != M.memptr())
+        return 5;
     return 0;
 } /* arr_to_mat_1d */
 
@@ -395,7 +398,6 @@ py::array_t<double> debug_arr_to_mat(py::array_t<double>& arr, int copy) {
     }
     return carma::mat_to_arr(carma::arr_to_mat<double>(arr, copy));
 }
-
 
 }  // namespace tests
 }  // namespace carma

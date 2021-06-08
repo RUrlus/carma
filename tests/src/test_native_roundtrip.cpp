@@ -1,7 +1,7 @@
-#include <carma>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <armadillo>
+#include <carma>
 #include <catch2/catch.hpp>
 
 namespace py = pybind11;
@@ -24,7 +24,7 @@ TEST_CASE("Test roundtrip mat", "[roundtrip_mat]") {
 
     // compute sum of array
     double arr_sum = 0.0;
-    double * _ptr = reinterpret_cast<double*>(info.ptr);
+    double* _ptr = reinterpret_cast<double*>(info.ptr);
     auto ptr = arr.unchecked<2>();
     for (size_t ic = 0; ic < arr_S1; ic++) {
         for (size_t ir = 0; ir < arr_S0; ir++) {
@@ -56,7 +56,7 @@ TEST_CASE("Test roundtrip mat", "[roundtrip_mat]") {
 
     // compute sum of array
     double arr_sum_out = 0.0;
-    double * _ptr_out = reinterpret_cast<double*>(info_out.ptr);
+    double* _ptr_out = reinterpret_cast<double*>(info_out.ptr);
     auto ptr_out = arr_out.unchecked<2>();
     for (size_t ic = 0; ic < arr_out_S1; ic++) {
         for (size_t ir = 0; ir < arr_out_S0; ir++) {
@@ -112,7 +112,7 @@ TEST_CASE("Test roundtrip row", "[roundtrip_row]") {
 
     // compute sum of array
     double arr_sum_out = 0.0;
-    double * _ptr_out = reinterpret_cast<double*>(info_out.ptr);
+    double* _ptr_out = reinterpret_cast<double*>(info_out.ptr);
     auto ptr_out = arr_out.unchecked<2>();
     for (size_t i = 0; i < arr_out_S0; i++) {
         arr_sum_out += ptr_out(0, i);
@@ -165,7 +165,7 @@ TEST_CASE("Test roundtrip col", "[roundtrip_col]") {
 
     // compute sum of array
     double arr_sum_out = 0.0;
-    double * _ptr_out = reinterpret_cast<double*>(info_out.ptr);
+    double* _ptr_out = reinterpret_cast<double*>(info_out.ptr);
     auto ptr_out = arr_out.unchecked<2>();
     for (size_t i = 0; i < arr_out_S0; i++) {
         arr_sum_out += ptr_out(i, 0);
