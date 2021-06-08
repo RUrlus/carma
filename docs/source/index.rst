@@ -10,7 +10,7 @@ CARMA - Armadillo converters
     Contents:
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     introduction
 
@@ -19,6 +19,7 @@ CARMA - Armadillo converters
     :maxdepth: 2
 
     basic_usage
+    examples
 
 .. toctree::
     :caption: Memory Management
@@ -27,7 +28,14 @@ CARMA - Armadillo converters
     memory_management
 
 .. toctree::
+    :caption: Advanced
+    :maxdepth: 1
+
+    configuration
+    building
+
+.. toctree::
     :caption: CARMA
-    :maxdepth: 3
+    :maxdepth: 2
 
     carma
