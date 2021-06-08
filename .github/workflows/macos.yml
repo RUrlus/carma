@@ -7,6 +7,9 @@ on:
       - unstable
   schedule:
     - cron: '0 23 * * 1'
+  push:
+    branches:
+      - stable
 
 defaults:
   run:
