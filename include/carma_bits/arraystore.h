@@ -14,7 +14,9 @@
  *      arma_wrapper/arma_wrapper.h:
  *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
  */
-#include <utility>
+#ifndef INCLUDE_CARMA_BITS_ARRAYSTORE_H_
+#define INCLUDE_CARMA_BITS_ARRAYSTORE_H_
+
 #include <pybind11/numpy.h>  // NOLINT
 #include <pybind11/pybind11.h>  // NOLINT
 #include <carma_bits/debug.h>  // NOLINT
@@ -22,10 +24,9 @@
 #include <carma_bits/typecheck.h>  // NOLINT
 #include <carma_bits/converters.h>  // NOLINT
 
-namespace py = pybind11;
+#include <utility>
 
-#ifndef INCLUDE_CARMA_BITS_ARRAYSTORE_H_
-#define INCLUDE_CARMA_BITS_ARRAYSTORE_H_
+namespace py = pybind11;
 
 namespace carma {
 

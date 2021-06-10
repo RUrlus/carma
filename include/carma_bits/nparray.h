@@ -10,20 +10,20 @@
  *      All rights reserved. Use of this source code is governed by a
  *      BSD-style license that can be found in the LICENSE file.
  */
+#ifndef INCLUDE_CARMA_BITS_NPARRAY_H_
+#define INCLUDE_CARMA_BITS_NPARRAY_H_
 
-/* External headers */
+#include <pybind11/numpy.h>  // NOLINT
+#include <pybind11/pybind11.h>  // NOLINT
+
+#include <carma_bits/cnumpy.h> // NOLINT
+#include <carma_bits/config.h> // NOLINT
+
 #include <memory>
 #include <type_traits>
 #include <utility>
 
-#include <pybind11/numpy.h>  // NOLINT
-#include <pybind11/pybind11.h>  // NOLINT
-#include <carma_bits/cnumpy.h> // NOLINT
-#include <carma_bits/config.h> // NOLINT
 namespace py = pybind11;
-
-#ifndef INCLUDE_CARMA_BITS_NPARRAY_H_
-#define INCLUDE_CARMA_BITS_NPARRAY_H_
 
 namespace carma {
 

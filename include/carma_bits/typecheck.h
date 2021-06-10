@@ -3,15 +3,13 @@
  *  All rights reserved. Use of this source code is governed by a
  *  Apache-2.0 license that can be found in the LICENSE file.
  */
-#include <memory>
-#include <type_traits>
-#include <utility>
-
-/* External headers */
-#include <armadillo>  // NOLINT
-
 #ifndef INCLUDE_CARMA_BITS_TYPECHECK_H_
 #define INCLUDE_CARMA_BITS_TYPECHECK_H_
+#include <armadillo>
+
+#include <memory>
+#include <utility>
+#include <type_traits>
 
 namespace carma {
 
