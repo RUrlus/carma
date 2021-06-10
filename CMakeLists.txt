@@ -46,40 +46,11 @@ IF (NOT DEFINED PYTHON_EXECUTABLE)
     SET(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
 ENDIF ()
 # ##############################################################################
-#                                   TARGET                                     #
+#                                   TARGETS                                    #
 # ##############################################################################
-# Carma >= v0.5.0 must use a modified version of armadillo to enable consistent
-# behaviour across platforms. A pull request has been opened to include the
-# changes in the upstream repository
+# create armadillo and or pybind11 target if not defined
+INCLUDE(ThirdPartyTargets)
 
-# We download the fork and create a custom target
-INCLUDE(GetArmadillo)
-ADD_LIBRARY(carma_armadillo INTERFACE)
-TARGET_INCLUDE_DIRECTORIES(carma_armadillo INTERFACE
-    ${PROJECT_SOURCE_DIR}/cnalloc/include/
-    ${PROJECT_SOURCE_DIR}/extern/armadillo-code/include
-)
-TARGET_LINK_LIBRARIES(carma_armadillo INTERFACE Python3::NumPy)
-TARGET_PRECOMPILE_HEADERS(carma_armadillo
-    INTERFACE
-        ${PROJECT_SOURCE_DIR}/cnalloc/include/cnalloc.hpp
-)
-IF (ENABLE_CARMA_EXTRA_DEBUG)
-    TARGET_COMPILE_DEFINITIONS(carma_armadillo INTERFACE CARMA_EXTRA_DEBUG=1)
-ENDIF ()
-
-INSTALL(
-    DIRECTORY "${PROJECT_SOURCE_DIR}/extern/armadillo/include"
-    DESTINATION carma_armadillo
-    FILES_MATCHING
-        PATTERN "*.hpp"
-        PATTERN "armadillo"
-)
-# ---------------------------------------------------------------------------------
-
-# ##############################################################################
-#                                  EXECUTABLE                                  #
-# ##############################################################################
 ADD_LIBRARY(carma INTERFACE)
 TARGET_COMPILE_DEFINITIONS(carma
     INTERFACE
@@ -94,13 +65,18 @@ TARGET_INCLUDE_DIRECTORIES(carma
     $<INSTALL_INTERFACE:include> # <prefix>/include/carma
     # path of the headers before installation
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    ${PROJECT_SOURCE_DIR}/cnalloc/include/cnalloc.hpp
 )
 TARGET_LINK_LIBRARIES(carma
     INTERFACE
+        armadillo
         Python3::NumPy
         Python3::Module
-        carma_armadillo
         pybind11::pybind11
+)
+TARGET_PRECOMPILE_HEADERS(carma
+    INTERFACE
+        ${PROJECT_SOURCE_DIR}/cnalloc/include/cnalloc.hpp
 )
 
 INSTALL(
@@ -114,11 +90,6 @@ INSTALL(
 # ##############################################################################
 #                              TEST TARGETS                                    #
 # ##############################################################################
-IF (BUILD_TESTS OR BUILD_EXAMPLES)
-    # optionally build custom targets for our third_party libs
-    INCLUDE(ThirdPartyTargets)
-ENDIF()
-
 IF(BUILD_TESTS)
     INCLUDE(CTest)
     ENABLE_TESTING()
