@@ -22,12 +22,13 @@
 #include <carma_bits/debug.h>
 #include <carma_bits/typecheck.h>
 
+#include <armadillo>
+
 #include <limits>
 #include <iostream>
 #include <algorithm>
 #include <utility>
 
-#include <armadillo> // NOLINT
 
 namespace py = pybind11;
 

@@ -14,18 +14,16 @@
  *      arma_wrapper/arma_wrapper.h:
  *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
  */
-#include <utility>
-
-/* External headers */
-#include <armadillo>  // NOLINT
+#ifndef INCLUDE_CARMA_BITS_ARMATONUMPY_H_
+#define INCLUDE_CARMA_BITS_ARMATONUMPY_H_
 #include <pybind11/pybind11.h>  // NOLINT
 #include <pybind11/numpy.h>  // NOLINT
 #include <carma_bits/config.h> // NOLINT
 
-namespace py = pybind11;
+#include <armadillo>  // NOLINT
+#include <utility>
 
-#ifndef INCLUDE_CARMA_BITS_ARMATONUMPY_H_
-#define INCLUDE_CARMA_BITS_ARMATONUMPY_H_
+namespace py = pybind11;
 
 namespace carma {
 namespace details {

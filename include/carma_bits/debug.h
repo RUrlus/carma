@@ -3,6 +3,9 @@
  *  All rights reserved. Use of this source code is governed by a
  *  Apache-2.0 license that can be found in the LICENSE file. */
 /* External headers */
+#ifndef INCLUDE_CARMA_BITS_DEBUG_H_
+#define INCLUDE_CARMA_BITS_DEBUG_H_
+
 #include <Python.h>
 #include <pymem.h>
 #include <numpy/arrayobject.h>
@@ -12,17 +15,14 @@
 #include <pybind11/pybind11.h>  // NOLINT
 
 #include <carma_bits/config.h> // NOLINT
-
 #include <armadillo>  // NOLINT
+
 #include <string>
 #include <memory>
 #include <type_traits>
 #include <utility>
 
 namespace py = pybind11;
-
-#ifndef INCLUDE_CARMA_BITS_DEBUG_H_
-#define INCLUDE_CARMA_BITS_DEBUG_H_
 
 namespace carma {
 
