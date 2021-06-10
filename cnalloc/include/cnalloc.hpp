@@ -5,7 +5,8 @@
 #include <numpy/arrayobject.h>
 #include <numpy/ndarraytypes.h>
 
-#ifdef CARMA_EXTRA_DEBUG
+#include <cstddef>
+#ifdef CARMA_DEV_DEBUG
 #include <iostream>
 #endif
 
@@ -15,7 +16,7 @@ inline void* npy_malloc(std::size_t bytes) {
     if (PyArray_API == NULL) {
         _import_array();
     }
-#ifdef CARMA_EXTRA_DEBUG
+#ifdef CARMA_DEV_DEBUG
     std::cout << "\n-----------\nCARMA DEBUG\n-----------\n";
     std::cout << "Using numpy allocator" << "\n";
     std::cout << "-----------\n";
@@ -27,7 +28,7 @@ inline void npy_free(void* ptr) {
     if (PyArray_API == NULL) {
         _import_array();
     }
-#ifdef CARMA_EXTRA_DEBUG
+#ifdef CARMA_DEV_DEBUG
     std::cout << "\n-----------\nCARMA DEBUG\n-----------\n";
     std::cerr << "Using numpy deallocator\n";
     std::cout << "-----------\n";
