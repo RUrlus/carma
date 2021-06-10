@@ -2,20 +2,32 @@
  *  Copyright (c) 2020 Ralph Urlus <rurlus.dev@gmail.com>
  *  All rights reserved. Use of this source code is governed by a
  *  Apache-2.0 license that can be found in the LICENSE file.
- *
- *  Adapated from:
- *
- *      pybind11/eigen.h: Transparent conversion for dense and sparse Eigen matrices
- *      Copyright (c) 2016 Wolf Vollprecht <w.vollprecht@gmail.com>
- *                         Wenzel Jakob <wenzel.jakob@epfl.ch>
- *      All rights reserved. Use of this source code is governed by a
- *      BSD-style license that can be found in the pybind11/LICENSE file.
- *
- *      arma_wrapper/arma_wrapper.h:
- *      Copyright (C) 2019 Paul Sangrey governed by Apache 2.0 License
  */
 #ifndef INCLUDE_CARMA_H_
 #define INCLUDE_CARMA_H_
+/* If the Numpy allocator/deallocator have not been set through
+ * the carma_armadillo target ARMA_ALIEN_MEM_ALLOC_FUNCTION and
+ * ARMA_ALIEN_MEM_FREE_FUNCTION need to be set.
+ *
+ * This requires that Armadillo wasn't included before carma
+ */
+#ifndef CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET
+  #if defined(ARMA_VERSION_MAJOR)
+    #error "carma: please include the armadillo header after the carma header or use the CARMA CMake build"
+  #endif
+  #include <cnalloc.hpp>
+#endif
+
+#ifndef ARMA_VERSION_MAJOR
+  #include <armadillo>
+#endif
+
+#if defined(CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET)
+  #if (defined(ARMA_ALIEN_MEM_ALLOC_FUNCTION) && !defined(ARMA_ALIEN_MEM_FREE_FUNCTION)) || (!defined(ARMA_ALIEN_MEM_ALLOC_FUNCTION) && defined(ARMA_ALIEN_MEM_FREE_FUNCTION))
+    #error "carma: ARMA_ALIEN_MEM_ALLOC_FUNCTION and or ARMA_ALIEN_MEM_FREE_FUNCTION not set while CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET is"
+  #endif
+#endif
+
 #define CARMA_ARMA_VERSION (ARMA_VERSION_MAJOR * 10000 + ARMA_VERSION_MINOR * 100 + ARMA_VERSION_PATCH)
 #if (CARMA_ARMA_VERSION < 100501)
   #error "carma: minimum supported armadillo version is 10.5.1"
