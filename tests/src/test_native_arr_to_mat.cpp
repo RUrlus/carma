@@ -8,6 +8,10 @@ namespace py = pybind11;
 
 typedef py::array_t<double, py::array::f_style | py::array::forcecast> fArr;
 
+TEST_CASE("Version check", "[version_check]") {
+    std::cout << "carma v" << carma::carma_version().as_string() << "\n";
+}
+
 TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     py::module np = py::module::import("numpy");
     py::module np_rand = py::module::import("numpy.random");
