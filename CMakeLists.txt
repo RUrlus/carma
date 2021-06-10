@@ -56,11 +56,17 @@ ENDIF ()
 INCLUDE(GetArmadillo)
 ADD_LIBRARY(carma_armadillo INTERFACE)
 TARGET_INCLUDE_DIRECTORIES(carma_armadillo INTERFACE
-    ${PROJECT_SOURCE_DIR}/extern/armadillo-code/include
     ${PROJECT_SOURCE_DIR}/cnalloc/include/
+    ${PROJECT_SOURCE_DIR}/extern/armadillo-code/include
 )
 TARGET_LINK_LIBRARIES(carma_armadillo INTERFACE Python3::NumPy)
-TARGET_COMPILE_DEFINITIONS(carma_armadillo INTERFACE ARMA_USE_ALIEN_MEM_FUNCTION=1)
+TARGET_PRECOMPILE_HEADERS(carma_armadillo
+    INTERFACE
+        ${PROJECT_SOURCE_DIR}/cnalloc/include/cnalloc.hpp
+)
+IF (ENABLE_CARMA_EXTRA_DEBUG)
+    TARGET_COMPILE_DEFINITIONS(carma_armadillo INTERFACE CARMA_EXTRA_DEBUG=1)
+ENDIF ()
 
 INSTALL(
     DIRECTORY "${PROJECT_SOURCE_DIR}/extern/armadillo/include"
@@ -91,10 +97,10 @@ TARGET_INCLUDE_DIRECTORIES(carma
 )
 TARGET_LINK_LIBRARIES(carma
     INTERFACE
+        Python3::NumPy
+        Python3::Module
         carma_armadillo
         pybind11::pybind11
-        Python3::Module
-        Python3::NumPy
 )
 
 INSTALL(
