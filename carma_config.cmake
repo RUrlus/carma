@@ -5,17 +5,15 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 # This is the configuration module for carma set the option to ON in carma_config to enable the setting.
 # Please see the documentation for details: https://carma.readthedocs.io/en/latest/configuration.html
 
-# -- Armadillo version --
-# Set which version of Armadillo to use
-# Supported versions are:
-#     - 10.5.x
-#     - 10.4.x
-# OPTION(USE_ARMA_VERSION "Which version of Armadillo to use" 10.5.x)
-
 # -- ENABLE_CARMA_EXTRA_DEBUG --
-# This option enables additional debuggin statements
+# This option enables additional debugging statements
 OPTION(ENABLE_CARMA_EXTRA_DEBUG "Enable CARMA_EXTRA_DEBUG" OFF)
 OPTION(ENABLE_ARMA_EXTRA_DEBUG "Enable ARMA_EXTRA_DEBUG" OFF)
+
+# -- ENABLE_ARMA_NO_DEBUG --
+# This option sets ARMA_NO_DEBUG as part of the release flags
+# NOTE Should only be used when you have thoroughly tested your code
+OPTION(ENABLE_ARMA_NO_DEBUG "Enable ENABLE_ARMA_NO_DEBUG" OFF)
 
 # -- ENABLE_CARMA_SOFT_STEAL --
 # When stealing the data of an array replace it with
