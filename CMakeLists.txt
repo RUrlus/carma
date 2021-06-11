@@ -22,10 +22,10 @@ SET(DEFAULT_BUILD_TYPE "Release")
 INCLUDE(BuildType)
 INCLUDE(ReleaseSettings)
 
-OPTION(DEV_MODE "Enable additional definitions for development" OFF)
-OPTION(DEV_DEBUG_MODE "Turn on all debugging definitions" OFF)
-OPTION(BUILD_TESTS "Build tests for carma" OFF)
-OPTION(BUILD_EXAMPLES "Build examples for carma" OFF)
+OPTION(CARMA_DEV_MODE "Enable additional definitions for development" OFF)
+OPTION(CARMA_DEV_DEBUG_MODE "Turn on all debugging definitions" OFF)
+OPTION(CARMA_BUILD_TESTS "Build tests for carma" OFF)
+OPTION(CARMA_BUILD_EXAMPLES "Build examples for carma" OFF)
 
 # collect user settable options
 INCLUDE(${PROJECT_SOURCE_DIR}/carma_config.cmake)
@@ -59,6 +59,7 @@ TARGET_COMPILE_DEFINITIONS(carma
     CARMA_VERSION_PATCH=${CARMA_VERSION_PATCH}
     "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_DEFINITIONS}>"
 )
+
 TARGET_INCLUDE_DIRECTORIES(carma
     INTERFACE
     # path of the headers after installation
@@ -78,9 +79,10 @@ TARGET_PRECOMPILE_HEADERS(carma
         ${PROJECT_SOURCE_DIR}/include/carma_bits/cnalloc.hpp
 )
 
+SET(CARMA_HEADERS include/carma)
+
 INSTALL(
-    DIRECTORY "${PROJECT_SOURCE_DIR}/include" 
-    DESTINATION carma
+    DIRECTORY "${PROJECT_SOURCE_DIR}/include" DESTINATION carma
     FILES_MATCHING
         PATTERN "*.h"
         PATTERN "carma"
@@ -89,7 +91,7 @@ INSTALL(
 # ##############################################################################
 #                              TEST TARGETS                                    #
 # ##############################################################################
-IF(BUILD_TESTS)
+IF(CARMA_BUILD_TESTS)
     INCLUDE(CTest)
     ENABLE_TESTING()
     INCLUDE(GetCatch2)
@@ -98,7 +100,7 @@ IF(BUILD_TESTS)
     INCLUDE(CoverageTarget)
 ENDIF()
 
-IF(BUILD_EXAMPLES)
+IF(CARMA_BUILD_EXAMPLES)
     ADD_SUBDIRECTORY(examples)
 ENDIF()
 #------------------------------------------------------

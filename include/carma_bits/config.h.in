@@ -6,7 +6,6 @@
 // Please see the documentation for details: https://carma.readthedocs.io/en/latest/configuration.html
 
 //-- ENABLE_CARMA_EXTRA_DEBUG --
-
 #if !defined(CARMA_EXTRA_DEBUG)
 #cmakedefine ENABLE_CARMA_EXTRA_DEBUG
 #cmakedefine CARMA_EXTRA_DEBUG "@CARMA_EXTRA_DEBUG@"

@@ -33,7 +33,7 @@ CMake can be installed with :bash:`pip install cmake`, your package manager or d
 
    mkdir build
    cd build
-   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -DBUILD_EXAMPLES=true  -DBUILD_TESTS=true .. && make install
+   cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -DCARMA_BUILD_EXAMPLES=true  -DCARMA_BUILD_TESTS=true .. && make install
 
 To run the tests you need to install `pytest`:
 

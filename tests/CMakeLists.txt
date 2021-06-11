@@ -54,23 +54,10 @@ IF (NOT DEFINED BUILD_PYTHON_TESTS OR BUILD_PYTHON_TESTS)
             src/test_type_caster.cpp
     )
     TARGET_LINK_LIBRARIES(${MODNAME} PUBLIC carma)
-
     TARGET_INCLUDE_DIRECTORIES(${MODNAME}
         PUBLIC
-            $<INSTALL_INTERFACE:include>
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests/src>
     )
-
-    TARGET_COMPILE_OPTIONS(${MODNAME}
-        PUBLIC
-            "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_FLAGS}>"
-    )
-
-    TARGET_COMPILE_DEFINITIONS(${MODNAME}
-        PUBLIC
-            "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_DEFINITIONS}>"
-    )
-
     # ******************************************************************************
     #                                   INSTALL                                    *
     # ******************************************************************************

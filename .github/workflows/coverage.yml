@@ -117,7 +117,7 @@ jobs:
 
           cmake \
             ${{ matrix.config.options }}  \
-            -DBUILD_TESTS=ON \
+            -DCARMA_BUILD_TESTS=ON \
             -DENABLE_COVERAGE=ON\
             -DCMAKE_C_COMPILER="gcc-9" \
             -DCMAKE_CXX_COMPILER="g++-9" \

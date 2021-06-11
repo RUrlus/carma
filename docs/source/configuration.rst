@@ -86,18 +86,18 @@ Two settings exists to faciliate development of CARMA:
 
 .. code-block:: bash
 
-    -DDEV_MODE=ON
+    -DCARMA_DEV_MODE=ON
 
 This enables:
 
-- :bash:`BUILD_TESTS=ON`
+- :bash:`CARMA_BUILD_TESTS=ON`
 - :bash:`CARMA_DEV_TARGET=ON`
 - :bash:`CMAKE_EXPORT_COMPILE_COMMANDS=1`
 - :bash:`CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/build)`
 
 .. code-block:: bash
 
-    -DDEV_DEBUG_MODE=ON
+    -DCARMA_DEV_DEBUG_MODE=ON
 
-Turns on :bash:`DEV_MODE` and
+Turns on :bash:`CARMA_DEV_MODE` and
 :bash:`ENABLE_CARMA_EXTRA_DEBUG`.

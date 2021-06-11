@@ -86,7 +86,7 @@ jobs:
           export PY_CMD=$(python -c 'import sys; print(sys.executable)')
 
           cmake \
-            -DBUILD_TESTS=ON \
+            -DCARMA_BUILD_TESTS=ON \
             -DCMAKE_C_COMPILER=${{ matrix.config.cc }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
