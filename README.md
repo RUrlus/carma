@@ -32,10 +32,7 @@ For details on Pybind11 and Armadillo refer to their respective documentation [1
 CARMA is a header only library that relies on two other header only libraries, Armadillo and Pybind11.
 
 CARMA can be integrated in a CMake build using `ADD_SUBDIRECTORY(<path_to_carma>)` which provides an interface library target `carma`
-that has been linked with Python, Numpy, Pybind11 and Armadillo.
-**Note, at the time of writing CARMA requires a forked version of Armadillo that
-uses Numpy's allocator and deallocator.** This fork is provided as an interface libary target
-`carma_armadillo`.
+that has been linked with Python, Numpy, Pybind11 and Armadillo. For Pybind11 and or Armadillo we create target(s) based on user settable version, see [build configuration](https://carma.readthedocs.io/en/stable/building.html), when they are not defined.
 
 To link with CARMA:
 ```cmake
@@ -52,17 +49,14 @@ CARMA provides a number of configurations that can be set in the `carma_config.c
 
 ## Requirements
 
-CARMA v0.5 requires a compiler with support for C++14 and supports:
+CARMA >= v0.5 requires a compiler with support for C++14 and supports:
 
 * Python 3.6 -- 3.9
 * Numpy >= 1.14
 * Pybind11 v2.6.0 -- v2.6.2
-* Armadillo 10.4.x -- 10.5.x
+* Armadillo >= 10.5.2
 
-**Note, at the time of writing CARMA requires a forked version of Armadillo that
-uses Numpy's allocator and deallocator.**
-The forked version is shipped with the library and provided at build time.
-For details see the [Build configuration](https://carma.readthedocs.io/en/stable/building.html).
+CARMA makes use of Armadillo's `ARMA_ALIEN_MEM_ALLOC` and `ARMA_ALIEN_MEM_FREE` functionality introduced in version 10.5.2 to use Numpy's (de)allocator.
 
 ### Considerations
 

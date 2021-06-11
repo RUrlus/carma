@@ -4,23 +4,27 @@
 First steps
 ###########
 
-Carma relies on Pybind11 for the generation of the bindings and casting of the arguments from Python to C++.
+CARMA relies on Pybind11 for the generation of the bindings and casting of the arguments from Python to C++.
 Make sure you are familiar with `Pybind11 <https://pybind11.readthedocs.io/en/stable/intro.html>`_ before continuing on.
 
-You can embed CARMA in a Pybind11 project using CMake command
+You can embed CARMA in a Pybind11 project using the CMake commands:
 
 .. code-block:: cmake
 
     ADD_SUBDIRECTORY(extern/carma)
     TARGET_LINK_LIBRARIES(<your_target> PRIVATE carma)
 
+It is advised to use :bash:`ADD_SUBDIRECTORY` to incorporate CARMA as this provides an interface target, ``carma``, that can be linked to your target.
+Using this target prevents an include order dependency, see :ref:`CARMA target` for details.
+
+.. warning:: if you are not using CARMA's cmake target you have to ensure that you include CARMA before Armadillo. Not doing so results in a compile error.
+
+CARMA can provide Armadillo and or Pybind11 at compile time if desired, see :ref:`Armadillo` and :ref:`Pybind11` details.
+
 See `Pybind11's CMake build system documentation <https://pybind11.readthedocs.io/en/stable/compiling.html#building-with-cmake>`_ or `CARMA's examples <https://github.com/RUrlus/carma/blob/stable/examples/CMakeLists.txt>`_ for a start.
 
-.. note:: 
-    
-    At the time of writing CARMA requires a forked version of Armadillo that
-    uses Numpy's allocator and deallocator.
-    The forked version is shipped with library and provided at build time, see :ref:`Build Configuration` for details.
+Build examples
+--------------
 
 The tests and examples can be compiled using CMake.
 CMake can be installed with :bash:`pip install cmake`, your package manager or directly from `cmake <http://cmake.org/download/>`__.
@@ -56,7 +60,6 @@ The installation directory contains
 .. code-block:: bash
 
     include                  # carma headers
-    extern/armadillo-code    # fork of armadillo required by carma
     tests                    # carma tests with python module (if enabled using -DBUILD_TESTS=on)
     examples                 # carma python examples with python module (if enabled using -DBUILD_EXAMPLES=on)
 
@@ -94,7 +97,7 @@ Copy
 
 If you want to give Armadillo full control of underlying memory but also want to keep Numpy as owner you should copy. The Armadillo object can be safely returned out without a copy. If the memory of the array is not well-behaved a copy of the memory is used instead.
 
-.. note:: the size of the Armadillo object is allowed change after copying.
+.. note:: the size of the Armadillo object is allowed change after copying, ``strict=false``.
 
 View
 ----
