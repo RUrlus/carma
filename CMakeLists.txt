@@ -18,7 +18,6 @@ LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")
 # ##############################################################################
 SET(CMAKE_CXX_STANDARD 14)
 SET(DEFAULT_BUILD_TYPE "Release")
-SET(DEFAULT_ARMA_VERSION 10.5.x)
 # Set build type to Release if not specified
 INCLUDE(BuildType)
 INCLUDE(ReleaseSettings)

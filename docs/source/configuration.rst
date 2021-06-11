@@ -68,6 +68,17 @@ Turn this setting on if you want to debug conversions. Debug prints are generate
 place. Note that the additional debugging information from Armadillo can be enabled using the second setting.
 
 
+Release
+-------
+
+.. code-block:: cmake
+    
+    OPTION(ENABLE_ARMA_NO_DEBUG "Enable ENABLE_ARMA_NO_DEBUG" OFF)
+
+This option sets ARMA_NO_DEBUG as part of the release flags.
+
+"Disable all run-time checks, such as bounds checking. This will result in faster code, but you first need to make sure that your code runs correctly! We strongly recommend to have the run-time checks enabled during development, as this greatly aids in finding mistakes in your code, and hence speeds up development. We recommend that run-time checks be disabled only for the shipped version of your program (i.e. final release build)." -- Armadillo documentation
+
 Developer settings
 ------------------
 
