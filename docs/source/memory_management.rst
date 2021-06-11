@@ -25,8 +25,6 @@ Memory (de)allocator
 Armadillo will not always hold the same memory for the entirety of a object's lifetime, e.g. you add columns to a matrix. To be able to transfer ownership we have to be sure that the memory will be deallocated by the function matching the allocator. In the case of CARMA this means Armadillo must use the Numpy allocator (``PyDataMem_NEW``) and deallocator (``PyDataMem_FREE``).
 Numpy's allocator is compatible with Armadillo as both call/wrap ``malloc/calloc``.
 
-For this reason CARMA v0.5.0 requires a fork or Armadillo. A pull-request has been opened to enable a foreign (de)allocator.
-
 Memory Safety
 #############
 
