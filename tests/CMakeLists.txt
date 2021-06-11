@@ -63,12 +63,12 @@ IF (NOT DEFINED BUILD_PYTHON_TESTS OR BUILD_PYTHON_TESTS)
 
     TARGET_COMPILE_OPTIONS(${MODNAME}
         PUBLIC
-            "$<$<CONFIG:RELEASE>:${PROJECT_RELEASE_FLAGS}>"
+            "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_FLAGS}>"
     )
 
     TARGET_COMPILE_DEFINITIONS(${MODNAME}
         PUBLIC
-            "$<$<CONFIG:RELEASE>:${PROJECT_RELEASE_DEFINITIONS}>"
+            "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_DEFINITIONS}>"
     )
 
     # ******************************************************************************
