@@ -65,7 +65,6 @@ TARGET_INCLUDE_DIRECTORIES(carma
     $<INSTALL_INTERFACE:include> # <prefix>/include/carma
     # path of the headers before installation
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    ${PROJECT_SOURCE_DIR}/cnalloc/include/cnalloc.hpp
 )
 TARGET_LINK_LIBRARIES(carma
     INTERFACE
@@ -76,7 +75,7 @@ TARGET_LINK_LIBRARIES(carma
 )
 TARGET_PRECOMPILE_HEADERS(carma
     INTERFACE
-        ${PROJECT_SOURCE_DIR}/cnalloc/include/cnalloc.hpp
+        ${PROJECT_SOURCE_DIR}/include/carma_bits/cnalloc.hpp
 )
 
 INSTALL(
