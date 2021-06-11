@@ -63,7 +63,7 @@ jobs:
           export PY_CMD=$(python -c 'import sys; print(sys.executable)')
 
           cmake \
-            -DBUILD_TESTS=ON \
+            -DCARMA_BUILD_TESTS=ON \
             -DBUILD_NATIVE_TESTS=OFF \
             -DBUILD_PYTHON_TESTS=ON \
             -DCMAKE_C_COMPILER=clang-10 \
