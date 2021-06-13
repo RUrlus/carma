@@ -30,7 +30,7 @@
 
 #define CARMA_ARMA_VERSION (ARMA_VERSION_MAJOR * 10000 + ARMA_VERSION_MINOR * 100 + ARMA_VERSION_PATCH)
 #if (CARMA_ARMA_VERSION < 100501)
-  #error "carma: minimum supported armadillo version is 10.5.1"
+  #error "carma: minimum supported armadillo version is 10.5.2"
 #endif
 
 namespace carma {
