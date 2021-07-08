@@ -33,6 +33,13 @@
   #error "carma: minimum supported armadillo version is 10.5.2"
 #endif
 
+#ifndef CARMA_VERSION_MAJOR
+  #define CARMA_VERSION_MAJOR 0
+  #define CARMA_VERSION_MINOR 5
+  #define CARMA_VERSION_PATCH 1
+  #define CARMA_VERSION_NAME  "0.5.1 HO"
+#endif
+
 namespace carma {
 
 struct carma_version {
