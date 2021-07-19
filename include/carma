@@ -18,9 +18,7 @@
   #include "carma_bits/cnalloc.hpp"
 #endif
 
-#ifndef ARMA_VERSION_MAJOR
-  #include <armadillo>
-#endif
+#include <armadillo>
 
 #if defined(CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET)
   #if (defined(ARMA_ALIEN_MEM_ALLOC_FUNCTION) && !defined(ARMA_ALIEN_MEM_FREE_FUNCTION)) || (!defined(ARMA_ALIEN_MEM_ALLOC_FUNCTION) && defined(ARMA_ALIEN_MEM_FREE_FUNCTION))
