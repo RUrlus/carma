@@ -15,7 +15,7 @@
   #if defined(ARMA_VERSION_MAJOR)
     #error "carma: please include the armadillo header after the carma header or use the CARMA CMake build"
   #endif
-  #include <cnalloc.hpp>
+  #include "carma_bits/cnalloc.hpp"
 #endif
 
 #ifndef ARMA_VERSION_MAJOR
