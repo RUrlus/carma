@@ -3,15 +3,20 @@
 # ##############################################################################
 # Use a header only version of armadillo; default CMake project is not header only
 # That's why we use a custom 'armadillo' target with only include directory
-IF(NOT TARGET armadillo)
-    IF (ARMADILLO_ROOT_DIR)
-        SET(ARMADILLO_INCLUDE_DIR ${ARMADILLO_ROOT_DIR}/include)
+IF(NOT TARGET armadillo::armadillo)
+    IF (TARGET armadillo)
+        ADD_LIBRARY(armadillo::armadillo ALIAS armadillo)
     ELSE()
-        INCLUDE(GetArmadillo)
-        SET(ARMADILLO_INCLUDE_DIR extern/armadillo-code/include)
+        IF (ARMADILLO_ROOT_DIR)
+            SET(ARMADILLO_INCLUDE_DIR ${ARMADILLO_ROOT_DIR}/include)
+        ELSE()
+            INCLUDE(GetArmadillo)
+            SET(ARMADILLO_INCLUDE_DIR extern/armadillo-code/include)
+        ENDIF()
+        ADD_LIBRARY(armadillo INTERFACE)
+        ADD_LIBRARY(armadillo::armadillo ALIAS armadillo)
+        TARGET_INCLUDE_DIRECTORIES(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
     ENDIF()
-    ADD_LIBRARY(armadillo INTERFACE)
-    TARGET_INCLUDE_DIRECTORIES(armadillo INTERFACE ${ARMADILLO_INCLUDE_DIR})
 ENDIF()
 
 IF(NOT TARGET pybind11::pybind11)
