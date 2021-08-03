@@ -10,12 +10,16 @@ PROJECT(
     VERSION ${CARMA_VERSION_INFO}
     LANGUAGES CXX
 )
+INCLUDE(GNUInstallDirs)
 
 SET(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
 LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")
 # ##############################################################################
 #                                   SETTINGS                                   #
 # ##############################################################################
+OPTION(CARMA_INSTALL_LIB "Install CARMA headers" OFF)
+SET(CARMA_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/carma")
+
 SET(CMAKE_CXX_STANDARD 14)
 SET(DEFAULT_BUILD_TYPE "Release")
 # Set build type to Release if not specified
@@ -35,6 +39,7 @@ CONFIGURE_FILE(
     ${PROJECT_SOURCE_DIR}/include/carma_bits/config.h
     @ONLY
 )
+
 # ##############################################################################
 #                                REQUIREMENTS                                  #
 # ##############################################################################
@@ -44,13 +49,13 @@ FIND_PACKAGE(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
 IF (NOT DEFINED PYTHON_EXECUTABLE)
     SET(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
 ENDIF ()
-# ##############################################################################
-#                                   TARGETS                                    #
-# ##############################################################################
-# create armadillo and or pybind11 target if not defined
-INCLUDE(ThirdPartyTargets)
 
+# ##############################################################################
+#                                   TARGET                                     #
+# ##############################################################################
 ADD_LIBRARY(carma INTERFACE)
+ADD_LIBRARY(carma::carma ALIAS carma)
+
 TARGET_COMPILE_DEFINITIONS(carma
     INTERFACE
     CARMA_VERSION_MAJOR=${CARMA_VERSION_MAJOR}
@@ -62,32 +67,80 @@ TARGET_COMPILE_DEFINITIONS(carma
 
 TARGET_INCLUDE_DIRECTORIES(carma
     INTERFACE
-    # path of the headers after installation
-    $<INSTALL_INTERFACE:include> # <prefix>/include/carma
-    # path of the headers before installation
+    $<INSTALL_INTERFACE:${CARMA_INCLUDE_INSTALL_DIR}>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
+
 TARGET_LINK_LIBRARIES(carma
     INTERFACE
-        armadillo
+        armadillo::armadillo
         Python3::NumPy
         Python3::Module
         pybind11::pybind11
 )
-TARGET_PRECOMPILE_HEADERS(carma
-    INTERFACE
-        ${PROJECT_SOURCE_DIR}/include/carma_bits/cnalloc.hpp
-)
 
-SET(CARMA_HEADERS include/carma)
+# Only install the headers
+IF (CARMA_INSTALL_LIB)
+    # modified from https://dominikberner.ch/cmake-interface-lib/
 
-INSTALL(
-    DIRECTORY "${PROJECT_SOURCE_DIR}/include" DESTINATION carma
-    FILES_MATCHING
-        PATTERN "*.h"
-        PATTERN "carma"
-)
+    # locations are provided by GNUInstallDirs
+    INSTALL(
+        TARGETS carma
+        EXPORT carma_Targets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+    
+    INCLUDE(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+        "carmaConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMinorVersion
+    )
+    
+    configure_package_config_file(
+        "${PROJECT_SOURCE_DIR}/cmake/carmaConfig.cmake.in"
+        "${PROJECT_BINARY_DIR}/carmaConfig.cmake"
+        INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
+    )
+    
+    INSTALL(
+      EXPORT carma_Targets
+      FILE carmaTargets.cmake
+      NAMESPACE carma::
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
+    )
+    
+    INSTALL(
+        FILES
+            "${PROJECT_BINARY_DIR}/carmaConfig.cmake"
+            "${PROJECT_BINARY_DIR}/carmaConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
+    )
 
+    INSTALL(
+        FILES "${PROJECT_SOURCE_DIR}/include/carma"
+        DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}
+    )
+
+    INSTALL(
+        DIRECTORY ${PROJECT_SOURCE_DIR}/include/carma_bits
+        DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}
+        FILES_MATCHING
+            PATTERN "*.h"
+    )
+    
+#INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/tmp/ DESTINATION ${CARMA_INCLUDE_INSTALL_DIR})
+ELSE()
+    # create armadillo and or pybind11 target if not defined
+    INCLUDE(ThirdPartyTargets)
+
+    TARGET_PRECOMPILE_HEADERS(carma
+        INTERFACE
+            ${PROJECT_SOURCE_DIR}/include/carma_bits/cnalloc.h
+    )
+ENDIF()
 # ##############################################################################
 #                              TEST TARGETS                                    #
 # ##############################################################################
