@@ -28,6 +28,7 @@
 #include <carma_bits/cnumpy.h>  // NOLINT
 #include <carma_bits/nparray.h>  // NOLINT
 #include <carma_bits/config.h> // NOLINT
+#include <carma_bits/exceptions.h> // NOLINT
 
 #include <armadillo>  // NOLINT
 #include <iostream>
@@ -35,12 +36,6 @@
 namespace py = pybind11;
 
 namespace carma {
-
-struct conversion_error : std::exception {
-    const char* message;
-    explicit conversion_error(const char* message) : message(message) {}
-    const char* what() const throw() { return message; }
-};
 
 namespace details {
 
@@ -77,10 +72,10 @@ inline T* validate_from_array_mat(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims < 1 || dims > 2) {
-        throw conversion_error("Number of dimensions must be 1 <= ndim <= 2");
+        throw ConversionError("CARMA: Number of dimensions must be 1 <= ndim <= 2");
     }
     if (data == nullptr) {
-        throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
+        throw ConversionError("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
 }  // validate_to_array_mat
@@ -151,10 +146,10 @@ inline T* validate_from_array_col(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[1] != 1)) {
-        throw conversion_error("CARMA: Number of columns must <= 1");
+        throw ConversionError("CARMA: Number of columns must <= 1");
     }
     if (src.ptr == nullptr) {
-        throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
+        throw ConversionError("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
 }  // validate_to_array_col
@@ -205,11 +200,10 @@ inline T* validate_from_array_row(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if ((dims >= 2) && (src.shape[0] != 1)) {
-        throw conversion_error("CARMA: Number of rows must <= 1");
+        throw ConversionError("CARMA: Number of rows must <= 1");
     }
-
     if (src.ptr == nullptr) {
-        throw conversion_error("CARMA: armadillo matrix conversion failed, nullptr");
+        throw ConversionError("CARMA: armadillo matrix conversion failed, nullptr");
     }
     return data;
 }  // validate_to_array_row
@@ -262,10 +256,10 @@ inline T* validate_from_array_cube(const py::buffer_info& src) {
     T* data = reinterpret_cast<T*>(src.ptr);
     ssize_t dims = src.ndim;
     if (dims != 3) {
-        throw conversion_error("CARMA: Number of dimensions must be 3");
+        throw ConversionError("CARMA: Number of dimensions must be 3");
     }
     if (src.ptr == nullptr) {
-        throw conversion_error("CARMA: Array doesn't hold any data, nullptr");
+        throw ConversionError("CARMA: Array doesn't hold any data, nullptr");
     }
     return data;
 }  // validate_to_array_cube

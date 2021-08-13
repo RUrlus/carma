@@ -29,6 +29,7 @@
 #include <carma_bits/numpytoarma.h>  // NOLINT
 #include <carma_bits/armatonumpy.h>  // NOLINT
 #include <carma_bits/config.h> // NOLINT
+#include <carma_bits/exceptions.h> // NOLINT
 
 #include <armadillo>  // NOLINT
 
@@ -705,7 +706,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         //
         py::array_t<T> buffer = py::array_t<T>::ensure(src);
         if (!buffer) {
-            throw carma::conversion_error("invalid object passed");
+            throw carma::ConversionError("CARMA: Input cannot be interpreted as array.");
         }
         value = carma::to_arma<armaT>::from(buffer, false);
         return true;

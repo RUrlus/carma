@@ -21,6 +21,7 @@
 #include <carma_bits/numpyapi.h>
 #include <carma_bits/debug.h>
 #include <carma_bits/typecheck.h>
+#include <carma_bits/exceptions.h>
 
 #include <armadillo>
 
@@ -122,12 +123,6 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
 namespace carma {
 namespace details {
 
-struct not_writeable_error : std::exception {
-    const char* message;
-    explicit not_writeable_error(const char* message) : message(message) {}
-    const char* what() const throw() { return message; }
-};
-
 /* ---- steal_memory ----
  * The default behaviour is to turn off the owndata flag, numpy will no longer
  * free the allocated resources.
@@ -227,7 +222,10 @@ inline static T* steal_copy_array(PyObject* obj) {
     ));
 
     // copy the array to a well behaved F-order
-    api.PyArray_CopyInto_(dest, src);
+    int ret_code = api.PyArray_CopyInto_(dest, src);
+    if (ret_code != 0) {
+        throw ConversionError("CARMA: Could not copy and steal.");
+    }
 
     // set OWNDATA to false such that the newly create
     // memory is not freed when the array is cleared
@@ -249,7 +247,7 @@ inline static T* swap_copy_array(PyObject* obj) {
     std::cout << "-----------" << "\n";
 #endif
     if (!PyArray_CHKFLAGS(src, NPY_ARRAY_WRITEABLE)) {
-        throw not_writeable_error("carma: Array is not writeable and cannot be swapped");
+        throw ConversionError("CARMA: Array is not writeable, could not swap.");
     }
     PyArray_Descr* dtype = PyArray_DESCR(src);
     // NewFromDescr steals a reference
@@ -275,6 +273,9 @@ inline static T* swap_copy_array(PyObject* obj) {
 
     // copy the array to a well behaved F-order
     int ret_code = api.PyArray_CopyInto_(tmp, src);
+    if (ret_code != 0) {
+        throw ConversionError("CARMA: Could not copy and swap.");
+    }
     // swap copy into the original array
     auto tmp_of = reinterpret_cast<PyArrayObject_fields *>(tmp);
     auto src_of = reinterpret_cast<PyArrayObject_fields *>(src);
