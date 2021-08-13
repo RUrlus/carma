@@ -89,9 +89,6 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("F-contiguous; steal") {
-        int copy = 0;
-        int strict = 0;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
         // attributes of the numpy array
@@ -126,8 +123,6 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("F-contiguous; const") {
-        int copy = 0;
-
         const py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
         // attributes of the numpy array
@@ -246,9 +241,6 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("C-contiguous; steal") {
-        int copy = 0;
-        int strict = 0;
-
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2));
 
         // attributes of the numpy array
@@ -288,8 +280,6 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("C-contiguous; const") {
-        int copy = 0;
-
         const py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2));
 
         // attributes of the numpy array
@@ -351,8 +341,6 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("F-contiguous; const; change") {
-        int copy = 0;
-
         const py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
         // call function to be tested
@@ -361,8 +349,6 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("F-contiguous; steal; change") {
-        int copy = 0;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
         // call function to be tested
@@ -371,19 +357,15 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     }
 
     SECTION("C-contiguous; no copy; change") {
-        int copy = 0;
-
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2));
 
         // call function to be tested
-        arma::Mat<double> M = carma::arr_to_mat<double>(arr, copy);
+        arma::Mat<double> M = carma::arr_to_mat<double>(arr, false);
 
         REQUIRE_THROWS(M.insert_cols(0, 2, true));
     }
 
     SECTION("dimension exception") {
-        int copy = 0;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
         REQUIRE_THROWS_AS(carma::arr_to_mat<double>(arr, copy), carma::conversion_error);
@@ -455,8 +437,6 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
     }
 
     SECTION("F-contiguous; steal") {
-        bool copy = false;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, 100));
 
         // attributes of the numpy array
@@ -485,8 +465,6 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
     }
 
     SECTION("F-contiguous; const") {
-        bool copy = false;
-
         const py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, 100));
 
         // attributes of the numpy array
@@ -639,8 +617,6 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
     }
 
     SECTION("C-contiguous; steal") {
-        bool copy = false;
-
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         // attributes of the numpy array
@@ -669,9 +645,6 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
     }
 
     SECTION("C-contiguous; const") {
-        bool copy = false;
-        bool strict = false;
-
         const py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         // attributes of the numpy array
@@ -720,8 +693,6 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
     }
 
     SECTION("const; change") {
-        bool copy = false;
-
         const py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         //  call function to be tested
@@ -730,8 +701,6 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
     }
 
     SECTION("steal; change") {
-        bool copy = false;
-
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         //  call function to be tested
@@ -813,8 +782,6 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
     }
 
     SECTION("F-contiguous; steal") {
-        bool copy = false;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, 100));
 
         // attributes of the numpy array
@@ -843,8 +810,6 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
     }
 
     SECTION("F-contiguous; const") {
-        bool copy = false;
-
         const py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, 100));
 
         // attributes of the numpy array
@@ -997,9 +962,6 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
     }
 
     SECTION("C-contiguous; steal") {
-        bool copy = false;
-        bool strict = false;
-
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         // attributes of the numpy array
@@ -1028,8 +990,6 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
     }
 
     SECTION("C-contiguous; const") {
-        bool copy = false;
-
         const py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         // attributes of the numpy array
@@ -1079,8 +1039,6 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
     }
 
     SECTION("steal; change") {
-        bool copy = false;
-
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         //  call function to be tested
@@ -1089,8 +1047,6 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
     }
 
     SECTION("const; change") {
-        bool copy = false;
-
         const py::array_t<double> arr = np_rand.attr("normal")(0, 1, 100);
 
         //  call function to be tested
@@ -1190,8 +1146,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
     }
 
     SECTION("F-contiguous; steal") {
-        bool copy = false;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
         // attributes of the numpy array
@@ -1229,8 +1183,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
     }
 
     SECTION("F-contiguous; const") {
-        bool copy = false;
-
         const py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
         // attributes of the numpy array
@@ -1360,8 +1312,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
     }
 
     SECTION("C-contiguous; steal") {
-        bool copy = false;
-
         py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2));
 
         // attributes of the numpy array
@@ -1405,8 +1355,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
     }
 
     SECTION("C-contiguous; const") {
-        bool copy = false;
-
         const py::array_t<double> arr = np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2));
 
         // attributes of the numpy array
@@ -1450,8 +1398,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
     }
 
     SECTION("F-contiguous; steal; -- change") {
-        bool copy = true;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
         // attributes of the numpy array
@@ -1503,8 +1449,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
 #ifndef WIN32
     SECTION("F-contiguous; const; -- change") {
-        bool copy = false;
-
         const py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
         // call function to be tested
@@ -1516,8 +1460,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
 #ifndef WIN32
     SECTION("F-contiguous; steal; -- change") {
-        bool copy = false;
-
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
         // call function to be tested
@@ -1529,7 +1471,6 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
     SECTION("dimension exception") {
         bool copy = false;
-        bool strict = false;
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
@@ -1669,7 +1610,6 @@ TEST_CASE("Test arr_to_row_view", "[arr_to_row_view]") {
         CHECK(std::abs(arr_sum - mat_sum) < 1e-6);
         CHECK(info.ptr == M.memptr());
     }
-
 }  // TEST_CASE ARR_TO_ROW_VIEW
 
 TEST_CASE("Test arr_to_col_view", "[arr_to_col_view]") {
