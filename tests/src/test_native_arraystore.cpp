@@ -528,7 +528,6 @@ TEST_CASE("Test ArrayStore Cube", "[ArrayStore<Cube>]") {
         size_t out_N = out.size();
         size_t out_S0 = out.shape(0);
         size_t out_S1 = out.shape(1);
-        size_t out_S2 = out.shape(2);
 
         CHECK(in.n_elem == out_N);
         CHECK(in.n_rows == out_S0);

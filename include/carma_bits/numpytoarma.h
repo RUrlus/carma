@@ -90,7 +90,6 @@ inline arma::Mat<T> arr_to_mat(
     const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
-    ssize_t dims = src.ndim;
     uword nrows;
     uword ncols;
     uword nelem = src.size;
@@ -165,7 +164,6 @@ inline arma::Col<T> arr_to_col(
     const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
-    ssize_t dims = src.ndim;
     uword nelem = src.size;
 
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
@@ -221,7 +219,6 @@ inline arma::Row<T> arr_to_row(
     const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
-    ssize_t dims = src.ndim;
     uword nelem = src.size;
 
     bool copy = (nelem > aconf::mat_prealloc) ? false : true;
@@ -278,7 +275,6 @@ inline arma::Cube<T> arr_to_cube(
     const py::buffer_info& src, T* data, bool stolen, bool strict
 ) {
     // extract buffer information
-    ssize_t dims = src.ndim;
     uword nrows = src.shape[0];
     uword ncols = src.shape[1];
     uword nslices = src.shape[2];
