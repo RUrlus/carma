@@ -138,9 +138,9 @@ class ArrayStore {
 
     py::array_t<T> get_view(bool writeable) {
         ssize_t nslices;
-        ssize_t nelem = static_cast<ssize_t>(mat.n_elem);
-        ssize_t nrows = static_cast<ssize_t>(mat.n_rows);
-        ssize_t ncols = static_cast<ssize_t>(mat.n_cols);
+        auto nelem = static_cast<ssize_t>(mat.n_elem);
+        auto nrows = static_cast<ssize_t>(mat.n_rows);
+        auto ncols = static_cast<ssize_t>(mat.n_cols);
         ssize_t rc_elem = nrows * ncols;
 
         py::array_t<T> arr;

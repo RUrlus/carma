@@ -69,7 +69,7 @@ struct npy_api {
         py::module m = py::module::import("numpy.core.multiarray");
         auto c = m.attr("_ARRAY_API");
 #if PY_MAJOR_VERSION >= 3
-        void **api_ptr = reinterpret_cast<void **>(PyCapsule_GetPointer(c.ptr(), NULL));
+        void **api_ptr = reinterpret_cast<void **>(PyCapsule_GetPointer(c.ptr(), nullptr));
 #else
         void **api_ptr = reinterpret_cast<void **>(PyCObject_AsVoidPtr(c.ptr()));
 #endif

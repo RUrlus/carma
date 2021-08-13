@@ -440,14 +440,14 @@ struct to_arma<returnT, typename is_cube<returnT>::type> {
 template <typename T>
 inline py::array_t<T> row_to_arr(const arma::Row<T>& src) {
     /* Convert armadillo row to numpy array */
-    arma::Row<T>* data = new arma::Row<T>(src);
+    auto data = new arma::Row<T>(src);
     return details::construct_array<T>(data);
 } /* row_to_arr */
 
 template <typename T>
 inline py::array_t<T> row_to_arr(arma::Row<T>&& src) {
     /* Convert armadillo row to numpy array */
-    arma::Row<T>* data = new arma::Row<T>(std::move(src));
+    auto data = new arma::Row<T>(std::move(src));
     return details::construct_array<T>(data);
 } /* row_to_arr */
 
@@ -480,14 +480,14 @@ inline py::array_t<T> row_to_arr(arma::Row<T>* src, int copy = false) {
 template <typename T>
 inline py::array_t<T> col_to_arr(const arma::Col<T>& src) {
     /* Convert armadillo col to numpy array */
-    arma::Col<T>* data = new arma::Col<T>(src);
+    auto data = new arma::Col<T>(src);
     return details::construct_array<T>(data);
 } /* col_to_arr */
 
 template <typename T>
 inline py::array_t<T> col_to_arr(arma::Col<T>&& src) {
     /* Convert armadillo col to numpy array */
-    arma::Col<T>* data = new arma::Col<T>(std::move(src));
+    auto data = new arma::Col<T>(std::move(src));
     return details::construct_array<T>(data);
 } /* col_to_arr */
 
@@ -551,13 +551,13 @@ inline py::array_t<T> mat_to_arr(arma::Mat<T>* src, int copy = 0) {
 
 template <typename T>
 inline py::array_t<T> cube_to_arr(const arma::Cube<T>& src) {
-    arma::Cube<T>* data = new arma::Cube<T>(src);
+    auto data = new arma::Cube<T>(src);
     return details::construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename T>
 inline py::array_t<T> cube_to_arr(arma::Cube<T>&& src) {
-    arma::Cube<T>* data = new arma::Cube<T>(std::move(src));
+    auto data = new arma::Cube<T>(std::move(src));
     return details::construct_array<T>(data);
 } /* cube_to_arr */
 
@@ -586,13 +586,13 @@ inline py::array_t<T> cube_to_arr(arma::Cube<T>* src, int copy = 0) {
 /* ---------------------------------- to_numpy ---------------------------------- */
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
 inline py::array_t<T> to_numpy(const armaT& src) {
-    arma::Cube<T>* data = new arma::Cube<T>(src);
+    auto data = new arma::Cube<T>(src);
     return details::construct_array<T>(data);
 } /* cube_to_arr */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Cube<armaT> = 0>
 inline py::array_t<T> to_numpy(armaT&& src) {
-    arma::Cube<T>* data = new arma::Cube<T>(std::forward<arma::Cube<T>>(src));
+    auto data = new arma::Cube<T>(std::forward<arma::Cube<T>>(src));
     return details::construct_array<T>(data);
 } /* cube_to_arr */
 
@@ -621,14 +621,14 @@ inline py::array_t<T> to_numpy(armaT* src, int copy = 0) {
 template <typename armaT, typename T = typename armaT::elem_type, is_Mat<armaT> = 1>
 inline py::array_t<T> to_numpy(const armaT& src) {
     // use armadillo copy constructor
-    armaT* data = new armaT(src);
+    auto data = new armaT(src);
     return details::construct_array<T>(data);
 } /* to_numpy */
 
 template <typename armaT, typename T = typename armaT::elem_type, is_Mat<armaT> = 1>
 inline py::array_t<T> to_numpy(armaT&& src) {
     // steal mem
-    armaT* data = new armaT(std::forward<armaT>(src));
+    auto data = new armaT(std::forward<armaT>(src));
     return details::construct_array<T>(data);
 } /* to_numpy */
 

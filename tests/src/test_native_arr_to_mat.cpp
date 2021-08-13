@@ -31,7 +31,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // compute sum of array
         double arr_sum = 0.0;
-        double* _ptr = reinterpret_cast<double*>(info.ptr);
+        auto* _ptr = reinterpret_cast<double*>(info.ptr);
         auto ptr = arr.unchecked<2>();
         for (size_t ic = 0; ic < arr_S1; ic++) {
             for (size_t ir = 0; ir < arr_S0; ir++) {
@@ -67,7 +67,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // compute sum of array
         double arr_sum = 0.0;
-        double* _ptr = reinterpret_cast<double*>(info.ptr);
+        auto* _ptr = reinterpret_cast<double*>(info.ptr);
         auto ptr = arr.unchecked<2>();
         for (size_t ic = 0; ic < arr_S1; ic++) {
             for (size_t ir = 0; ir < arr_S0; ir++) {
@@ -101,7 +101,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // compute sum of array
         double arr_sum = 0.0;
-        double* _ptr = reinterpret_cast<double*>(info.ptr);
+        auto* _ptr = reinterpret_cast<double*>(info.ptr);
         auto ptr = arr.unchecked<2>();
         for (size_t ic = 0; ic < arr_S1; ic++) {
             for (size_t ir = 0; ir < arr_S0; ir++) {
@@ -135,7 +135,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // compute sum of array
         double arr_sum = 0.0;
-        double* _ptr = reinterpret_cast<double*>(info.ptr);
+        auto* _ptr = reinterpret_cast<double*>(info.ptr);
         auto ptr = arr.unchecked<2>();
         for (size_t ic = 0; ic < arr_S1; ic++) {
             for (size_t ir = 0; ir < arr_S0; ir++) {
@@ -211,7 +211,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
 
         // get buffer for raw pointer
         py::buffer_info info = arr.request();
-        double* ptr = reinterpret_cast<double*>(info.ptr);
+        auto* ptr = reinterpret_cast<double*>(info.ptr);
 
         // compute sum of array
         double arr_sum = 0;
@@ -1495,7 +1495,7 @@ TEST_CASE("Test arr_to_mat_view", "[arr_to_mat_view]") {
 
         // compute sum of array
         double arr_sum = 0.0;
-        double* _ptr = reinterpret_cast<double*>(info.ptr);
+        auto* _ptr = reinterpret_cast<double*>(info.ptr);
         auto ptr = arr.unchecked<2>();
         for (size_t ic = 0; ic < arr_S1; ic++) {
             for (size_t ir = 0; ir < arr_S0; ir++) {
