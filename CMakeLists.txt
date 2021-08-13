@@ -64,6 +64,15 @@ TARGET_COMPILE_DEFINITIONS(carma
     CARMA_VERSION_NAME=${CARMA_VERSION_INFO}
     "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_DEFINITIONS}>"
 )
+IF(CARMA_DEV_MODE)
+    TARGET_COMPILE_OPTIONS(carma
+        INTERFACE
+        -Wall
+        -Wextra
+        -Wunused-variable
+        -Wunused-const-variable
+    )
+ENDIF()
 
 TARGET_INCLUDE_DIRECTORIES(carma
     INTERFACE
