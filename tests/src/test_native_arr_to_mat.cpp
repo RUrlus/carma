@@ -368,7 +368,7 @@ TEST_CASE("Test arr_to_mat", "[arr_to_mat]") {
     SECTION("dimension exception") {
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2, 2)));
 
-        REQUIRE_THROWS_AS(carma::arr_to_mat<double>(arr, copy), carma::conversion_error);
+        REQUIRE_THROWS_AS(carma::arr_to_mat<double>(arr, false), carma::ConversionError);
     }
 } /* TEST_CASE ARR_TO_MAT */
 
@@ -713,7 +713,7 @@ TEST_CASE("Test arr_to_row", "[arr_to_row]") {
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(2, 100)));
 
-        REQUIRE_THROWS_AS(carma::arr_to_row<double>(arr, copy), carma::conversion_error);
+        REQUIRE_THROWS_AS(carma::arr_to_row<double>(arr, copy), carma::ConversionError);
     }
 } /* TEST_CASE ARR_TO_ROW */
 
@@ -1059,7 +1059,7 @@ TEST_CASE("Test arr_to_col", "[arr_to_col]") {
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
-        REQUIRE_THROWS_AS(carma::arr_to_col<double>(arr, copy), carma::conversion_error);
+        REQUIRE_THROWS_AS(carma::arr_to_col<double>(arr, copy), carma::ConversionError);
     }
 } /* TEST_CASE ARR_TO_COL */
 
@@ -1474,7 +1474,7 @@ TEST_CASE("Test arr_to_cube", "[arr_to_cube]") {
 
         py::array_t<double> arr = fArr(np_rand.attr("normal")(0, 1, py::make_tuple(100, 2)));
 
-        REQUIRE_THROWS_AS(carma::arr_to_cube<double>(arr, copy), carma::conversion_error);
+        REQUIRE_THROWS_AS(carma::arr_to_cube<double>(arr, copy), carma::ConversionError);
     }
 } /* TEST_CASE ARR_TO_CUBE */
 
