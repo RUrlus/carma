@@ -41,7 +41,7 @@ extern "C" {
  * The last check can be disabled by setting `-DCARMA_DONT_REQUIRE_OWNDATA`
  */
 static inline bool well_behaved(PyObject* src) {
-    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
+    auto arr = reinterpret_cast<PyArrayObject*>(src);
 #if defined CARMA_DONT_REQUIRE_OWNDATA && defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
     return PyArray_CHKFLAGS(
         arr, NPY_ARRAY_ALIGNED | NPY_ARRAY_WRITEABLE
@@ -65,7 +65,7 @@ static inline bool well_behaved(PyObject* src) {
 }
 
 static inline bool well_behaved_view(PyObject* src) {
-    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(src);
+    auto arr = reinterpret_cast<PyArrayObject*>(src);
 #if defined CARMA_DONT_REQUIRE_OWNDATA && defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
     return PyArray_CHKFLAGS(
         arr, NPY_ARRAY_ALIGNED
@@ -156,7 +156,7 @@ struct not_writeable_error : std::exception {
 template <typename T>
 static inline void steal_memory(PyObject* src) {
 #ifdef CARMA_EXTRA_DEBUG
-    PyArrayObject* db_arr = reinterpret_cast<PyArrayObject*>(src);
+    auto db_arr = reinterpret_cast<PyArrayObject*>(src);
     std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
     T* db_data = reinterpret_cast<T*>(PyArray_DATA(db_arr));
     std::cout << "Array with data adress: " << db_data << " will be stolen." << "\n";
@@ -170,7 +170,7 @@ static inline void steal_memory(PyObject* src) {
     double* data = reinterpret_cast<double *>(
             carman::npy_api::get().PyDataMem_NEW_(sizeof(double))
     );
-    if (data == NULL) throw std::bad_alloc();
+    if (data == nullptr) throw std::bad_alloc();
     data[0] = NAN;
     obj->data = reinterpret_cast<char*>(data);
 
@@ -194,7 +194,7 @@ static inline void steal_memory(PyObject* src) {
 /* Use Numpy's api to account for stride, order and steal the memory */
 template <typename T>
 inline static T* steal_copy_array(PyObject* obj) {
-    PyArrayObject* src = reinterpret_cast<PyArrayObject*>(obj);
+    auto src = reinterpret_cast<PyArrayObject*>(obj);
 #ifdef CARMA_EXTRA_DEBUG
     std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
     T* db_data = reinterpret_cast<T*>(PyArray_DATA(src));
@@ -240,7 +240,7 @@ inline static T* steal_copy_array(PyObject* obj) {
 /* Use Numpy's api to account for stride, order and steal the memory */
 template <typename T>
 inline static T* swap_copy_array(PyObject* obj) {
-    PyArrayObject* src = reinterpret_cast<PyArrayObject*>(obj);
+    auto src = reinterpret_cast<PyArrayObject*>(obj);
 #ifdef CARMA_EXTRA_DEBUG
     std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
     T* db_data = reinterpret_cast<T*>(PyArray_DATA(src));

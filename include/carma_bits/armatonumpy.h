@@ -31,7 +31,7 @@ namespace details {
 template <typename armaT>
 inline py::capsule create_capsule(armaT* data) {
     return py::capsule(data, [](void* f) {
-        armaT* mat = reinterpret_cast<armaT*>(f);
+        auto mat = reinterpret_cast<armaT*>(f);
 #ifdef CARMA_EXTRA_DEBUG
         std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
         // if in debug mode let us know what pointer is being freed
@@ -57,8 +57,8 @@ inline py::capsule create_dummy_capsule(T* data) {
 
 template <typename T>
 inline py::array_t<T> construct_array(arma::Row<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t ncols = static_cast<ssize_t>(data->n_cols);
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto ncols = static_cast<ssize_t>(data->n_cols);
 
     py::capsule base = create_capsule<arma::Row<T>>(data);
 
@@ -72,8 +72,8 @@ inline py::array_t<T> construct_array(arma::Row<T>* data) {
 
 template <typename T>
 inline py::array_t<T> construct_array(arma::Col<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t nrows = static_cast<ssize_t>(data->n_rows);
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto nrows = static_cast<ssize_t>(data->n_rows);
 
     py::capsule base = create_capsule<arma::Col<T>>(data);
 
@@ -87,9 +87,9 @@ inline py::array_t<T> construct_array(arma::Col<T>* data) {
 
 template <typename T>
 inline py::array_t<T> construct_array(arma::Mat<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t nrows = static_cast<ssize_t>(data->n_rows);
-    ssize_t ncols = static_cast<ssize_t>(data->n_cols);
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto nrows = static_cast<ssize_t>(data->n_rows);
+    auto ncols = static_cast<ssize_t>(data->n_cols);
 
     py::capsule base = create_capsule<arma::Mat<T>>(data);
 
@@ -103,10 +103,10 @@ inline py::array_t<T> construct_array(arma::Mat<T>* data) {
 
 template <typename T>
 inline py::array_t<T> construct_array(arma::Cube<T>* data) {
-    constexpr ssize_t tsize = static_cast<ssize_t>(sizeof(T));
-    ssize_t nrows = static_cast<ssize_t>(data->n_rows);
-    ssize_t ncols = static_cast<ssize_t>(data->n_cols);
-    ssize_t nslices = static_cast<ssize_t>(data->n_slices);
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto nrows = static_cast<ssize_t>(data->n_rows);
+    auto ncols = static_cast<ssize_t>(data->n_cols);
+    auto nslices = static_cast<ssize_t>(data->n_slices);
 
     return py::array_t<T>(
         // shape

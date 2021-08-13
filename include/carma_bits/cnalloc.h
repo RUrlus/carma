@@ -12,8 +12,8 @@
 
 namespace cnalloc {
 
-inline void* npy_malloc(std::size_t bytes) {
-    if (PyArray_API == NULL) {
+inline void* npy_malloc(size_t bytes) {
+    if (PyArray_API == nullptr) {
         _import_array();
     }
 #ifdef CARMA_DEV_DEBUG
@@ -25,7 +25,7 @@ inline void* npy_malloc(std::size_t bytes) {
 } // npy_malloc
 
 inline void npy_free(void* ptr) {
-    if (PyArray_API == NULL) {
+    if (PyArray_API == nullptr) {
         _import_array();
     }
 #ifdef CARMA_DEV_DEBUG
