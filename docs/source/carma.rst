@@ -313,6 +313,12 @@ to_numpy
 ``to_numpy`` has overloads for ``Mat<T>``, ``Row<T>``, ``Col<T>`` and ``Cube<T>``.
 It should be called with e.g. ``to_numpy<arma::Mat<double>>(m)``
 
+.. function:: template <typename armaT> py::array_t<eT> to_numpy_view(const armaT<eT>& src)
+
+   Create 'view' on Armadillo object as non-writeable Numpy array.
+   :note: the returned array will have F order memory.
+   :param src: armadillo object to be converted.
+
 .. function:: template <typename armaT> py::array_t<eT> to_numpy(armaT<eT>& src, bool copy=false)
 
    Convert Armadillo object to Numpy array.
