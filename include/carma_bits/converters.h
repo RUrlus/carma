@@ -42,6 +42,10 @@ namespace py = pybind11;
 
 namespace carma {
 
+namespace details {
+using aconf = arma::arma_config;
+}  // namespace details
+
 /*****************************************************************************************
  *                                   Numpy to Armadillo                                   *
  *****************************************************************************************/
@@ -680,6 +684,18 @@ inline py::array_t<T> to_numpy(armaT* src, int copy = 0) {
     }
     return details::construct_array<T>(data);
 } /* to_numpy */
+
+/* ---------------------------------- to_numpy_view ---------------------------------- */
+template <typename armaT, typename T = typename armaT::elem_type>
+inline py::array_t<T> to_numpy_view(const armaT& src) {
+    const armaT* data;
+    if (src.n_elem > details::aconf::mat_prealloc) {
+        data = &src;
+    } else {
+        data = new armaT(src);
+    }
+    return details::construct_array<T>(data);
+} /* to_numpy_view */
 
 }  // namespace carma
 
