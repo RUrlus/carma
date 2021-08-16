@@ -62,6 +62,13 @@ def test_arr_to_mat_double_c_contiguous_large():
     assert flag == 5, test_flags[flag]
 
 
+def test_arr_to_mat_double_c_contiguous_small():
+    """Test arr_to_mat."""
+    sample = np.asarray(np.random.normal(size=(3, 3)), dtype=np.float64)
+    flag = carma.arr_to_mat_double(sample, False)
+    assert flag == 5, test_flags[flag]
+
+
 def test_arr_to_mat_long_c_contiguous():
     """Test arr_to_mat."""
     sample = np.asarray(np.random.normal(size=(50, 2)), dtype=np.int64)
