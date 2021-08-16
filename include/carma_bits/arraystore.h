@@ -44,11 +44,11 @@ class ArrayStore {
  public:
     ArrayStore(py::array_t<T>& arr, bool copy) :
     mat{to_arma<armaT>::from(arr, copy)} {
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     explicit ArrayStore(const armaT& src) : mat{armaT(src)} {
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     ArrayStore(arma::Mat<T>& src, bool copy) {
@@ -57,7 +57,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     ArrayStore(arma::Cube<T>& src, bool copy) {
@@ -66,7 +66,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     // SFINAE by adding additional parameter as
@@ -78,11 +78,11 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     explicit ArrayStore(armaT&& src) noexcept : mat{std::move(src)} {
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     // Function requires different name than set_data
@@ -93,12 +93,12 @@ class ArrayStore {
         } else {
             mat = to_arma<armaT>::from(std::move(arr));
         }
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     void set_data(const armaT& src) {
         mat = armaT(src);
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     void set_data(arma::Mat<T>& src, bool copy) {
@@ -107,7 +107,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     // SFINAE by adding additional parameter as
@@ -119,7 +119,7 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     void set_data(arma::Cube<T>& src, bool copy) {
@@ -128,12 +128,12 @@ class ArrayStore {
         } else {
             mat = std::move(src);
         }
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     void set_data(armaT&& src) {
         mat = std::move(src);
-        base = details::create_dummy_capsule(mat.memptr());
+        base = details::create_dummy_capsule(&mat);
     }
 
     py::array_t<T> get_view(bool writeable) {
