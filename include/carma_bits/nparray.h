@@ -29,12 +29,12 @@ namespace carma {
 
 template <typename T>
 inline bool is_f_contiguous(const py::array_t<T>& arr) {
-    return py::detail::check_flags(arr.ptr(), py::detail::npy_api::NPY_ARRAY_F_CONTIGUOUS_);
+    return details::is_f_contiguous(arr.ptr());
 }
 
 template <typename T>
 inline bool is_c_contiguous(const py::array_t<T>& arr) {
-    return py::detail::check_flags(arr.ptr(), py::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_);
+    return details::is_c_contiguous(arr.ptr());
 }
 
 template <typename T>
@@ -44,17 +44,17 @@ inline bool is_contiguous(const py::array_t<T>& arr) {
 
 template <typename T>
 inline bool is_writeable(const py::array_t<T>& arr) {
-    return py::detail::check_flags(arr.ptr(), py::detail::npy_api::NPY_ARRAY_WRITEABLE_);
+    return details::is_writeable(arr.ptr());
 }
 
 template <typename T>
 inline bool is_owndata(const py::array_t<T>& arr) {
-    return py::detail::check_flags(arr.ptr(), py::detail::npy_api::NPY_ARRAY_OWNDATA_);
+    return details::is_owndata(arr.ptr());
 }
 
 template <typename T>
 inline bool is_aligned(const py::array_t<T>& arr) {
-    return py::detail::check_flags(arr.ptr(), py::detail::npy_api::NPY_ARRAY_ALIGNED_);
+    return details::is_aligned(arr.ptr());
 }
 
 template <typename T>
@@ -64,22 +64,46 @@ inline bool is_well_behaved(const py::array_t<T>& arr) {
 
 template <typename T>
 inline void set_owndata(py::array_t<T>& arr) {
-    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_OWNDATA_;
+    details::set_owndata(arr.ptr());
+}
+
+template <typename T>
+inline py::array_t<T> set_owndata(py::array_t<T>&& arr) {
+    details::set_owndata(arr.ptr());
+    return std::move(arr);
 }
 
 template <typename T>
 inline void set_not_owndata(py::array_t<T>& arr) {
-    py::detail::array_proxy(arr.ptr())->flags &= ~py::detail::npy_api::NPY_ARRAY_OWNDATA_;
+    details::set_not_owndata(arr.ptr());
+}
+
+template <typename T>
+inline py::array_t<T> set_not_owndata(py::array_t<T>&& arr) {
+    details::set_not_owndata(arr.ptr());
+    return std::move(arr);
 }
 
 template <typename T>
 inline void set_writeable(py::array_t<T>& arr) {
-    py::detail::array_proxy(arr.ptr())->flags &= py::detail::npy_api::NPY_ARRAY_WRITEABLE_;
+    details::set_writeable(arr.ptr());
+}
+
+template <typename T>
+inline py::array_t<T> set_writeable(py::array_t<T>&& arr) {
+    details::set_writeable(arr.ptr());
+    return std::move(arr);
 }
 
 template <typename T>
 inline void set_not_writeable(py::array_t<T>& arr) {
-    py::detail::array_proxy(arr.ptr())->flags &= ~py::detail::npy_api::NPY_ARRAY_WRITEABLE_;
+    details::set_not_writeable(arr.ptr());
+}
+
+template <typename T>
+inline py::array_t<T> set_not_writeable(py::array_t<T>&& arr) {
+    details::set_not_writeable(arr.ptr());
+    return std::move(arr);
 }
 
 }  // namespace carma

@@ -123,6 +123,100 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
 namespace carma {
 namespace details {
 
+inline bool is_f_contiguous(const PyObject* src) {
+    return PyArray_CHKFLAGS(
+        reinterpret_cast<const PyArrayObject*>(src),
+        NPY_ARRAY_F_CONTIGUOUS
+    );
+}
+
+inline bool is_f_contiguous(const PyArrayObject* src) {
+    return PyArray_CHKFLAGS(src, NPY_ARRAY_F_CONTIGUOUS);
+}
+
+inline bool is_c_contiguous(const PyObject* src) {
+    return PyArray_CHKFLAGS(
+        reinterpret_cast<const PyArrayObject*>(src),
+        NPY_ARRAY_C_CONTIGUOUS
+    );
+}
+
+inline bool is_c_contiguous(const PyArrayObject* src) {
+    return PyArray_CHKFLAGS(src, NPY_ARRAY_C_CONTIGUOUS);
+}
+
+inline bool is_aligned(const PyObject* src) {
+    return PyArray_CHKFLAGS(
+        reinterpret_cast<const PyArrayObject*>(src),
+        NPY_ARRAY_ALIGNED
+    );
+}
+
+inline bool is_aligned(const PyArrayObject* src) {
+    return PyArray_CHKFLAGS(src, NPY_ARRAY_ALIGNED);
+}
+
+inline bool is_owndata(const PyObject* src) {
+    return PyArray_CHKFLAGS(
+        reinterpret_cast<const PyArrayObject*>(src), NPY_ARRAY_OWNDATA
+    );
+}
+
+inline bool is_owndata(const PyArrayObject* src) {
+    return PyArray_CHKFLAGS(src, NPY_ARRAY_OWNDATA);
+}
+
+inline void set_owndata(PyObject* src) {
+    PyArray_ENABLEFLAGS(
+        reinterpret_cast<PyArrayObject*>(src), NPY_ARRAY_OWNDATA
+    );
+}
+
+inline void set_owndata(PyArrayObject* src) {
+    PyArray_ENABLEFLAGS(src, NPY_ARRAY_OWNDATA);
+}
+
+inline void set_not_owndata(PyObject* src) {
+    PyArray_CLEARFLAGS(
+        reinterpret_cast<PyArrayObject*>(src), NPY_ARRAY_OWNDATA
+    );
+}
+
+inline void set_not_owndata(PyArrayObject* src) {
+    PyArray_CLEARFLAGS(src, NPY_ARRAY_OWNDATA);
+}
+
+inline bool is_writeable(const PyObject* src) {
+    return PyArray_CHKFLAGS(
+        reinterpret_cast<const PyArrayObject*>(src), NPY_ARRAY_WRITEABLE
+    );
+}
+
+inline bool is_writeable(const PyArrayObject* src) {
+    return PyArray_CHKFLAGS(src, NPY_ARRAY_WRITEABLE);
+}
+
+inline void set_writeable(PyObject* src) {
+    PyArray_ENABLEFLAGS(
+        reinterpret_cast<PyArrayObject*>(src), NPY_ARRAY_WRITEABLE
+    );
+}
+
+inline void set_writeable(PyArrayObject* src) {
+    PyArray_ENABLEFLAGS(src, NPY_ARRAY_WRITEABLE);
+}
+
+inline void set_not_writeable(PyObject* src) {
+    PyArray_CLEARFLAGS(
+        reinterpret_cast<PyArrayObject*>(src), NPY_ARRAY_WRITEABLE
+    );
+}
+
+inline void set_not_writeable(PyArrayObject* src) {
+    PyArray_CLEARFLAGS(src, NPY_ARRAY_WRITEABLE);
+}
+
+
 /* ---- steal_memory ----
  * The default behaviour is to turn off the owndata flag, numpy will no longer
  * free the allocated resources.
