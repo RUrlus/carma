@@ -714,6 +714,17 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
 
  private:
     // Cast implementation
+    static handle cast_impl(const armaT& src, return_value_policy policy, handle) {
+        switch (policy) {
+            case return_value_policy::automatic:
+                return carma::to_numpy<armaT>(src).release();
+            case return_value_policy::copy:
+                return carma::to_numpy<armaT>(src).release();
+            default:
+                throw cast_error("unhandled return_value_policy");
+        }
+    }
+
     static handle cast_impl(armaT&& src, return_value_policy policy, handle) {
         switch (policy) {
             case return_value_policy::move:
@@ -752,7 +763,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
     // If you return a non-reference const; we copy
     static handle cast(const armaT&& src, return_value_policy policy, handle parent) {
         policy = return_value_policy::copy;
-        return cast_impl(&src, policy, parent);
+        return cast_impl(src, policy, parent);
     }
     // lvalue reference return; default (automatic) becomes steal
     static handle cast(armaT& src, return_value_policy policy, handle parent) {
@@ -761,7 +772,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
     // const lvalue reference return; default (automatic) becomes copy
     static handle cast(const armaT& src, return_value_policy policy, handle parent) {
         policy = return_value_policy::copy;
-        return cast_impl(&src, policy, parent);
+        return cast_impl(src, policy, parent);
     }
     // non-const pointer return; we steal
     static handle cast(armaT* src, return_value_policy policy, handle parent) {
@@ -770,7 +781,7 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
     // const pointer return; we copy
     static handle cast(const armaT* src, return_value_policy policy, handle parent) {
         policy = return_value_policy::copy;
-        return cast_impl(src, policy, parent);
+        return cast_impl(*src, policy, parent);
     }
 
     PYBIND11_TYPE_CASTER(armaT, _("Numpy.ndarray[") + npy_format_descriptor<T>::name + _("]"));
