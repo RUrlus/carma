@@ -46,6 +46,10 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_to_numpy_row(m);
     bind_test_to_numpy_col(m);
     bind_test_to_numpy_cube(m);
+    bind_test_to_numpy_view_mat(m);
+    bind_test_to_numpy_view_row(m);
+    bind_test_to_numpy_view_col(m);
+    bind_test_to_numpy_view_cube(m);
 
     // nparray
     bind_test_is_owndata(m);
