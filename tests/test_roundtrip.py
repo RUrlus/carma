@@ -33,6 +33,35 @@ def test_mat_roundtrip_small():
     assert np.allclose(og_sample, out)
 
 
+def test_mat_roundtrip_c_order():
+    """Test mat_roundtrip."""
+    og_sample = np.asarray(
+        np.random.normal(size=(50, 2)), dtype=np.float64, order='C'
+    )
+    sample = og_sample.copy()
+    out = carma.mat_roundtrip(sample)
+    assert np.allclose(og_sample, out)
+
+def test_mat_roundtrip_large_c_order():
+    """Test mat_roundtrip."""
+    og_sample = np.asarray(
+        np.random.normal(size=(1000, 1000)), dtype=np.float64, order='C'
+    )
+    sample = og_sample.copy()
+    out = carma.mat_roundtrip(sample)
+    assert np.allclose(og_sample, out)
+
+
+def test_mat_roundtrip_small_c_order():
+    """Test mat_roundtrip."""
+    og_sample = np.asarray(
+        np.random.normal(size=(3, 3)), dtype=np.float64, order='C'
+    )
+    sample = og_sample.copy()
+    out = carma.mat_roundtrip(sample)
+    assert np.allclose(og_sample, out)
+
+
 def test_row_roundtrip():
     """Test row_roundtrip."""
     og_sample = np.asarray(
