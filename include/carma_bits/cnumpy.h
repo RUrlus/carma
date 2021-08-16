@@ -291,28 +291,13 @@ inline static T* steal_copy_array(PyObject* obj) {
     debug::print_array_info<T>(obj);
     std::cout << "-----------" << "\n";
 #endif
-    PyArray_Descr* dtype = PyArray_DESCR(src);
-    // NewFromDescr steals a reference
-    Py_INCREF(dtype);
-    // dimension checks have been done prior so array should
-    // not have more than 3 dimensions
-    int ndim = PyArray_NDIM(src);
-    npy_intp const* dims = PyArray_DIMS(src);
-
     auto& api = carman::npy_api::get();
-    // data will be freed by arma::memory::release
-    T* data = arma::memory::acquire<T>(api.PyArray_Size_(obj));
-
     // build an PyArray to do F-order copy
-    auto dest = reinterpret_cast<PyArrayObject*>(api.PyArray_NewFromDescr_(
-        Py_TYPE(src),
-        dtype,
-        ndim,
-        dims,
-        NULL,
-        data,
-        NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_BEHAVED,
-        NULL
+    auto dest = reinterpret_cast<PyArrayObject*>(api.PyArray_NewLikeArray_(
+        src,
+        NPY_FORTRANORDER,
+        nullptr,
+        0
     ));
 
     // copy the array to a well behaved F-order
@@ -321,6 +306,7 @@ inline static T* steal_copy_array(PyObject* obj) {
         throw ConversionError("CARMA: Could not copy and steal.");
     }
 
+    auto data = reinterpret_cast<T*>(PyArray_DATA(dest));
     // set OWNDATA to false such that the newly create
     // memory is not freed when the array is cleared
     PyArray_CLEARFLAGS(dest, NPY_ARRAY_OWNDATA);
@@ -343,26 +329,12 @@ inline static T* swap_copy_array(PyObject* obj) {
     if (!PyArray_CHKFLAGS(src, NPY_ARRAY_WRITEABLE)) {
         throw ConversionError("CARMA: Array is not writeable, could not swap.");
     }
-    PyArray_Descr* dtype = PyArray_DESCR(src);
-    // NewFromDescr steals a reference
-    Py_INCREF(dtype);
-    // dimension checks have been done prior so array should
-    // not have more than 3 dimensions
-    int ndim = PyArray_NDIM(src);
-    npy_intp const* dims = PyArray_DIMS(src);
-
     auto& api = carman::npy_api::get();
-
-    // build an PyArray to do F-order copy, memory will be freed by arma::memory::release
-    auto tmp = reinterpret_cast<PyArrayObject*>(api.PyArray_NewFromDescr_(
-        Py_TYPE(src),
-        dtype,
-        ndim,
-        dims,
-        NULL,
-        arma::memory::acquire<T>(api.PyArray_Size_(obj)),
-        NPY_ARRAY_F_CONTIGUOUS | NPY_ARRAY_BEHAVED,
-        NULL
+    auto tmp = reinterpret_cast<PyArrayObject*>(api.PyArray_NewLikeArray_(
+        src,
+        NPY_FORTRANORDER,
+        nullptr,
+        0
     ));
 
     // copy the array to a well behaved F-order
@@ -374,7 +346,17 @@ inline static T* swap_copy_array(PyObject* obj) {
     auto tmp_of = reinterpret_cast<PyArrayObject_fields *>(tmp);
     auto src_of = reinterpret_cast<PyArrayObject_fields *>(src);
     std::swap(src_of->data, tmp_of->data);
-    std::swap(src_of->strides, tmp_of->strides);
+
+    // fix strides
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    int ndim = PyArray_NDIM(src);
+    npy_intp const* dims = PyArray_DIMS(src);
+    src_of->strides[0] = tsize;
+    if (ndim == 2) {
+        src_of->strides[1] = dims[0] * tsize;
+    } else if (ndim == 3) {
+        src_of->strides[1] = dims[0] * dims[1] * tsize;
+    }
 
     if (PyArray_CHKFLAGS(src, NPY_ARRAY_OWNDATA)) {
         PyArray_ENABLEFLAGS(tmp, NPY_ARRAY_OWNDATA);
