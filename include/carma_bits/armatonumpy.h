@@ -35,7 +35,7 @@ inline py::capsule create_capsule(armaT* data) {
 #ifdef CARMA_EXTRA_DEBUG
         std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
         // if in debug mode let us know what pointer is being freed
-        std::cerr << "Freeing memory @" << mat->memptr() << std::endl;
+        std::cout << "Freeing memory @" << mat->memptr() << std::endl;
         std::cout << "-----------" << "\n";
 #endif
         delete mat;
@@ -48,7 +48,7 @@ inline py::capsule create_dummy_capsule(T* data) {
 #ifdef CARMA_EXTRA_DEBUG
         std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
         // if in debug mode let us know what pointer is being freed
-        std::cerr << "Destructing view on memory @" << f << std::endl;
+        std::cout << "Destructing view on memory @" << mat->memptr() << std::endl;
         std::cout << "-----------" << "\n";
 #endif
     });
