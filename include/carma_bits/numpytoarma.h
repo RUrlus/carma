@@ -40,7 +40,7 @@ namespace carma {
 namespace details {
 
 using uword = arma::uword;
-using aconf =  arma::arma_config;
+using aconf = arma::arma_config;
 
 template<typename T> inline void free_array(T* data) {
 #ifdef CARMA_EXTRA_DEBUG

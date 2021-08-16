@@ -19,6 +19,7 @@
 #include <pybind11/pybind11.h>  // NOLINT
 #include <pybind11/numpy.h>  // NOLINT
 #include <carma_bits/config.h> // NOLINT
+#include <carma_bits/nparray.h> // NOLINT
 
 #include <armadillo>  // NOLINT
 #include <utility>
@@ -119,6 +120,77 @@ inline py::array_t<T> construct_array(arma::Cube<T>* data) {
         // numpy array references this parent
         create_capsule<arma::Cube<T>>(data)
     );
+} /* construct_array */
+
+template <typename T>
+inline py::array_t<T> construct_array(const arma::Row<T>* data) {
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto ncols = static_cast<ssize_t>(data->n_cols);
+
+    py::capsule base = create_dummy_capsule<arma::Row<T>>(data);
+
+    auto arr = py::array_t<T>(
+        {static_cast<ssize_t>(1), ncols},  // shape
+        {tsize, tsize},                    // F-style contiguous strides
+        data->memptr(),                    // the data pointer
+        base                               // numpy array references this parent
+    );
+    carma::set_not_writeable(arr);
+    return arr;
+} /* construct_array */
+
+template <typename T>
+inline py::array_t<T> construct_array(const arma::Col<T>* data) {
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto nrows = static_cast<ssize_t>(data->n_rows);
+
+    py::capsule base = create_dummy_capsule<arma::Col<T>>(data);
+
+    auto arr = py::array_t<T>(
+        {nrows, static_cast<ssize_t>(1)},  // shape
+        {tsize, nrows * tsize},            // F-style contiguous strides
+        data->memptr(),                    // the data pointer
+        base                               // numpy array references this parent
+    );
+    carma::set_not_writeable(arr);
+    return arr;
+} /* construct_array */
+
+template <typename T>
+inline py::array_t<T> construct_array(const arma::Mat<T>* data) {
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto nrows = static_cast<ssize_t>(data->n_rows);
+    auto ncols = static_cast<ssize_t>(data->n_cols);
+
+    auto arr = py::array_t<T>(
+        {nrows, ncols},          // shape
+        {tsize, nrows * tsize},  // F-style contiguous strides
+        data->memptr(),          // the data pointer
+        // numpy array references this parent
+        create_dummy_capsule<arma::Mat<T>>(data)
+    );
+    carma::set_not_writeable(arr);
+    return arr;
+} /* construct_array */
+
+template <typename T>
+inline py::array_t<T> construct_array(const arma::Cube<T>* data) {
+    constexpr auto tsize = static_cast<ssize_t>(sizeof(T));
+    auto nrows = static_cast<ssize_t>(data->n_rows);
+    auto ncols = static_cast<ssize_t>(data->n_cols);
+    auto nslices = static_cast<ssize_t>(data->n_slices);
+    auto arr = py::array_t<T>(
+        // shape
+        {nrows, ncols, nslices},
+        // F-style contiguous strides
+        {tsize, nrows * tsize, tsize * nrows * ncols},
+        // the data pointer
+        data->memptr(),
+        // numpy array references this parent
+        create_dummy_capsule<arma::Cube<T>>(data)
+    );
+    carma::set_not_writeable(arr);
+    return arr;
 } /* construct_array */
 
 }  // namespace details
