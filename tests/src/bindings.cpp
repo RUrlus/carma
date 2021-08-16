@@ -3,6 +3,9 @@
 // include numpy header for usage of array_t
 #include <pybind11/numpy.h>
 
+#include <carma>
+#include <armadillo>
+
 #include "test_arr_to_mat.h"
 #include "test_arraystore.h"
 #include "test_mat_to_arr.h"
@@ -60,6 +63,7 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_tc_in_col(m);
     bind_test_tc_in_cube(m);
     bind_test_tc_out_mat(m);
+    bind_test_tc_out_mat_const(m);
     bind_test_tc_out_mat_rvalue(m);
     bind_test_tc_out_row(m);
     bind_test_tc_out_row_rvalue(m);

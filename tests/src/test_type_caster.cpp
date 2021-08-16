@@ -19,6 +19,13 @@ double test_tc_in_cube(arma::Cube<double>& mat) {
     return arma::accu(mat);
 }
 
+const arma::Mat<double> test_tc_out_mat_const(const py::array_t<double>& arr) {
+    arma::Mat<double> ones = arma::ones(arr.shape(0), arr.shape(1));
+    arma::Mat<double> mat = carma::arr_to_mat<double>(arr);
+    arma::Mat<double> out = ones + mat;
+    return out;
+}
+
 arma::Mat<double> test_tc_out_mat(const py::array_t<double>& arr) {
     arma::Mat<double> ones = arma::ones(arr.shape(0), arr.shape(1));
     arma::Mat<double> mat = carma::arr_to_mat<double>(arr);
@@ -92,6 +99,10 @@ void bind_test_tc_in_cube(py::module& m) {
 
 void bind_test_tc_out_mat(py::module& m) {
     m.def("tc_out_mat", &carma::tests::test_tc_out_mat, "Test type caster");
+}
+
+void bind_test_tc_out_mat_const(py::module& m) {
+    m.def("tc_out_mat_const", &carma::tests::test_tc_out_mat_const, "Test type caster");
 }
 
 void bind_test_tc_out_mat_rvalue(py::module& m) {

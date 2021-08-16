@@ -19,6 +19,7 @@ double test_tc_in_cube(arma::Cube<double>& mat);
 
 // type_caster_out
 arma::Mat<double> test_tc_out_mat(const py::array_t<double>& arr);
+const arma::Mat<double> test_tc_out_mat_const(const py::array_t<double>& arr);
 arma::Mat<double> test_tc_out_mat_rvalue(const py::array_t<double>& arr);
 arma::Row<double> test_tc_out_row(const py::array_t<double>& arr);
 arma::Row<double> test_tc_out_row_rvalue(const py::array_t<double>& arr);
@@ -39,6 +40,7 @@ void bind_test_tc_out_row(py::module& m);
 
 // type_caster_out
 void bind_test_tc_out_mat(py::module& m);
+void bind_test_tc_out_mat_const(py::module& m);
 void bind_test_tc_out_mat_rvalue(py::module& m);
 void bind_test_tc_out_row(py::module& m);
 void bind_test_tc_out_row_rvalue(py::module& m);
