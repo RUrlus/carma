@@ -37,7 +37,7 @@ def test_arr_to_mat_double_small():
         np.random.normal(size=(3, 3)), dtype=np.float64, order='F'
     )
     flag = carma.arr_to_mat_double(sample, False)
-    assert flag == 5, test_flags[flag]
+    assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_mat_long():
@@ -129,7 +129,7 @@ def test_arr_to_mat_1d_small():
         np.random.normal(size=5), dtype=np.float64, order='F'
     )
     flag = carma.arr_to_mat_1d(sample, False)
-    assert flag == 5, test_flags[flag]
+    assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_mat_1d_copy():
@@ -152,7 +152,7 @@ def test_arr_to_col_small():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=5), dtype=np.float64, order='F')
     flag = carma.arr_to_col(sample, False)
-    assert flag == 5, test_flags[flag]
+    assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_col_2d():
@@ -210,7 +210,7 @@ def test_arr_to_row_small():
     """Test arr_to_row."""
     sample = np.asarray(np.random.normal(size=5), dtype=np.float64, order='F')
     flag = carma.arr_to_row(sample, False)
-    assert flag == 5, test_flags[flag]
+    assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_row_2d():
@@ -272,7 +272,7 @@ def test_arr_to_cube_small():
         np.random.normal(size=(2, 2, 2)), dtype=np.float64, order='F'
     )
     flag = carma.arr_to_cube(sample, False)
-    assert flag == 5, test_flags[flag]
+    assert flag == 0, test_flags[flag]
 
 
 def test_arr_to_cube_double_c_contiguous():
