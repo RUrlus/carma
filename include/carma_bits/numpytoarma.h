@@ -107,12 +107,7 @@ inline arma::Mat<T> arr_to_mat(
      * we free the array after if it was stolen as arma will
      * not own it.
      */
-    bool copy = (nelem > aconf::mat_prealloc) ? false : true;
-#ifdef CARMA_EXTRA_DEBUG
-    if (copy) {
-        debug::print_prealloc<T>(data);
-    }
-#endif
+    bool copy = (nelem <= aconf::mat_prealloc) && stolen;
 // rvalue return due to lack of NRVO on MSVC
 #ifdef _WIN32
     // not stolen means numpy owns the memory and Arma borrows the memory
@@ -123,7 +118,6 @@ inline arma::Mat<T> arr_to_mat(
 #else
     arma::Mat<T> dest(data, nrows, ncols, copy, strict);
     if (!stolen) {
-        // rvalue return due to lack of NRVO on MSVC
         return dest;
     }
 #endif
@@ -161,12 +155,7 @@ inline arma::Col<T> arr_to_col(
     // extract buffer information
     uword nelem = src.size;
 
-    bool copy = (nelem > aconf::mat_prealloc) ? false : true;
-#ifdef CARMA_EXTRA_DEBUG
-    if (copy) {
-        debug::print_prealloc<T>(data);
-    }
-#endif
+    bool copy = (nelem <= aconf::mat_prealloc) && stolen;
 // rvalue return due to lack of NRVO on MSVC
 #ifdef _WIN32
     // not stolen means numpy owns the memory and Arma borrows the memory
@@ -215,12 +204,7 @@ inline arma::Row<T> arr_to_row(
     // extract buffer information
     uword nelem = src.size;
 
-    bool copy = (nelem > aconf::mat_prealloc) ? false : true;
-#ifdef CARMA_EXTRA_DEBUG
-    if (copy) {
-        debug::print_prealloc<T>(data);
-    }
-#endif
+    bool copy = (nelem <= aconf::mat_prealloc) && stolen;
 // rvalue return due to lack of NRVO on MSVC
 #ifdef _WIN32
     // not stolen means numpy owns the memory and Arma borrows the memory
@@ -274,12 +258,7 @@ inline arma::Cube<T> arr_to_cube(
     uword nslices = src.shape[2];
     uword nelem = src.size;
 
-    bool copy = (nelem > arma::Cube_prealloc::mem_n_elem) ? false : true;
-#ifdef CARMA_EXTRA_DEBUG
-    if (copy) {
-        debug::print_prealloc<T>(data);
-    }
-#endif
+    bool copy = (nelem <= aconf::mat_prealloc) && stolen;
 // rvalue return due to lack of NRVO on MSVC
 #ifdef _WIN32
     // not stolen means numpy owns the memory and Arma borrows the memory
