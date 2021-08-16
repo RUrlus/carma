@@ -719,12 +719,20 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
      * If the array is 1D we create a column oriented matrix (N, 1) */
     bool load(handle src, bool) {
         // set as array buffer
-        //
         py::array_t<T> buffer = py::array_t<T>::ensure(src);
         if (!buffer) {
             throw carma::ConversionError("CARMA: Input cannot be interpreted as array.");
         }
-        value = carma::to_arma<armaT>::from(buffer, false);
+        // borrow the array
+        armaT tmp = carma::to_arma<armaT>::from(buffer, false);
+        // meet conditions that allow armadillo to steal the matrix
+        arma::access::rw(tmp.n_alloc) = tmp.n_elem;
+        arma::access::rw(tmp.mem_state) = 0;
+        // move the created matrix into the empty but instantiated default
+        value = std::move(tmp);
+        // reset settings such that the array is in a borrow state
+        arma::access::rw(value.n_alloc) = 0;
+        arma::access::rw(value.mem_state) = 2;
         return true;
     }
 
