@@ -30,7 +30,7 @@ inline void npy_free(void* ptr) {
     }
 #ifdef CARMA_DEV_DEBUG
     std::cout << "\n-----------\nCARMA DEBUG\n-----------\n";
-    std::cerr << "Using numpy deallocator\n";
+    std::cout << "Using numpy deallocator\n";
     std::cout << "-----------\n";
 #endif  // ARMA_EXTRA_DEBUG
     PyDataMem_FREE(ptr);
