@@ -42,9 +42,10 @@ inline py::capsule create_capsule(armaT* data) {
     });
 } /* create_capsule */
 
-template <typename T>
-inline py::capsule create_dummy_capsule(T* data) {
+template <typename armaT>
+inline py::capsule create_dummy_capsule(const armaT* data) {
     return py::capsule(data, [](void* f) {
+        auto mat = reinterpret_cast<armaT*>(f);
 #ifdef CARMA_EXTRA_DEBUG
         std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
         // if in debug mode let us know what pointer is being freed
