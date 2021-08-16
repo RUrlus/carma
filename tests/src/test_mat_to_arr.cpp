@@ -21,6 +21,11 @@ py::array_t<double> test_mat_to_arr_plus_one(const py::array_t<double>& arr, boo
     return mat_to_arr<double>(out, copy);
 } /* test_mat_to_arr_plus_one */
 
+py::array_t<double> test_to_numpy_view_mat() {
+    const arma::mat mat = arma::mat(4, 5, arma::fill::randu);
+    return to_numpy_view<arma::mat>(mat);
+} /* test_to_numpy_mat */
+
 // ------------------------------ Row -----------------------------------------
 py::array_t<double> test_row_to_arr(bool copy) {
     arma::Row<double> mat = arma::Row<double>(20, arma::fill::randu);
@@ -38,6 +43,11 @@ py::array_t<double> test_row_to_arr_plus_one(const py::array_t<double>& arr, boo
     arma::Row<double> out = ones + mat;
     return row_to_arr<double>(out, copy);
 } /* test_row_to_arr_plus_one */
+
+py::array_t<double> test_to_numpy_view_row() {
+    const arma::Row<double> mat = arma::Row<double>(20, arma::fill::randu);
+    return to_numpy_view<arma::Row<double>>(mat);
+} /* test_to_numpy_row */
 
 // ------------------------------ Col -----------------------------------------
 py::array_t<double> test_col_to_arr(bool copy) {
@@ -57,6 +67,11 @@ py::array_t<double> test_col_to_arr_plus_one(const py::array_t<double>& arr, boo
     return col_to_arr<double>(out, copy);
 } /* test_col_to_arr_plus_one */
 
+py::array_t<double> test_to_numpy_view_col() {
+    const arma::Col<double> mat = arma::Col<double>(20, arma::fill::randu);
+    return to_numpy_view<arma::Col<double>>(mat);
+} /* test_to_numpy_col */
+
 // ------------------------------ Cube ----------------------------------------
 py::array_t<double> test_cube_to_arr(bool copy) {
     arma::Cube<double> mat = arma::Cube<double>(100, 2, 4, arma::fill::randu);
@@ -74,6 +89,11 @@ py::array_t<double> test_cube_to_arr_plus_one(const py::array_t<double>& arr, bo
     arma::Cube<double> out = ones + mat;
     return cube_to_arr<double>(out, copy);
 } /* test_mat_to_arr_plus_one */
+
+py::array_t<double> test_to_numpy_view_cube() {
+    const arma::Cube<double> mat = arma::Cube<double>(100, 2, 4, arma::fill::randu);
+    return to_numpy_view<arma::Cube<double>>(mat);
+} /* test_to_numpy_cube */
 
 }  // namespace tests
 }  // namespace carma
@@ -108,6 +128,22 @@ void bind_test_to_numpy_col(py::module& m) {
 
 void bind_test_to_numpy_cube(py::module& m) {
     m.def("to_numpy_cube", &carma::tests::test_to_numpy_cube, "Test to_numpy");
+}
+
+void bind_test_to_numpy_view_mat(py::module& m) {
+    m.def("to_numpy_view_mat", &carma::tests::test_to_numpy_view_mat, "Test to_numpy");
+}
+
+void bind_test_to_numpy_view_row(py::module& m) {
+    m.def("to_numpy_view_row", &carma::tests::test_to_numpy_view_row, "Test to_numpy");
+}
+
+void bind_test_to_numpy_view_col(py::module& m) {
+    m.def("to_numpy_view_col", &carma::tests::test_to_numpy_view_col, "Test to_numpy");
+}
+
+void bind_test_to_numpy_view_cube(py::module& m) {
+    m.def("to_numpy_view_cube", &carma::tests::test_to_numpy_view_cube, "Test to_numpy");
 }
 
 void bind_test_mat_to_arr_plus_one(py::module& m) {

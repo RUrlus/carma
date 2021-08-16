@@ -63,6 +63,29 @@ def test_mat_to_arr_plus_one_copy():
     mat = carma.mat_to_arr_plus_one(sample, True)
     assert np.allclose(mat, sample + 1)
 
+
+def test_to_numpy_mat():
+    arr = carma.to_numpy_mat(False)
+    assert arr.ndim == 2
+    assert arr.shape[0] == 4
+    assert arr.shape[1] == 5
+    assert arr.flags['WRITEABLE'] == True
+
+    arr = carma.to_numpy_mat(True)
+    assert arr.ndim == 2
+    assert arr.shape[0] == 4
+    assert arr.shape[1] == 5
+    assert arr.flags['WRITEABLE'] == True
+
+
+def test_to_numpy_view_mat():
+    arr = carma.to_numpy_view_mat()
+    assert arr.ndim == 2
+    assert arr.shape[0] == 4
+    assert arr.shape[1] == 5
+    assert arr.flags['WRITEABLE'] == False
+
+
 ###############################################################################
 #                                 ROW
 ###############################################################################
@@ -122,6 +145,28 @@ def test_row_to_arr_plus_one_copy():
     )
     mat = carma.row_to_arr_plus_one(sample, True)
     assert np.allclose(mat, sample + 1)
+
+
+def test_to_numpy_row():
+    arr = carma.to_numpy_row(False)
+    assert arr.ndim == 2
+    assert arr.shape[0] == 1
+    assert arr.shape[1] == 20
+    assert arr.flags['WRITEABLE'] == True
+
+    arr = carma.to_numpy_row(True)
+    assert arr.ndim == 2
+    assert arr.shape[0] == 1
+    assert arr.shape[1] == 20
+    assert arr.flags['WRITEABLE'] == True
+
+
+def test_to_numpy_view_row():
+    arr = carma.to_numpy_view_row()
+    assert arr.ndim == 2
+    assert arr.shape[0] == 1
+    assert arr.shape[1] == 20
+    assert arr.flags['WRITEABLE'] == False
 
 
 ###############################################################################
@@ -184,6 +229,27 @@ def test_col_to_arr_plus_one_copy():
     mat = carma.col_to_arr_plus_one(sample, True)
     assert np.allclose(mat, sample + 1)
 
+
+def test_to_numpy_col():
+    arr = carma.to_numpy_col(False)
+    assert arr.shape[0] == 20
+    assert arr.shape[1] == 1
+    assert arr.flags['WRITEABLE'] == True
+
+    arr = carma.to_numpy_col(True)
+    assert arr.shape[0] == 20
+    assert arr.shape[1] == 1
+    assert arr.flags['WRITEABLE'] == True
+
+
+def test_to_numpy_view_col():
+    arr = carma.to_numpy_view_col()
+    assert arr.ndim == 2
+    assert arr.shape[0] == 20
+    assert arr.shape[1] == 1
+    assert arr.flags['WRITEABLE'] == False
+
+
 ###############################################################################
 #                                 CUBE
 ###############################################################################
@@ -245,3 +311,28 @@ def test_cube_to_arr_plus_one_copy():
     )
     mat = carma.cube_to_arr_plus_one(sample, True)
     assert np.allclose(mat, 1 + sample)
+
+
+def test_to_numpy_cube():
+    arr = carma.to_numpy_cube(False)
+    assert arr.ndim == 3
+    assert arr.shape[0] == 100
+    assert arr.shape[1] == 2
+    assert arr.shape[2] == 4
+    assert arr.flags['WRITEABLE'] == True
+
+    arr = carma.to_numpy_cube(True)
+    assert arr.ndim == 3
+    assert arr.shape[0] == 100
+    assert arr.shape[1] == 2
+    assert arr.shape[2] == 4
+    assert arr.flags['WRITEABLE'] == True
+
+
+def test_to_numpy_view_cube():
+    arr = carma.to_numpy_view_cube()
+    assert arr.ndim == 3
+    assert arr.shape[0] == 100
+    assert arr.shape[1] == 2
+    assert arr.shape[2] == 4
+    assert arr.flags['WRITEABLE'] == False
