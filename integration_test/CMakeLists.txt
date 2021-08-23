@@ -32,6 +32,25 @@ ENDIF ()
 
 ADD_SUBDIRECTORY(extern/pybind11)
 
+SET(USE_ARMA_VERSION 10.6.x)
+FetchContent_Declare(
+  CarmaArmadillo
+  GIT_REPOSITORY https://gitlab.com/conradsnicta/armadillo-code.git
+  GIT_TAG        ${USE_ARMA_VERSION}
+  SOURCE_DIR ${PROJECT_SOURCE_DIR}/extern/armadillo-code
+)
+
+FetchContent_GetProperties(CarmaArmadillo)
+
+STRING(TOLOWER "CarmaArmadillo" lcName)
+IF (NOT ${lcName}_POPULATED)
+    MESSAGE(STATUS "carma: collecting Armadillo ${USE_ARMA_VERSION}")
+    # Fetch the content using previously declared details
+    FetchContent_Populate(CarmaArmadillo)
+ENDIF ()
+
+SET(ARMADILLO_INCLUDE_DIR extern/armadillo-code/include)
+
 IF (CARMA_TEST_MODE STREQUAL "comp_carma")
     FIND_PACKAGE(carma CONFIG REQUIRED COMPONENTS carma)
 ELSEIF (CARMA_TEST_MODE STREQUAL "comp_headers")
