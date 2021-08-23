@@ -186,4 +186,4 @@ jobs:
       - name: Test
         run: |
             cd integration_test/build
-            ctest --verbose --output-on-failure
+            python -m pytest -v
