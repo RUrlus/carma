@@ -30,14 +30,33 @@ For details on Pybind11 and Armadillo refer to their respective documentation [1
 
 ## Installation
 CARMA is a header only library that relies on two other header only libraries, Armadillo and Pybind11.
+It can be integrated in a CMake build using `ADD_SUBDIRECTORY(<path_to_carma>)` or installation which provides an interface library target `carma::carma` that has been linked with Python, Numpy, Pybind11 and Armadillo. See [build configuration](https://carma.readthedocs.io/en/stable/building.html) for details.
 
-CARMA can be integrated in a CMake build using `ADD_SUBDIRECTORY(<path_to_carma>)` which provides an interface library target `carma`
-that has been linked with Python, Numpy, Pybind11 and Armadillo. For Pybind11 and or Armadillo we create target(s) based on user settable version, see [build configuration](https://carma.readthedocs.io/en/stable/building.html), when they are not defined.
+It can be installed using:
+```bash
+mkdir build
+cd build
+# optionally with -DCMAKE_INSTALL_PREFIX:PATH=<path/to/desired/location>
+cmake -DCARMA_INSTALL_LIB=ON ..
+cmake --build . --config Release --target install
+```
+
+You can than include it in a project using:
+
+```cmake
+FIND_PACKAGE(carma CONFIG REQUIRED)
+TARGET_LINK_LIBRARIES(<your_target> PRIVATE carma::carma)
+```
+
+### CMake subdirectory
+
+Alternatively you can forgo installing CARMA and directly use it as CMake subdirectory.
+For Pybind11 and or Armadillo we create target(s) based on user settable version, see [build configuration](https://carma.readthedocs.io/en/stable/building.html), when they are not defined.
 
 To link with CARMA:
 ```cmake
 ADD_SUBDIRECTORY(extern/carma)
-TARGET_LINK_LIBRARIES(<your_target> PRIVATE carma)
+TARGET_LINK_LIBRARIES(<your_target> PRIVATE carma::carma)
 ```
 CARMA and Armadillo can then be included using:
 ```C++
@@ -88,6 +107,8 @@ creating the tuple for the way out.
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pytypes.h>
+
+namespace py = pybind11;
 
 py::tuple ols(arma::mat& X, arma::colvec& y) {
     // We borrow the data underlying the numpy arrays
