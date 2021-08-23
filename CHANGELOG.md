@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.0] - 2021-08-23
+
+### Fixed
+
+- Bug wrt const return type path in type-caster (#83)
+- Bug where TC input was copied (#83)
+- Bug wrt handling of input arrays smaller than pre-allocation limit (#85)
+- Remove unused variables (#84)
+
+### Enhancements
+
+- CARMA is now compatible with ``FIND_PACKAGE(carma CONFIG)`` (#81, #82)
+- introduces ``to_numpy_view`` a read-only view on ArmaT as non-writeable array
+
 ## [0.5.2] - 2021-07-19
 
 ### Fixed
