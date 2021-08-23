@@ -41,16 +41,6 @@ CONFIGURE_FILE(
 )
 
 # ##############################################################################
-#                                REQUIREMENTS                                  #
-# ##############################################################################
-FIND_PACKAGE(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
-
-# Needed to ensure the same Python executable is found by Pybind11
-IF (NOT DEFINED PYTHON_EXECUTABLE)
-    SET(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
-ENDIF ()
-
-# ##############################################################################
 #                                   TARGET                                     #
 # ##############################################################################
 ADD_LIBRARY(carma INTERFACE)
@@ -64,6 +54,9 @@ TARGET_COMPILE_DEFINITIONS(carma
     CARMA_VERSION_NAME=${CARMA_VERSION_INFO}
     "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_DEFINITIONS}>"
 )
+
+TARGET_COMPILE_FEATURES(carma INTERFACE cxx_std_14)
+
 IF(CARMA_DEV_MODE)
     TARGET_COMPILE_OPTIONS(carma
         INTERFACE
@@ -88,6 +81,25 @@ TARGET_LINK_LIBRARIES(carma
         pybind11::pybind11
 )
 
+ADD_LIBRARY(carma_headers INTERFACE)
+ADD_LIBRARY(carma::headers ALIAS carma_headers)
+
+TARGET_COMPILE_DEFINITIONS(carma_headers
+    INTERFACE
+    CARMA_VERSION_MAJOR=${CARMA_VERSION_MAJOR}
+    CARMA_VERSION_MINOR=${CARMA_VERSION_MINOR}
+    CARMA_VERSION_PATCH=${CARMA_VERSION_PATCH}
+    CARMA_VERSION_NAME=${CARMA_VERSION_INFO}
+)
+TARGET_COMPILE_FEATURES(carma_headers INTERFACE cxx_std_14)
+
+TARGET_INCLUDE_DIRECTORIES(carma_headers
+    INTERFACE
+    $<INSTALL_INTERFACE:${CARMA_INCLUDE_INSTALL_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+)
+    
+
 # Only install the headers
 IF (CARMA_INSTALL_LIB)
     # modified from https://dominikberner.ch/cmake-interface-lib/
@@ -96,6 +108,14 @@ IF (CARMA_INSTALL_LIB)
     INSTALL(
         TARGETS carma
         EXPORT carma_Targets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+
+    INSTALL(
+        TARGETS carma_headers
+        EXPORT carma_Header_Targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -113,18 +133,26 @@ IF (CARMA_INSTALL_LIB)
         "${PROJECT_BINARY_DIR}/carmaConfig.cmake"
         INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
     )
-    
+
     INSTALL(
       EXPORT carma_Targets
-      FILE carmaTargets.cmake
+      FILE carmaCarmaTargets.cmake
       NAMESPACE carma::
       DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
     )
-    
+
+    INSTALL(
+      EXPORT carma_Header_Targets
+      FILE carmaHeaderTargets.cmake
+      NAMESPACE carma::
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
+    )
+
     INSTALL(
         FILES
             "${PROJECT_BINARY_DIR}/carmaConfig.cmake"
             "${PROJECT_BINARY_DIR}/carmaConfigVersion.cmake"
+            "${PROJECT_SOURCE_DIR}/cmake/carmaDependencyTargets.cmake"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
     )
 
@@ -140,8 +168,17 @@ IF (CARMA_INSTALL_LIB)
             PATTERN "*.h"
     )
     
-#INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/tmp/ DESTINATION ${CARMA_INCLUDE_INSTALL_DIR})
 ELSE()
+    # ##############################################################################
+    #                                REQUIREMENTS                                  #
+    # ##############################################################################
+    FIND_PACKAGE(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
+
+    # Needed to ensure the same Python executable is found by Pybind11
+    IF (NOT DEFINED PYTHON_EXECUTABLE)
+        SET(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+    ENDIF ()
+
     # create armadillo and or pybind11 target if not defined
     INCLUDE(ThirdPartyTargets)
 
