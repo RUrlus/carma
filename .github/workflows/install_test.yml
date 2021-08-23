@@ -166,6 +166,7 @@ jobs:
 
           cmake \
             -DCARMA_INSTALL_LIB=ON \
+            -DCMAKE_INSTALL_PREFIX:PATH=. \
             -DCARMA_TEST_MODE=${{matrix.carma_test_mode}} \
             -DCMAKE_C_COMPILER=${{ matrix.config.cc }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
@@ -179,7 +180,7 @@ jobs:
             cd integration_test/build
             cmake \
               --build . \
-              --target ${{ matrix.config.target }} \
+              --target install \
               --config ${{ matrix.config.build_type }}
 
       - name: Test
