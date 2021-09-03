@@ -1,6 +1,10 @@
 #ifndef INCLUDE_CARMA_BITS_CNALLOC_H_
 #define INCLUDE_CARMA_BITS_CNALLOC_H_
 
+// pybind11 include required even if not explicitly used 
+// to prevent link with pythonXX_d.lib on Win32 
+// (cf Py_DEBUG defined in numpy headers and https://github.com/pybind/pybind11/issues/1295)
+#include <pybind11/pybind11.h>     
 #define NPY_NO_DEPRECATED_API NPY_1_14_API_VERSION
 #include <numpy/arrayobject.h>
 #include <numpy/ndarraytypes.h>
