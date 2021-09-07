@@ -172,7 +172,8 @@ IF (CARMA_INSTALL_LIB)
 
     INSTALL(
             FILES ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h 
-            DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}/carma_bits/config.h
+            DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}/carma_bits
+            RENAME config.h
             )
 
 ELSE()
