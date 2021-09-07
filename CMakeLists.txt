@@ -36,7 +36,7 @@ INCLUDE(${PROJECT_SOURCE_DIR}/carma_config.cmake)
 INCLUDE(ParseOptions)
 CONFIGURE_FILE(
     ${PROJECT_SOURCE_DIR}/include/carma_bits/config.h.in
-    ${PROJECT_BINARY_DIR}/include/carma_bits/config.h
+    ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h
     @ONLY
 )
 
@@ -171,8 +171,8 @@ IF (CARMA_INSTALL_LIB)
     )
 
     INSTALL(
-            FILES ${PROJECT_BINARY_DIR}/include/carma_bits/config.h 
-            DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}/carma_bits
+            FILES ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h 
+            DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}/carma_bits/config.h
             )
 
 ELSE()
