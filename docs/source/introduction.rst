@@ -13,14 +13,24 @@ Installation
 ++++++++++++
 CARMA is a header only library that relies on two other header only libraries, Armadillo and Pybind11.
 
-CARMA can be integrated in a CMake build using :cmake:`ADD_SUBDIRECTORY(<path_to_carma>)` which provides an interface library target ``carma`` that has been linked with Python, Numpy, Pybind11 and Armadillo.
+CARMA can be installed using:
 
-To link with CARMA:
+.. code-block:: bash
+    
+    mkdir build
+    cd build
+    # optionally with -DCMAKE_INSTALL_PREFIX:PATH=
+    cmake -DCARMA_INSTALL_LIB=ON ..
+    cmake --build . --config Release --target install
+
+You can than include it in a project using:
 
 .. code-block:: cmake
 
-    ADD_SUBDIRECTORY(extern/carma)
-    TARGET_LINK_LIBRARIES(<your_target> PRIVATE carma)
+    FIND_PACKAGE(carma CONFIG REQUIRED)
+    TARGET_LINK_LIBRARIES(<your_target> PRIVATE carma::carma)
+
+The ``REQUIRED`` state is propagated to the dependencies of CARMA.
 
 CARMA and Armadillo can then be included using:
 
@@ -29,12 +39,13 @@ CARMA and Armadillo can then be included using:
     #include <carma>
     #include <armadillo>
 
-CARMA provides a number of configurations that can be set in the ``carma_config.cmake`` file at the root of the directory or passed to CMake, see :ref:`Configuration` and :ref:`Build configuration` sections for details.
+CARMA can also be used without installation see :ref:`Build configuration`.
+CARMA provides a number of configurations that can be set in the ``carma_config.cmake`` file at the root of the directory or passed to CMake, see :ref:`Configuration` for details.
 
 Requirements
 ++++++++++++
 
-CARMA v0.5 requires a compiler with support for C++14 and supports:
+CARMA >= v0.5 requires a compiler with support for C++14 and supports:
 
 - Python 3.6 -- 3.9
 - Numpy >= 1.14
