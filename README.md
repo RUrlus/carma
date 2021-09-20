@@ -72,7 +72,7 @@ CARMA >= v0.5 requires a compiler with support for C++14 and supports:
 
 * Python 3.6 -- 3.9
 * Numpy >= 1.14
-* Pybind11 v2.6.0 -- v2.6.2
+* Pybind11 >= v2.6.0
 * Armadillo >= 10.5.2
 
 CARMA makes use of Armadillo's `ARMA_ALIEN_MEM_ALLOC` and `ARMA_ALIEN_MEM_FREE` functionality introduced in version 10.5.2 to use Numpy's (de)allocator.
