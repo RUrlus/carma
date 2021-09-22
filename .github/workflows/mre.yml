@@ -2,10 +2,6 @@ name: Bug MRE
 
 on:
   workflow_dispatch:
-      version:
-        description: 'CARMA Version'
-        required: true
-        default: 'stable'
 
 defaults:
   run:
@@ -122,7 +118,7 @@ jobs:
           export PY_CMD=$(python -c 'import sys; print(sys.executable)')
 
           cmake \
-            -DUSE_CARMA_VERSION=${{ github.event.inputs.version }} \
+            -DUSE_CARMA_VERSION=${{ matrix.carma_version }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
             -DPython3_EXECUTABLE=${PY_CMD} \
@@ -135,10 +131,10 @@ jobs:
             cd mre
             cmake \
               --build build \
-              --target ${{ matrix.config.target }} \
+              --target install \
               --config ${{ matrix.config.build_type }}
 
       - name: Test
         run: |
-            cd mre
-            python3 pymod_test.py
+          cd mre
+          python -m pytest -v pymod_test.py
