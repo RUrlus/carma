@@ -21,7 +21,7 @@ FetchContent_GetProperties(CarmaCarma)
 
 STRING(TOLOWER "CarmaCarma" lcName)
 IF (NOT ${lcName}_POPULATED)
-    MESSAGE(STATUS "carma: collecting Carma")
+    MESSAGE(STATUS "carma: collecting carma version ${USE_CARMA_VERSION}")
     # Fetch the content using previously declared details
     FetchContent_Populate(CarmaCarma)
 ENDIF ()
