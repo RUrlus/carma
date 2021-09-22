@@ -4,11 +4,9 @@ on:
   pull_request:
     branches:
       - stable
-      - unstable
   push:
     branches:
       - stable
-      - unstable
 
 jobs:
   pre_job:
