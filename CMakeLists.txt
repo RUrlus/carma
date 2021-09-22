@@ -20,11 +20,16 @@ LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")
 OPTION(CARMA_INSTALL_LIB "Install CARMA headers" OFF)
 SET(CARMA_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/carma")
 
-SET(CMAKE_CXX_STANDARD 14)
 SET(DEFAULT_BUILD_TYPE "Release")
 # Set build type to Release if not specified
 INCLUDE(BuildType)
-INCLUDE(ReleaseSettings)
+
+IF (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    # workaround like https://github.com/nlohmann/json/issues/1408
+    # to avoid error like: carma\...\include\armadillo_bits/arma_str.hpp(194):
+    # error C2039: '_snprintf': is not a member of 'std'
+    ADD_DEFINITIONS(-DHAVE_SNPRINTF)
+ENDIF ()
 
 OPTION(CARMA_DEV_MODE "Enable additional definitions for development" OFF)
 OPTION(CARMA_DEV_DEBUG_MODE "Turn on all debugging definitions" OFF)
@@ -190,6 +195,11 @@ ENDIF()
 # ##############################################################################
 #                              TEST TARGETS                                    #
 # ##############################################################################
+
+IF(CARMA_BUILD_TESTS OR CARMA_BUILD_EXAMPLES)
+    SET(CMAKE_CXX_STANDARD 14)
+ENDIF()
+
 IF(CARMA_BUILD_TESTS)
     INCLUDE(CTest)
     ENABLE_TESTING()
