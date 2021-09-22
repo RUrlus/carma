@@ -60,6 +60,8 @@ PYBIND11_MODULE(test_carma, m) {
     bind_test_set_not_owndata(m);
     bind_test_set_not_writeable(m);
     bind_test_is_well_behaved(m);
+    bind_test_exception_flow(m);
+    bind_test_conversion_error(m);
 
     // type caster
     bind_test_tc_in_mat(m);

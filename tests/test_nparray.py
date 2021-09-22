@@ -1,4 +1,5 @@
 """Test nparray.h."""
+import pytest
 import numpy as np
 
 import test_carma as carma
@@ -74,3 +75,15 @@ def test_set_not_writeable():
     sample = np.arange(100, dtype=np.float64)
     carma.set_not_writeable(sample)
     assert sample.flags['WRITEABLE'] is False, m
+
+
+def test_exception_flow():
+    """Test exceptions are raised properly."""
+    with pytest.raises(RuntimeError):
+        carma.test_exception_flow()
+
+
+def test_conversion_error():
+    """Test exceptions are raised properly."""
+    with pytest.raises(RuntimeError):
+        carma.test_conversion_error()
