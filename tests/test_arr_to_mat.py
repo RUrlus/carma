@@ -171,13 +171,6 @@ def test_arr_to_col_C():
     assert flag == 0, test_flags[flag]
 
 
-def test_arr_to_col_writeable():
-    """Test arr_to_col."""
-    sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
-    sample.setflags(write=0)
-    with pytest.raises(RuntimeError):
-        flag = carma.arr_to_col(sample, False)
-
 def test_arr_to_col_writeable_copy():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
@@ -228,13 +221,6 @@ def test_arr_to_row_C():
     flag = carma.arr_to_row(sample, False)
     assert flag == 0, test_flags[flag]
 
-
-def test_arr_to_row_writeable():
-    """Test arr_to_row."""
-    sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
-    sample.setflags(write=0)
-    with pytest.raises(RuntimeError):
-        flag = carma.arr_to_row(sample, False)
 
 def test_arr_to_row_writeable_copy():
     """Test arr_to_row."""
@@ -294,7 +280,7 @@ def test_arr_to_cube_copy():
 def test_arr_to_cube_writeable():
     """Test arr_to_mat."""
     sample = np.asarray(
-        np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='F'
+        np.random.normal(size=(25, 2, 2)), dtype=np.float64, order='C'
     )
     sample.setflags(write=0)
     with pytest.raises(RuntimeError):

@@ -68,7 +68,7 @@ inline const arma::Mat<T> arr_to_mat_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_mat<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved_view(obj)) {
+    if (!well_conditioned(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_mat(info, data, true, true);
     }
@@ -121,7 +121,7 @@ inline arma::Mat<T> arr_to_mat(py::array_t<T>& src, bool copy = false) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_mat(info, data, true, false);
     }
-    if (!well_behaved(obj)) {
+    if (!well_conditioned(obj)) {
         // copy and ensure fortran order and swap with src array
         data = details::swap_copy_array<T>(obj);
     }
@@ -150,7 +150,7 @@ inline const arma::Col<T> arr_to_col_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_col<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved_view(obj)) {
+    if (!well_conditioned(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_col(info, data, true, true);
     }
@@ -199,7 +199,7 @@ inline arma::Col<T> arr_to_col(py::array_t<T>& src, bool copy = false) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_col(info, data, true, false);
     }
-    if (!well_behaved(obj)) {
+    if (!well_conditioned(obj)) {
         // copy and ensure fortran order and swap with src array
         data = details::swap_copy_array<T>(obj);
     }
@@ -227,7 +227,7 @@ inline const arma::Row<T> arr_to_row_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_row<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved_view(obj)) {
+    if (!well_conditioned(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_row(info, data, true, true);
     }
@@ -276,7 +276,7 @@ inline arma::Row<T> arr_to_row(py::array_t<T>& src, bool copy = false) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_row(info, data, true, false);
     }
-    if (!well_behaved(obj)) {
+    if (!well_conditioned(obj)) {
         // copy and ensure fortran order and swap with src array
         data = details::swap_copy_array<T>(obj);
     }
@@ -304,7 +304,7 @@ inline const arma::Cube<T> arr_to_cube_view(const py::array_t<T>& src) {
     py::buffer_info info = src.request();
     T* data = details::validate_from_array_cube<T>(info);
     PyObject* obj = src.ptr();
-    if (!well_behaved_view(obj)) {
+    if (!well_conditioned(obj)) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_cube(info, data, true, true);
     }
@@ -357,7 +357,7 @@ inline arma::Cube<T> arr_to_cube(py::array_t<T>& src, bool copy = false) {
         data = details::steal_copy_array<T>(obj);
         return details::arr_to_cube(info, data, true, false);
     }
-    if (!well_behaved(obj)) {
+    if (!well_conditioned(obj)) {
         // copy and ensure fortran order and swap with src array
         data = details::swap_copy_array<T>(obj);
     }

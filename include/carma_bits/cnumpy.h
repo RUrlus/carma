@@ -34,6 +34,7 @@
 namespace py = pybind11;
 
 extern "C" {
+
 /* well behaved is defined as:
  *   - aligned
  *   - writeable
@@ -121,6 +122,41 @@ static inline bool well_behaved_arr(PyArrayObject* arr) {
 }  // extern "C"
 
 namespace carma {
+
+inline bool ownable(PyObject* src) {
+    auto arr = reinterpret_cast<PyArrayObject*>(src);
+#if defined CARMA_DONT_REQUIRE_OWNDATA
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_WRITEABLE);
+#else
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_OWNDATA | NPY_ARRAY_WRITEABLE);
+#endif
+}
+
+inline bool ownable(PyArrayObject* arr) {
+#if defined CARMA_DONT_REQUIRE_OWNDATA
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_WRITEABLE);
+#else
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_OWNDATA | NPY_ARRAY_WRITEABLE);
+#endif
+}
+
+inline bool well_conditioned(PyObject* src) {
+    auto arr = reinterpret_cast<PyArrayObject*>(src);
+#if defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_ALIGNED);
+#else
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_ALIGNED | NPY_ARRAY_F_CONTIGUOUS);
+#endif
+}
+
+inline bool well_conditioned(PyArrayObject* arr) {
+#if defined CARMA_DONT_REQUIRE_F_CONTIGUOUS
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_ALIGNED);
+#else
+    return PyArray_CHKFLAGS(arr, NPY_ARRAY_ALIGNED | NPY_ARRAY_F_CONTIGUOUS);
+#endif
+}
+
 namespace details {
 
 inline bool is_f_contiguous(const PyObject* src) {
@@ -326,8 +362,12 @@ inline static T* swap_copy_array(PyObject* obj) {
     debug::print_array_info<T>(obj);
     std::cout << "-----------" << "\n";
 #endif
-    if (!PyArray_CHKFLAGS(src, NPY_ARRAY_WRITEABLE)) {
-        throw ConversionError("CARMA: Array is not writeable, could not swap.");
+    if (!PyArray_CHKFLAGS(src, NPY_ARRAY_WRITEABLE | NPY_ARRAY_OWNDATA)) {
+        throw ConversionError(
+            "CARMA: This array cannot be borrowed and must be copied or stolen. "
+            "It is not well conditioned but it is not writeable or does not own "
+            "the data and hence cannot be swapped in place."
+        );
     }
     auto& api = carman::npy_api::get();
     auto tmp = reinterpret_cast<PyArrayObject*>(api.PyArray_NewLikeArray_(
