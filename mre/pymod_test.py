@@ -1,8 +1,7 @@
 import build.pymod as pymod
 
-def test_runtime_error_exception():
-    try:
-        pymod.test_runtime_error()
-    except RuntimeError as e:
-        print(e)
-        print('successfully caught error')
+def test_mre():
+    d = 30
+    mh1 = pymod.MH(d)
+    mh2 = pymod.MH(d)
+    mh1.A = mh2.A
