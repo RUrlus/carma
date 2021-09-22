@@ -47,3 +47,17 @@ void bind_test_is_well_behaved(py::module& m) {
         [](const py::array_t<double>& arr) { return carma::is_well_behaved(arr); },
         "Test is_well_behaved");
 }
+
+void bind_test_exception_flow(py::module&m) {
+    m.def(
+        "test_exception_flow",
+        []() { throw std::runtime_error("error message"); },
+        "Test exception_flow");
+}
+
+void bind_test_conversion_error(py::module&m) {
+    m.def(
+        "test_conversion_error",
+        []() { throw carma::ConversionError("error message"); },
+        "Test exception_flow");
+}

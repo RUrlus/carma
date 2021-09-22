@@ -1,3 +1,6 @@
+#ifndef TESTS_SRC_TEST_ROUNDTRIP_H_
+#define TESTS_SRC_TEST_ROUNDTRIP_H_
+
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <armadillo>
@@ -20,3 +23,5 @@ void bind_test_mat_roundtrip(py::module& m);
 void bind_test_row_roundtrip(py::module& m);
 void bind_test_col_roundtrip(py::module& m);
 void bind_test_cube_roundtrip(py::module& m);
+
+#endif  // TESTS_SRC_TEST_ROUNDTRIP_H_
