@@ -1,3 +1,6 @@
+#ifndef TESTS_SRC_TEST_ARR_TO_MAT_H_
+#define TESTS_SRC_TEST_ARR_TO_MAT_H_
+
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 
@@ -7,8 +10,6 @@
 
 namespace py = pybind11;
 
-#ifndef TESTS_SRC_TEST_ARR_TO_MAT_H_
-#define TESTS_SRC_TEST_ARR_TO_MAT_H_
 namespace carma {
 namespace tests {
 

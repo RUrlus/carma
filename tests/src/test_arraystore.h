@@ -1,3 +1,6 @@
+#ifndef TESTS_SRC_TEST_ARRAYSTORE_H_
+#define TESTS_SRC_TEST_ARRAYSTORE_H_
+
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 
@@ -6,9 +9,6 @@
 #include <string>
 
 namespace py = pybind11;
-
-#ifndef TESTS_SRC_TEST_ARRAYSTORE_H_
-#define TESTS_SRC_TEST_ARRAYSTORE_H_
 
 void bind_test_ArrayStore_get_mat(py::module& m);
 void bind_test_ArrayStore_get_mat_rvalue(py::module& m);
