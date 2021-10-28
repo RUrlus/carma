@@ -41,7 +41,7 @@ INCLUDE(${PROJECT_SOURCE_DIR}/carma_config.cmake)
 INCLUDE(ParseOptions)
 CONFIGURE_FILE(
     ${PROJECT_SOURCE_DIR}/include/carma_bits/config.h.in
-    ${PROJECT_SOURCE_DIR}/include/carma_bits/config.h
+    ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h
     @ONLY
 )
 
@@ -53,13 +53,13 @@ ADD_LIBRARY(carma::carma ALIAS carma)
 
 TARGET_COMPILE_DEFINITIONS(carma
     INTERFACE
+    CARMA_USE_GENERATED_CONFIG=1
     CARMA_VERSION_MAJOR=${CARMA_VERSION_MAJOR}
     CARMA_VERSION_MINOR=${CARMA_VERSION_MINOR}
     CARMA_VERSION_PATCH=${CARMA_VERSION_PATCH}
     CARMA_VERSION_NAME=${CARMA_VERSION_INFO}
     "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_DEFINITIONS}>"
 )
-
 TARGET_COMPILE_FEATURES(carma INTERFACE cxx_std_14)
 
 IF(CARMA_DEV_MODE)
@@ -76,6 +76,7 @@ TARGET_INCLUDE_DIRECTORIES(carma
     INTERFACE
     $<INSTALL_INTERFACE:${CARMA_INCLUDE_INSTALL_DIR}>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
 )
 
 TARGET_LINK_LIBRARIES(carma
@@ -102,6 +103,7 @@ TARGET_INCLUDE_DIRECTORIES(carma_headers
     INTERFACE
     $<INSTALL_INTERFACE:${CARMA_INCLUDE_INSTALL_DIR}>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
 )
     
 
@@ -172,6 +174,11 @@ IF (CARMA_INSTALL_LIB)
         FILES_MATCHING
             PATTERN "*.h"
     )
+
+     INSTALL(
+        FILES ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h 
+        DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}/carma_bits
+     )
     
 ELSE()
     # ##############################################################################
