@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.6.2] - 2021-10-28
+
+### Fixed
+
+* Bug where ill-conditioned arrays that don't own the data were copy-swapped -- #93
+
+### Changes
+
+* Generate config.h in build directory rather than in source -- #88
+* Add MRE test suite for easier debugging
+* Add support for Pybind11 2.8.1 and Armadillo 10.7.x
+
+## [0.6.1] - 2021-09-04
+
+### Changes
+
+* include Pybind11 header in cnalloc to prevent linking issue on Windows in debug mode #87 
+
 ## [0.6.0] - 2021-08-23
 
 ### Fixed
