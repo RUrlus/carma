@@ -45,15 +45,17 @@ inline py::capsule create_capsule(armaT* data) {
 
 template <typename armaT>
 inline py::capsule create_dummy_capsule(const armaT* data) {
+#ifdef CARMA_EXTRA_DEBUG
     return py::capsule(data, [](void* f) {
         auto mat = reinterpret_cast<armaT*>(f);
-#ifdef CARMA_EXTRA_DEBUG
         std::cout << "\n-----------\nCARMA DEBUG\n-----------" << "\n";
         // if in debug mode let us know what pointer is being freed
         std::cout << "Destructing view on memory @" << mat->memptr() << std::endl;
         std::cout << "-----------" << "\n";
-#endif
     });
+#else
+    return py::capsule(data, [](void*) {});
+#endif
 } /* create_capsule */
 
 
