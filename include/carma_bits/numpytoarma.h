@@ -130,7 +130,7 @@ inline arma::Mat<T> arr_to_mat(
     // we have stolen, numpy no longer owns the memory and
     // we haven't copied into the matrix hence Arma has to manage the lifetime
     // of the memory
-    arma::access::rw(dest.n_alloc) = nelem;
+    arma::access::rw(dest.n_elem) = nelem;
     arma::access::rw(dest.mem_state) = 0;
     return dest;
 } /* arr_to_mat */
