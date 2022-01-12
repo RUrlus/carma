@@ -13,6 +13,7 @@ def test_mat_roundtrip():
     out = carma.mat_roundtrip(sample)
     assert np.allclose(og_sample, out)
 
+
 def test_mat_roundtrip_large():
     """Test mat_roundtrip."""
     og_sample = np.asarray(
@@ -41,6 +42,7 @@ def test_mat_roundtrip_c_order():
     sample = og_sample.copy()
     out = carma.mat_roundtrip(sample)
     assert np.allclose(og_sample, out)
+
 
 def test_mat_roundtrip_large_c_order():
     """Test mat_roundtrip."""
@@ -71,6 +73,7 @@ def test_row_roundtrip():
     out = carma.row_roundtrip(sample)
     assert np.allclose(og_sample, out)
 
+
 def test_row_roundtrip_large():
     """Test row_roundtrip."""
     og_sample = np.asarray(
@@ -100,6 +103,7 @@ def test_col_roundtrip():
     out = carma.col_roundtrip(sample)
     assert np.allclose(og_sample, out.ravel())
 
+
 def test_col_roundtrip_large():
     """Test col_roundtrip."""
     og_sample = np.asarray(
@@ -128,6 +132,7 @@ def test_cube_roundtrip():
     sample = og_sample.copy()
     out = carma.cube_roundtrip(sample)
     assert np.allclose(og_sample, out)
+
 
 def test_cube_roundtrip_large():
     """Test cube_roundtrip."""
