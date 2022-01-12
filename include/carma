@@ -34,8 +34,8 @@
 #ifndef CARMA_VERSION_MAJOR
   #define CARMA_VERSION_MAJOR 0
   #define CARMA_VERSION_MINOR 6
-  #define CARMA_VERSION_PATCH 2
-  #define CARMA_VERSION_NAME  "0.6.2 HO"
+  #define CARMA_VERSION_PATCH 3
+  #define CARMA_VERSION_NAME  "0.6.3 HO"
 #endif
 
 namespace carma {
