@@ -6,7 +6,7 @@ IF (NOT USE_CARMA_VERSION)
     SET(USE_CARMA_VERSION "${DEFAULT_CARMA_VERSION}" CACHE STRING "Choose the version of CARMA." FORCE)
     # Set the possible values of build type for cmake-gui
     SET_PROPERTY(CACHE USE_CARMA_VERSION PROPERTY STRINGS
-        "stable" "unstable" "0.6.0"  "0.6.1"
+        "stable" "unstable" "0.6.0"  "0.6.1" "0.6.2" "0.6.3"
     )
 ENDIF ()
 
