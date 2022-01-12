@@ -109,7 +109,7 @@ inline void print_prealloc(T* data, PyObject* obj) {
     print_closing();
 }
 
-} // namespace debug
+}  // namespace debug
 #endif  // CARMA_EXTRA_DEBUG
 
 }  // namespace carma
