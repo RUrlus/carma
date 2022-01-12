@@ -69,13 +69,13 @@ def test_to_numpy_mat():
     assert arr.ndim == 2
     assert arr.shape[0] == 4
     assert arr.shape[1] == 5
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
     arr = carma.to_numpy_mat(True)
     assert arr.ndim == 2
     assert arr.shape[0] == 4
     assert arr.shape[1] == 5
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
 
 def test_to_numpy_view_mat():
@@ -83,7 +83,7 @@ def test_to_numpy_view_mat():
     assert arr.ndim == 2
     assert arr.shape[0] == 4
     assert arr.shape[1] == 5
-    assert arr.flags['WRITEABLE'] == False
+    assert arr.flags['WRITEABLE'] is False
 
 
 ###############################################################################
@@ -152,13 +152,13 @@ def test_to_numpy_row():
     assert arr.ndim == 2
     assert arr.shape[0] == 1
     assert arr.shape[1] == 20
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
     arr = carma.to_numpy_row(True)
     assert arr.ndim == 2
     assert arr.shape[0] == 1
     assert arr.shape[1] == 20
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
 
 def test_to_numpy_view_row():
@@ -166,7 +166,7 @@ def test_to_numpy_view_row():
     assert arr.ndim == 2
     assert arr.shape[0] == 1
     assert arr.shape[1] == 20
-    assert arr.flags['WRITEABLE'] == False
+    assert arr.flags['WRITEABLE'] is False
 
 
 ###############################################################################
@@ -234,12 +234,12 @@ def test_to_numpy_col():
     arr = carma.to_numpy_col(False)
     assert arr.shape[0] == 20
     assert arr.shape[1] == 1
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
     arr = carma.to_numpy_col(True)
     assert arr.shape[0] == 20
     assert arr.shape[1] == 1
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
 
 def test_to_numpy_view_col():
@@ -247,7 +247,7 @@ def test_to_numpy_view_col():
     assert arr.ndim == 2
     assert arr.shape[0] == 20
     assert arr.shape[1] == 1
-    assert arr.flags['WRITEABLE'] == False
+    assert arr.flags['WRITEABLE'] is False
 
 
 ###############################################################################
@@ -319,14 +319,14 @@ def test_to_numpy_cube():
     assert arr.shape[0] == 100
     assert arr.shape[1] == 2
     assert arr.shape[2] == 4
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
     arr = carma.to_numpy_cube(True)
     assert arr.ndim == 3
     assert arr.shape[0] == 100
     assert arr.shape[1] == 2
     assert arr.shape[2] == 4
-    assert arr.flags['WRITEABLE'] == True
+    assert arr.flags['WRITEABLE'] is True
 
 
 def test_to_numpy_view_cube():
@@ -335,4 +335,4 @@ def test_to_numpy_view_cube():
     assert arr.shape[0] == 100
     assert arr.shape[1] == 2
     assert arr.shape[2] == 4
-    assert arr.flags['WRITEABLE'] == False
+    assert arr.flags['WRITEABLE'] is False

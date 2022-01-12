@@ -63,6 +63,7 @@ def test_type_caster_out_mat():
     mat = carma.tc_out_mat(sample)
     assert np.allclose(mat, sample + 1)
 
+
 def test_type_caster_out_mat_const():
     """Test type caster output handling of matrix."""
     sample = np.random.normal(size=(25, 2))

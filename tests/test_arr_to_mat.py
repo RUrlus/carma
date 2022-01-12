@@ -55,6 +55,7 @@ def test_arr_to_mat_double_c_contiguous():
     flag = carma.arr_to_mat_double(sample, False)
     assert flag == 5, test_flags[flag]
 
+
 def test_arr_to_mat_double_c_contiguous_large():
     """Test arr_to_mat."""
     sample = np.asarray(np.random.normal(size=(1000, 1000)), dtype=np.float64)
@@ -93,6 +94,7 @@ def test_arr_to_mat_double_copy_c_contiguous():
     flag = carma.arr_to_mat_double_copy(sample)
     assert flag == 0, test_flags[flag]
 
+
 def test_arr_to_mat_writeable():
     """Test arr_to_mat."""
     sample = np.asarray(
@@ -100,7 +102,8 @@ def test_arr_to_mat_writeable():
     )
     sample.setflags(write=0)
     with pytest.raises(RuntimeError):
-        flag = carma.arr_to_mat_double(sample, False)
+        carma.arr_to_mat_double(sample, False)
+
 
 def test_arr_to_mat_writeable_copy():
     """Test arr_to_mat."""
@@ -110,6 +113,7 @@ def test_arr_to_mat_writeable_copy():
     sample.setflags(write=0)
     flag = carma.arr_to_mat_double(sample, True)
     assert flag == 5, test_flags[flag]
+
 
 # #############################################################################
 #                                   N-DIM 1                                   #
@@ -178,6 +182,7 @@ def test_arr_to_col_writeable_copy():
     flag = carma.arr_to_col(sample, True)
     assert flag == 5, test_flags[flag]
 
+
 def test_arr_to_col_copy():
     """Test arr_to_col."""
     sample = np.asarray(np.random.normal(size=100), dtype=np.float64, order='F')
@@ -228,6 +233,7 @@ def test_arr_to_row_writeable_copy():
     sample.setflags(write=0)
     flag = carma.arr_to_row(sample, True)
     assert flag == 5, test_flags[flag]
+
 
 def test_arr_to_row_copy():
     """Test arr_to_col."""
@@ -284,7 +290,8 @@ def test_arr_to_cube_writeable():
     )
     sample.setflags(write=0)
     with pytest.raises(RuntimeError):
-        flag = carma.arr_to_cube(sample, False)
+        carma.arr_to_cube(sample, False)
+
 
 def test_arr_to_cube_writeable_copy():
     """Test arr_to_mat."""
@@ -294,6 +301,7 @@ def test_arr_to_cube_writeable_copy():
     sample.setflags(write=0)
     flag = carma.arr_to_cube(sample, True)
     assert flag == 5, test_flags[flag]
+
 
 def test_to_arma_mat():
     """Test private implementation of to_arma for matrix."""
