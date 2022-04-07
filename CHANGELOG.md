@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.4] - 2022-04-07
+
+Patch release that mainly updates dependency versions.
+
+### Changes
+
+* Update default Armadillo version to 11.0.x from 10.8.x
+* Update default Pybind11 version to 2.9.2
+
 ## [0.6.3] - 2022-01-12
 
 Patch release that mainly updates dependency versions.
