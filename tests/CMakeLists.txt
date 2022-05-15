@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
 
 SET(NATIVE_MODNAME "test_carma_native")
+FIND_PACKAGE(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
 
 # ##############################################################################
 #                                   C++ TESTS                                  #
