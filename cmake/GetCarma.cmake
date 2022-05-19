@@ -1,12 +1,12 @@
 include(FetchContent)
 
-SET(DEFAULT_CARMA_VERSION "stable")
+SET(DEFAULT_CARMA_VERSION "0.6.5")
 IF (NOT USE_CARMA_VERSION)
     MESSAGE(STATUS "carma: Setting carma version to '${DEFAULT_CARMA_VERSION}' as none was specified.")
     SET(USE_CARMA_VERSION "${DEFAULT_CARMA_VERSION}" CACHE STRING "Choose the version of CARMA." FORCE)
     # Set the possible values of build type for cmake-gui
     SET_PROPERTY(CACHE USE_CARMA_VERSION PROPERTY STRINGS
-        "stable" "unstable" "0.6.0"  "0.6.1" "0.6.2" "0.6.3"
+        "stable" "unstable" "0.6.0"  "0.6.1" "0.6.2" "0.6.3" "0.6.5"
     )
 ENDIF ()
 

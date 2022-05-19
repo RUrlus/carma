@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.5] - 2022-05-19
+
+Patch release that mainly updates dependency versions.
+
+### Changes
+
+* Only search for Python headers for carma::carma target
+* Update default Armadillo version to 11.1.x from 11.0
+
 ## [0.6.4] - 2022-04-07
 
 Patch release that mainly updates dependency versions.
