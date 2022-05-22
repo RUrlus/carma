@@ -3,9 +3,15 @@
 # ##############################################################################
 # Python and Numpy dependencies
 IF (carma_FIND_REQUIRED)
-    FIND_PACKAGE(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
+    FIND_PACKAGE(Python3 COMPONENTS Development NumPy QUIET)
+    IF (NOT Python3_FOUND)
+        FIND_PACKAGE(Python3 COMPONENTS Development.Module NumPy REQUIRED)
+    ENDIF()
 ELSE ()
-    FIND_PACKAGE(Python3 COMPONENTS Interpreter Development NumPy)
+    FIND_PACKAGE(Python3 COMPONENTS Development NumPy QUIET)
+    IF (NOT Python3_FOUND)
+        FIND_PACKAGE(Python3 COMPONENTS Development.Module NumPy)
+    ENDIF()
 ENDIF ()
 IF (Python3_FOUND)
     LIST(APPEND carma_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})

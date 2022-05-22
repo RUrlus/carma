@@ -184,7 +184,10 @@ ELSE()
     # ##############################################################################
     #                                REQUIREMENTS                                  #
     # ##############################################################################
-    FIND_PACKAGE(Python3 COMPONENTS Development.Module NumPy REQUIRED)
+    FIND_PACKAGE(Python3 COMPONENTS Development NumPy QUIET)
+    IF (NOT Python3_FOUND)
+        FIND_PACKAGE(Python3 COMPONENTS Development.Module NumPy REQUIRED)
+    ENDIF()
 
     # Needed to ensure the same Python executable is found by Pybind11
     IF (NOT DEFINED PYTHON_EXECUTABLE)
