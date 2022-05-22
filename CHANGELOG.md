@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.6] - 2022-05-22
+
+### Changes
+
+* fixes finding python3 on manylinux CICD image when installed
+
 ## [0.6.5] - 2022-05-19
 
 Patch release that mainly updates dependency versions.
