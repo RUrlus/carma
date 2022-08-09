@@ -16,7 +16,7 @@
 
 #include <carma_bits/numpy_api.hpp>
 #include <cstddef>
-#ifdef CARMA_DEV_DEBUG
+#ifdef CARMA_DEBUG
 #include <iostream>
 #endif
 
@@ -25,21 +25,17 @@ namespace alloc {
 
 inline void* npy_malloc(size_t bytes) {
     const auto& api = internal::npy_api::get();
-#ifdef CARMA_DEV_DEBUG
-    std::cout << "\n-----------\nCARMA DEBUG\n-----------\n";
-    std::cout << "Using numpy allocator"
-              << "\n";
-    std::cout << "-----------\n";
+    void* ptr = api.PyDataMem_NEW_(bytes);
+#ifdef CARMA_EXTRA_DEBUG
+    std::cout << "|carma| allocated " << ptr << "\n";
 #endif  // ARMA_EXTRA_DEBUG
-    return api.PyDataMem_NEW_(bytes);
+    return ptr;
 }  // npy_malloc
 
 inline void npy_free(void* ptr) {
     const auto& api = internal::npy_api::get();
-#ifdef CARMA_DEV_DEBUG
-    std::cout << "\n-----------\nCARMA DEBUG\n-----------\n";
-    std::cout << "Using numpy deallocator\n";
-    std::cout << "-----------\n";
+#ifdef CARMA_EXTRA_DEBUG
+    std::cout << "|carma| freeing " << ptr << "\n";
 #endif  // ARMA_EXTRA_DEBUG
     api.PyDataMem_FREE_(ptr);
 }  // npy_free
@@ -47,9 +43,12 @@ inline void npy_free(void* ptr) {
 }  // namespace alloc
 }  // namespace carma
 
+// carma makes use of the below Armadillo macros to enable
+// handing over memory ownership to armadillo objects.
+// These definitions must be set before armadillo is included.
 #define ARMA_ALIEN_MEM_ALLOC_FUNCTION carma::alloc::npy_malloc
 #define ARMA_ALIEN_MEM_FREE_FUNCTION carma::alloc::npy_free
 #ifndef CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET
-#define CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET
+#define CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET true
 #endif
 #endif  // INCLUDE_CARMA_BITS_NUMPY_ALLOC_HPP_
