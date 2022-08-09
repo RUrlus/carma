@@ -1,19 +1,60 @@
 #ifndef INCLUDE_CARMA_BITS_COMMON_HPP_
 #define INCLUDE_CARMA_BITS_COMMON_HPP_
 
+#if defined __GNUG__ || defined __clang__  // gnu C++ compiler
+#include <cxxabi.h>
+#endif  // __GNUG__ || __clang__
+
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 
 #include <armadillo>
 #include <type_traits>
+#include <typeinfo>
 
 namespace carma {
 
 namespace py = pybind11;
 
+namespace internal {
 // FIXME handle portability
 #define CARMA_LIKELY(expr) __builtin_expect((expr), 1)
 #define CARMA_UNLIKELY(expr) __builtin_expect((expr), 0)
+
+#if defined __GNUG__ || defined __clang__  // gnu C++ compiler
+
+inline std::string demangle(const char* mangled_name) {
+    std::size_t len = 0;
+    int status = 0;
+    std::unique_ptr<char, decltype(&std::free)> ptr(__cxxabiv1::__cxa_demangle(mangled_name, nullptr, &len, &status),
+                                                    &std::free);
+    return ptr.get();
+}
+
+#else
+
+inline std::string demangle(const char* name) { return name; }
+
+#endif  // __GNUG__ || __clang__
+
+template <typename T>
+inline std::string get_full_typename() {
+    std::string name;
+    if (std::is_const_v<std::remove_reference_t<T>>) name += "const ";
+    name += demangle(typeid(T).name());
+    if (std::is_lvalue_reference_v<T>) {
+        name += "&";
+    } else if (std::is_rvalue_reference_v<T>) {
+        name += "&&";
+    }
+    return name;
+}
+
+/* -----------------------------------------------------------------------------
+                                   Debug prints
+----------------------------------------------------------------------------- */
+
+}  // namespace internal
 
 /* -----------------------------------------------------------------------------
                                    Type traits
