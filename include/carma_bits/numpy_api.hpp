@@ -13,6 +13,17 @@ namespace py = pybind11;
 
 namespace internal {
 
+inline void *get_data(PyArrayObject *src) { return PyArray_DATA(src); }
+inline bool is_aligned(const PyArrayObject *src) { return PyArray_CHKFLAGS(src, NPY_ARRAY_ALIGNED); }
+inline bool is_f_contiguous(const PyArrayObject *src) { return PyArray_CHKFLAGS(src, NPY_ARRAY_F_CONTIGUOUS); }
+inline bool is_c_contiguous(const PyArrayObject *src) { return PyArray_CHKFLAGS(src, NPY_ARRAY_C_CONTIGUOUS); }
+
+inline void set_not_writeable(PyArrayObject *src) { PyArray_CLEARFLAGS(src, NPY_ARRAY_WRITEABLE); }
+inline void set_not_owndata(PyArrayObject *src) { PyArray_CLEARFLAGS(src, NPY_ARRAY_OWNDATA); }
+
+inline void set_writeable(PyArrayObject *src) { PyArray_ENABLEFLAGS(src, NPY_ARRAY_WRITEABLE); }
+inline void set_owndata(PyArrayObject *src) { PyArray_ENABLEFLAGS(src, NPY_ARRAY_OWNDATA); }
+
 struct npy_api {
     typedef struct {
         Py_intptr_t *ptr;
