@@ -1,65 +1,57 @@
 #ifndef INCLUDE_CARMA_BITS_TO_ARMA_HPP_
 #define INCLUDE_CARMA_BITS_TO_ARMA_HPP_
 
-#include <Python.h>
-#define NPY_NO_DEPRECATED_API NPY_1_18_API_VERSION
-#include <numpy/arrayobject.h>
-#include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
-
 #include <armadillo>
+#include <carma_bits/array_view.hpp>
 #include <carma_bits/common.hpp>
-#include <carma_bits/numpy.hpp>
 #include <cstring>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <typeinfo>
 
-#define CARMA_DEBUG true
-
 namespace carma {
-
-namespace py = pybind11;
 
 namespace internal {
 
 template <typename armaT, iff_Row<armaT> = 0>
 inline armaT to_arma(const ArrayView& src) {
     using eT = typename armaT::elem_type;
-    arma::Row<eT> dest(src.data<eT>(), src.n_elem, src.copy_in, src.strict);
-    return dest;
+    return arma::Row<eT>(src.data<eT>(), src.n_elem, src.copy_in, src.strict);
 };
 
 template <typename armaT, iff_Col<armaT> = 1>
 inline armaT to_arma(const ArrayView& src) {
     using eT = typename armaT::elem_type;
-    arma::Col<eT> dest(src.data<eT>(), src.n_elem, src.copy_in, src.strict);
-    return dest;
+    return arma::Col<eT>(src.data<eT>(), src.n_elem, src.copy_in, src.strict);
 };
 
 template <typename armaT, iff_Mat<armaT> = 2>
 inline armaT to_arma(const ArrayView& src) {
     using eT = typename armaT::elem_type;
-    arma::Mat<eT> dest(src.data<eT>(), src.n_rows, src.n_cols, src.copy_in, src.strict);
-    return dest;
+    return arma::Mat<eT>(src.data<eT>(), src.n_rows, src.n_cols, src.copy_in, src.strict);
 };
 
 template <typename armaT, iff_Cube<armaT> = 3>
 inline armaT to_arma(const ArrayView& src) {
     using eT = typename armaT::elem_type;
-    arma::Cube<eT> dest(src.data<eT>(), src.n_rows, src.n_cols, src.n_slices, src.copy_in, src.strict);
-    return dest;
+    return arma::Cube<eT>(src.data<eT>(), src.n_rows, src.n_cols, src.n_slices, src.copy_in, src.strict);
+};
+
+// catch against unknown armaT with nicer to understand compile time issue
+template <typename armaT, std::enable_if_t<!is_Arma<armaT>::value>>
+inline armaT to_arma(const ArrayView&) {
+    static_assert(!is_Arma<armaT>::value, "|carma| encountered unhandled armaT.");
 };
 
 /**
  * \brief Give armadillo object ownership of memory
  *
  * \details Armadillo will free the memory during destruction when the `mem_state == 0` and
- * when `n_alloc > arma_config::mat_prealloc`.
- * In cases where the number of elements is below armadillo's pre-allocation limit
- * the memory will be copied in. This means that we have to free the memory if a copy
- * of an array was stolen.
+ *          when `n_alloc > arma_config::mat_prealloc`.
+ *          In cases where the number of elements is below armadillo's pre-allocation limit
+ *          the memory will be copied in. This means that we have to free the memory if a copy
+ *          of an array was stolen.
  *
  * \param[in]   dest    arma object to be given ownership
  * \param[in]   src     the view of the object from which to take ownership
@@ -148,18 +140,18 @@ class FitsArmaType {
 /**
  * \brief Borrow the Numpy array's memory
  *
- * \details    Convert the Numpy array to `armaT` by borrowing the
- *             memory, aka a mutable view on the memory.
- *             The resulting arma object is strict and does not
- *             own the data.
- *             Borrowing is a good choice when you want to set/change
- *             values but the shape of the object will not change
+ * \details Convert the Numpy array to `armaT` by borrowing the
+ *          memory, aka a mutable view on the memory.
+ *          The resulting arma object is strict and does not
+ *          own the data.
+ *          Borrowing is a good choice when you want to set/change
+ *          values but the shape of the object will not change
  *
- *             In order to borrow an array it's memory order should
- *             be:
- *                 * writeable
- *                 * aligned and contiguous
- *                 * compatible with the specified `memory_order_policy`
+ *          In order to borrow an array it's memory order should
+ *          be:
+ *              * writeable
+ *              * aligned and contiguous
+ *              * compatible with the specified `memory_order_policy`
  *
  * \param[in]   src    the view of the numpy array
  * \return arma object
@@ -192,7 +184,7 @@ struct BorrowConverter {
  */
 struct ViewConverter {
     template <typename armaT, iff_Arma<armaT> = 0>
-    const armaT get(const internal::ArrayView& src) {
+    armaT get(const internal::ArrayView& src) {
         return internal::to_arma<armaT>(src);
     };
 #ifdef CARMA_DEBUG
@@ -203,12 +195,12 @@ struct ViewConverter {
 /**
  * \brief Convert by copying the Numpy array's memory
  *
- * \details    Convert the Numpy array to `armaT` by copying the
- *             memory. The resulting arma object is _not_ strict
- *             and owns the data.
+ * \details Convert the Numpy array to `armaT` by copying the
+ *          memory. The resulting arma object is _not_ strict
+ *          and owns the data.
  *
- *             The copy converter does not have any requirements
- *             with regard to the memory
+ *          The copy converter does not have any requirements
+ *          with regard to the memory
  *
  * \param[in]   src    the view of the numpy array
  * \return arma object
@@ -229,20 +221,20 @@ struct CopyConverter {
 /**
  * \brief Convert by taking ownership of the Numpy array's memory
  *
- * \details    Convert the Numpy array to `armaT` by transfering
- *             ownership of the memory to the armadillo object.
- *             The resulting arma object is _not_ strict
- *             and owns the data.
+ * \details Convert the Numpy array to `armaT` by transfering
+ *          ownership of the memory to the armadillo object.
+ *          The resulting arma object is _not_ strict
+ *          and owns the data.
  *
- *             After conversion the Numpy array will no longer own the
- *             memory, `owndata == false`.
+ *          After conversion the Numpy array will no longer own the
+ *          memory, `owndata == false`.
  *
- *             In order to take ownership, the array's memory order should
- *             be:
- *                 * owned by the array, aka not a view or alias
- *                 * writeable
- *                 * aligned and contiguous
- *                 * compatible with the specified `memory_order_policy`
+ *          In order to take ownership, the array's memory order should
+ *          be:
+ *              * owned by the array, aka not a view or alias
+ *              * writeable
+ *              * aligned and contiguous
+ *              * compatible with the specified `memory_order_policy`
  *
  * \param[in]   src    the view of the numpy array
  * \return arma object
@@ -305,6 +297,16 @@ using iff_mutable_Converter =
 /* --------------------------------------------------------------
                     Memory order policies
 -------------------------------------------------------------- */
+
+/**
+ * \brief Memory order policy that looks for C-order contiguous arrays
+ *        and transposes them.
+ * \details The TransposedRowOrder memory_order_policy expects
+ *          that input arrays are row-major/C-order and converts them
+ *          to column-major/F-order by transposing the array.
+ *          If the array does not have the right order it is marked
+ *          to be copied to the right order.
+ */
 struct TransposedRowOrder {
     template <typename aramT, iff_Row<aramT> = 0>
     void check(internal::ArrayView& src) {
@@ -339,6 +341,13 @@ struct TransposedRowOrder {
 #endif
 };
 
+/**
+ * \brief Memory order policy that looks for F-order contiguous arrays.
+ * \details The ColumnOrder memory_order_policy expects
+ *          that input arrays are column-major/F-order.
+ *          If the array does not have the right order it is marked
+ *          to be copied to the right order.
+ */
 struct ColumnOrder {
     template <typename aramT, iff_Row<aramT> = 0>
     void check(internal::ArrayView& src) {
@@ -373,6 +382,16 @@ struct ColumnOrder {
 };
 
 template <typename T>
+struct is_ColumnOrder {
+    static constexpr bool value = std::is_same_v<T, ColumnOrder>;
+};
+
+template <typename T>
+struct is_TransposedRowOrder {
+    static constexpr bool value = std::is_same_v<T, TransposedRowOrder>;
+};
+
+template <typename T>
 struct is_MemoryOrderPolicy {
     static constexpr bool value = (std::is_same_v<T, ColumnOrder> || std::is_same_v<T, TransposedRowOrder>);
 };
@@ -381,11 +400,44 @@ struct is_MemoryOrderPolicy {
                     Resolution policies
 -------------------------------------------------------------- */
 
+namespace internal {
+
+#ifdef CARMA_DEBUG
+template <typename converter, bool CopySwapResolution = false>
+inline void carma_debug_print(const internal::ArrayView& src) {
+    if constexpr (is_MoveConverter<converter>::value) {
+        std::cout << "|carma| array " << src.arr << " does not meet MoveConverter conditions\n";
+    } else if constexpr (is_ViewConverter<converter>::value) {
+        std::cout << "|carma| array " << src.arr << " does not meet ViewConverter conditions\n";
+    } else if constexpr (is_BorrowConverter<converter>::value && CopySwapResolution == true) {
+        std::cout << "|carma| array " << src.arr << " requires copy-swap to meet BorrowConverter conditions\n";
+    }
+}
+#else
+template <typename... T>
+inline void carma_debug_print(const internal::ArrayView&){};
+#endif
+
+inline std::string get_array_address(const ArrayView& src) {
+    std::ostringstream stream;
+    stream << "|carma| array " << src.arr;
+    return stream.str();
+}
+
+}  // namespace internal
+
+/**
+ * \brief Resolution policy that allows (silent) copying to meet the required conditions when required.
+ * \details The CopyResolution is the default resolution policy and will copy the input array when
+ *          needed and possible. CopyResolution policy cannot resolve when the BorrowConverter is used,
+ *          the CopySwapResolution policy can handle this scenario.
+ */
 struct CopyResolution {
     template <typename armaT, typename converter, iff_BorrowConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy || (!src.writeable))) {
-            throw std::runtime_error("|carma| Cannot borrow an array that requires a copy");
+            throw std::runtime_error(internal::get_array_address(src) +
+                                     " does not meet BorrowConverter conditions and would require a copy");
         }
         return BorrowConverter().get<armaT>(src);
     }
@@ -398,14 +450,16 @@ struct CopyResolution {
     template <typename armaT, typename converter, iff_MoveConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy || (!src.owndata) || (!src.writeable))) {
+            internal::carma_debug_print<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return MoveConverter().get<armaT>(src);
     }
 
     template <typename armaT, typename converter, iff_ViewConverter<converter> = 0>
-    const armaT resolve(internal::ArrayView& src) {
+    armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
+            internal::carma_debug_print<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return ViewConverter().get<armaT>(src);
@@ -415,11 +469,18 @@ struct CopyResolution {
 #endif
 };
 
+/**
+ * \brief Resolution policy that raises an runtime exception when the required conditions are not met.
+ * \details The RaiseResolution is the strictest policy and will raise an exception if any condition is
+ *          not met, in contrast the CopyResolution will silently copy when it needs and can.
+ *          This policy should be used when silent copies are undesired or prohibitively expensive.
+ */
 struct RaiseResolution {
     template <typename armaT, typename converter, iff_BorrowConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy || (!src.writeable))) {
-            throw std::runtime_error("|carma| Cannot borrow an array that is ill-conditioned");
+            throw std::runtime_error(internal::get_array_address(src) +
+                                     " does not meet BorrowConverter conditions and would require a copy");
         }
         return BorrowConverter().get<armaT>(src);
     }
@@ -432,15 +493,17 @@ struct RaiseResolution {
     template <typename armaT, typename converter, iff_MoveConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy || (!src.owndata) || (!src.writeable))) {
-            throw std::runtime_error("|carma| Cannot take ownership of an array that is ill-conditioned");
+            throw std::runtime_error(internal::get_array_address(src) +
+                                     " does not meet MoveConverter conditions and would require a copy");
         }
         return MoveConverter().get<armaT>(src);
     }
 
     template <typename armaT, typename converter, iff_ViewConverter<converter> = 0>
-    const armaT resolve(internal::ArrayView& src) {
+    armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
-            throw std::runtime_error("|carma| Cannot create view of an array that is ill-conditioned");
+            throw std::runtime_error(internal::get_array_address(src) +
+                                     " does not meet ViewConverter conditions and would require a copy");
         }
         return ViewConverter().get<armaT>(src);
     };
@@ -448,12 +511,26 @@ struct RaiseResolution {
     static constexpr std::string_view name_ = "RaiseResolution";
 #endif
 };
+
+/**
+ * \brief Resolution policy that allows (silent) copying to meet the required conditions when required even with
+ *        BorrowConverter.
+ * \details The CopySwapResolution is behaves identically to CopyResolution policy with the exception
+ *          that it can handle ill conditioned and/or arrays with the wrong memory layout.
+ *          An exception is raised when the array does not own it's memory or is marked as not writeable.
+ * \warning CopySwapResolution handles ill conditioned memory by copying the array's memory to the right state
+ *          and swapping it in the place of the existing memory. This makes use of an deprecated numpy function
+ *          to directly interface with the array fields. As such this resolution policy should be considered
+ *          experimental. This policy will likely not work with Numpy >= v2.0
+ */
 struct CopySwapResolution {
     template <typename armaT, typename converter, iff_BorrowConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY((!src.writeable) || (!src.owndata))) {
-            throw std::runtime_error("|carma| Cannot CopySwap an array that does not own the data or is not writeable");
+            throw std::runtime_error(internal::get_array_address(src) +
+                                     " cannot copy-swapped as it does not own the data or is not writeable");
         } else if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
+            internal::carma_debug_print<converter, true>(src);
             src.swap_copy();
         }
         return BorrowConverter().get<armaT>(src);
@@ -467,14 +544,16 @@ struct CopySwapResolution {
     template <typename armaT, typename converter, iff_MoveConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy || (!src.owndata) || (!src.writeable))) {
+            internal::carma_debug_print<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return MoveConverter().get<armaT>(src);
     }
 
     template <typename armaT, typename converter, iff_ViewConverter<converter> = 0>
-    const armaT resolve(internal::ArrayView& src) {
+    armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
+            internal::carma_debug_print<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return ViewConverter().get<armaT>(src);
@@ -513,7 +592,7 @@ struct is_ResolutionPolicy {
 #endif  // CARMA_DEFAULT_LVALUE_CONVERTER
 
 #ifndef CARMA_DEFAULT_CONST_LVALUE_CONVERTER
-#define CARMA_DEFAULT_CONST_LVALUE_CONVERTER carma::ViewConverter
+#define CARMA_DEFAULT_CONST_LVALUE_CONVERTER carma::CopyConverter
 #endif  // CARMA_DEFAULT_CONST_LVALUE_CONVERTER
 
 #ifndef CARMA_DEFAULT_RESOLUTION
@@ -563,7 +642,7 @@ namespace internal {
 
 #if defined(CARMA_EXTRA_DEBUG)
 
-template <typename numpyT, typename armaT, typename converter, typename resolution_policy, typename memory_order_policy>
+template <typename armaT, typename numpyT, typename converter, typename resolution_policy, typename memory_order_policy>
 struct npConverterInfo {
     using numpyT_ = numpyT;
     using armaT_ = armaT;
@@ -574,6 +653,7 @@ struct npConverterInfo {
         std::cout << "\n|----------------------------------------------------------|\n"
                   << "|                  CARMA CONVERSION DEBUG                  |"
                   << "\n|----------------------------------------------------------|\n|\n";
+        std::cout << "| Array address:           " << src.obj << "\n|\n";
         std::cout << "| Conversion configuration:\n"
                   << "| -------------------------\n"
                   << "| * from:                  " << get_full_typename<numpyT_>() << "\n"
@@ -604,12 +684,21 @@ struct npConverterInfo {
                                             : "none")
                   << "\n|\n";
 
+        // needed as memory_order_policy runs after this, we can't move this forward without
+        // catching a potential exception regarding fit which we simple avoid here.
+        bool order_copy;
+        if constexpr (is_ColumnOrder<mem_order_>::value) {
+            order_copy = src.contiguous != 2;
+        } else {
+            order_copy = src.contiguous != 1;
+        }
+
         if constexpr (!is_CopyConverter<converter_>::value) {
             std::cout << "| Copy if:\n"
                       << "| --------\n"
                       << "| * not aligned            [" << (src.aligned ? "false" : "true") << "]\n"
                       << "| * not contiguous         [" << (src.contiguous > 0 ? "false" : "true") << "]\n"
-                      << "| * wrong memory order     [" << (src.order_copy ? "true" : "false") << "]\n";
+                      << "| * wrong memory order     [" << (order_copy ? "true" : "false") << "]\n";
             if constexpr (is_BorrowConverter<converter_>::value) {
                 std::cout << "| * not writeable          [" << (src.writeable ? "false" : "true") << "]\n";
             } else if constexpr (is_MoveConverter<converter_>::value) {
@@ -631,9 +720,10 @@ struct npConverterInfo {
 
 */
 
-template <typename numpyT, typename armaT, typename converter, typename resolution_policy, typename memory_order_policy>
+template <typename armaT, typename converter, typename resolution_policy, typename memory_order_policy>
 struct npConverterImpl {
-    armaT operator()(numpyT src) {
+    template <typename numpyT>
+    armaT operator()(numpyT&& src) {
         static_assert(is_Numpy<numpyT, typename armaT::elem_type>::value,
                       "|carma| `numpyT` must be a specialisation of `py::array_t`.");
         static_assert(is_Arma<armaT>::value,
@@ -645,11 +735,11 @@ struct npConverterImpl {
         static_assert(not(is_MoveConverter<converter>::value && (!std::is_rvalue_reference_v<numpyT>)),
                       "|carma| [optional] `MoveConverter` is only enabled for r-value references");
 #endif
-        internal::ArrayView view(src);
+        ArrayView view(src);
 #ifdef CARMA_EXTRA_DEBUG
-        npConverterInfo<numpyT, armaT, converter, resolution_policy, memory_order_policy>()(view);
+        npConverterInfo<armaT, numpyT, converter, resolution_policy, memory_order_policy>()(view);
 #endif  // CARMA_EXTRA_DEBUG
-        internal::FitsArmaType().check<armaT>(view);
+        FitsArmaType().check<armaT>(view);
         memory_order_policy().template check<armaT>(view);
         return resolution_policy().template resolve<armaT, converter>(view);
     }
@@ -660,10 +750,10 @@ struct npConverterImpl {
                                 npConverterBase
 
 */
-template <typename numpyT, typename armaT, typename converter, typename resolution_policy = CARMA_DEFAULT_RESOLUTION,
+template <typename armaT, typename numpyT, typename converter, typename resolution_policy = CARMA_DEFAULT_RESOLUTION,
           typename memory_order_policy = CARMA_DEFAULT_MEMORY_ORDER>
 struct npConverterBase {
-    armaT operator()(numpyT src) {
+    armaT operator()(numpyT&& src) {
         // check template arguments
         static_assert(is_Converter<converter>::value,
                       "|carma| `converter` must be one of: BorrowConverter, CopyConverter, ViewConverter or "
@@ -673,194 +763,33 @@ struct npConverterBase {
             "|carma| `resolution_policy` must be one of: CopyResolution, RaiseResolution, CopySwapResolution.");
         static_assert(is_MemoryOrderPolicy<memory_order_policy>::value,
                       "|carma| `memory_order_policy` must be one of: ColumnOrder, TransposedRowOrder.");
-        auto conv = internal::npConverterImpl<numpyT, armaT, converter, resolution_policy, memory_order_policy>();
-        if constexpr (std::is_rvalue_reference_v<numpyT>) {
-            return conv(std::move(src));
+        return internal::npConverterImpl<armaT, converter, resolution_policy, memory_order_policy>()(
+            std::forward<numpyT>(src));
+    }
+};
+
+template <typename armaT, typename resolution_policy = CARMA_DEFAULT_RESOLUTION,
+          typename memory_order_policy = CARMA_DEFAULT_MEMORY_ORDER>
+struct toArma {
+    template <typename numpyT>
+    armaT operator()(numpyT&& src) {
+        if constexpr (std::is_rvalue_reference_v<decltype(src)>) {
+            return internal::npConverterImpl<armaT, MoveConverter, resolution_policy, memory_order_policy>()
+                .template operator()<decltype(src)>(std::forward<numpyT>(src));
+        } else if constexpr (std::is_const_v<std::remove_reference_t<armaT>>) {
+            return internal::npConverterImpl<armaT, ViewConverter, resolution_policy, memory_order_policy>()(
+                std::forward<numpyT>(src));
+        } else if constexpr (std::is_const_v<std::remove_reference_t<decltype(src)>>) {
+            return internal::npConverterImpl<armaT, CARMA_DEFAULT_CONST_LVALUE_CONVERTER, resolution_policy,
+                                             memory_order_policy>()(std::forward<numpyT>(src));
         } else {
-            return conv(src);
+            return internal::npConverterImpl<armaT, CARMA_DEFAULT_LVALUE_CONVERTER, resolution_policy,
+                                             memory_order_policy>()(std::forward<numpyT>(src));
         }
     }
 };
 
 }  // namespace internal
-
-/*
-
-                                npConverter
-
-*/
-
-/**
- * \brief Configurable Numpy to Armadillo converter.
- * \details npConverter should be used when you want to configure a specific conversion strategy for specific arma or
- * numpy types.
- *
- * \tparam numpyT    pybind11::array_t specialisation
- * \tparam armaT     armadillo type
- * \tparam config    carma::ConversionConfig object
- * \return armaT     the created armadillo object
- */
-template <typename numpyT, typename armaT, typename config>
-struct npConverter {
-    armaT operator()(numpyT src) {
-        static_assert(is_ConversionConfig<config>::value,
-                      "|carma| config must be a specialisation of `ConversionConfig`");
-        auto conv = internal::npConverterImpl<numpyT, armaT, typename config::converter_, typename config::resolution_,
-                                              typename config::mem_order_>();
-        if constexpr (std::is_rvalue_reference_v<numpyT>) {
-            return conv(std::move(src));
-        } else {
-            return conv(src);
-        }
-    };
-};
-
-/*
-
-                                arr_to_row
-
-*/
-
-/**
- * \brief Configurable Numpy to arma::Row converter.
- * \details this converter should be used when you want to use a specific configuration
- * for pybind11::array_t specialisations.
- *
- * \tparam eT        element type
- * \tparam numpyT    pybind11::array_t specialisation
- * \tparam config    carma::ConversionConfig object
- * \return armaT     the created armadillo object
- */
-template <typename eT, typename numpyT, typename config>
-auto arr_to_row(numpyT arr) {
-    return npConverter<numpyT, arma::Row<eT>, config>()(arr);
-}
-
-/**
- * \brief Converter to arma::Row for l-value references.
- * \details By default the BorrowConverter is used which requires
- *          that the numpy array is mutable, and well-behaved.
- *
- *
- * \tparam eT element type
- * \tparam converter the converter to use, default is BorrowConverter.
- *                   Options are BorrowConverter, CopyConverter, ViewConverter
- * \param[in] arr pybind11 array to be converted
- * \return arma::Row<eT> the created armadillo object
- */
-template <typename eT, typename converter = CARMA_DEFAULT_LVALUE_CONVERTER>
-auto arr_to_row(py::array_t<eT>& arr) {
-    return internal::npConverterBase<py::array_t<eT>&, arma::Row<eT>, converter>()(arr);
-}
-
-/**
- * \brief Default converter to arma::Row for const l-value references.
- * \details By default the ViewConverter is used which requires
- *          that the numpy array is well-behaved.
- *
- *
- * \tparam eT element type
- * \tparam converter the converter to use, default is ViewConverter.
- *                   Options are CopyConverter, ViewConverter.
- * \param[in] arr pybind11 array to be converted
- * \return arma::Row<eT> the created armadillo object
- */
-template <typename eT, typename converter = CARMA_DEFAULT_CONST_LVALUE_CONVERTER>
-auto arr_to_row(const py::array_t<eT>& arr) {
-    return internal::npConverterBase<const py::array_t<eT>&, arma::Row<eT>, converter>()(arr);
-}
-
-/**
- * \brief Converter to arma::Row for r-value references.
- * \details By default the MoveConverter is used which requires
- *          that the numpy array is well-behaved.
- *
- *
- * \tparam eT element type
- * \tparam converter the converter to use, default is MoveConverter.
- *                   Options are CopyConverter, MoveConverter
- * \param[in] arr pybind11 array to be converted
- * \return arma::Row<eT> the created armadillo object
- */
-template <typename eT, typename converter = MoveConverter>
-auto arr_to_row(py::array_t<eT>&& arr) {
-    return internal::npConverterBase<py::array_t<eT>&&, arma::Row<eT>, converter>()(arr);
-}
-
-/*
-
-                                arr_to_col
-
-*/
-template <typename eT, typename numpyT, typename config>
-auto arr_to_col(numpyT arr) {
-    return npConverter<numpyT, arma::Col<eT>, config>()(arr);
-}
-
-template <typename eT, typename converter = CARMA_DEFAULT_LVALUE_CONVERTER>
-auto arr_to_col(py::array_t<eT>& arr) {
-    return internal::npConverterBase<py::array_t<eT>&, arma::Col<eT>, converter>()(arr);
-}
-
-template <typename eT, typename converter = CARMA_DEFAULT_CONST_LVALUE_CONVERTER>
-auto arr_to_col(const py::array_t<eT>& arr) {
-    return internal::npConverterBase<const py::array_t<eT>&, arma::Col<eT>, converter>()(arr);
-}
-
-template <typename eT, typename converter = MoveConverter>
-auto arr_to_col(py::array_t<eT>&& arr) {
-    return internal::npConverterBase<py::array_t<eT>&&, arma::Col<eT>, converter>()(arr);
-}
-
-/*
-
-                                arr_to_mat
-
-*/
-template <typename eT, typename numpyT, typename config>
-auto arr_to_mat(numpyT arr) {
-    return npConverter<numpyT, arma::Mat<eT>, config>()(arr);
-}
-
-template <typename eT, typename converter = CARMA_DEFAULT_LVALUE_CONVERTER>
-auto arr_to_mat(py::array_t<eT>& arr) {
-    return internal::npConverterBase<py::array_t<eT>&, arma::Mat<eT>, converter>()(arr);
-}
-
-template <typename eT, typename converter = CARMA_DEFAULT_CONST_LVALUE_CONVERTER>
-auto arr_to_mat(const py::array_t<eT>& arr) {
-    return internal::npConverterBase<const py::array_t<eT>&, arma::Mat<eT>, converter>()(arr);
-}
-
-template <typename eT, typename converter = MoveConverter>
-auto arr_to_mat(py::array_t<eT>&& arr) {
-    return internal::npConverterBase<py::array_t<eT>&&, arma::Mat<eT>, converter>()(arr);
-}
-
-/*
-
-                                arr_to_cube
-
-*/
-template <typename eT, typename numpyT, typename config>
-auto arr_to_cube(numpyT arr) {
-    return npConverter<numpyT, arma::Cube<eT>, config>()(arr);
-}
-
-template <typename eT, typename converter = CARMA_DEFAULT_LVALUE_CONVERTER>
-auto arr_to_cube(py::array_t<eT>& arr) {
-    return internal::npConverterBase<py::array_t<eT>&, arma::Cube<eT>, converter>()(arr);
-}
-
-template <typename eT, typename converter = CARMA_DEFAULT_CONST_LVALUE_CONVERTER>
-auto arr_to_cube(const py::array_t<eT>& arr) {
-    return internal::npConverterBase<const py::array_t<eT>&, arma::Cube<eT>, converter>()(arr);
-}
-
-template <typename eT, typename converter = MoveConverter>
-auto arr_to_cube(py::array_t<eT>&& arr) {
-    return internal::npConverterBase<py::array_t<eT>&&, arma::Cube<eT>, converter>()(arr);
-}
 
 }  // namespace carma
 #endif  // INCLUDE_CARMA_BITS_TO_ARMA_HPP_
