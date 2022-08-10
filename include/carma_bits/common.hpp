@@ -12,16 +12,41 @@
 #include <type_traits>
 #include <typeinfo>
 
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) || \
+    defined(__BORLANDC__)
+#define OS_WIN
+#endif
+
+// Fix for lack of ssize_t on Windows for CPython3.10
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4127)  // warning C4127: Conditional expression is constant
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
+#ifndef CARMA_DEFINED_EXPECT
+#if defined(__has_builtin) && __has_builtin(__builtin_expect)
+#define CARMA_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
+#define CARMA_LIKELY(expr) __builtin_expect(!!(expr), 1)
+#define CARMA_DEFINED_EXPECT
+#elif defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3)
+#define CARMA_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
+#define CARMA_LIKELY(expr) __builtin_expect(!!(expr), 1)
+#define CARMA_DEFINED_EXPECT
+#else
+#define CARMA_UNLIKELY(expr) (!!(expr))
+#define CARMA_LIKELY(expr) (!!(expr))
+#define CARMA_DEFINED_EXPECT
+#endif  // CARMA_LIKELY
+#endif  // CARMA_DEFINED_EXPECT
+
 namespace carma {
 
 namespace py = pybind11;
 
 namespace internal {
-// FIXME handle portability
-#define CARMA_LIKELY(expr) __builtin_expect((expr), 1)
-#define CARMA_UNLIKELY(expr) __builtin_expect((expr), 0)
-
-#if defined __GNUG__ || defined __clang__  // gnu C++ compiler
+#if defined(__GNUG__) || defined(__clang__)
 
 inline std::string demangle(const char* mangled_name) {
     std::size_t len = 0;
@@ -49,10 +74,6 @@ inline std::string get_full_typename() {
     }
     return name;
 }
-
-/* -----------------------------------------------------------------------------
-                                   Debug prints
------------------------------------------------------------------------------ */
 
 }  // namespace internal
 
