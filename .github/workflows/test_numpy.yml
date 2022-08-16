@@ -49,7 +49,7 @@ jobs:
             cxx: "g++-9",
             generators: "Ninja",
             target: "all",
-            numpy: "numpy==1.14.6"
+            numpy: "numpy==1.18.5"
           }
         - {
             name: "Latest Numpy version",
@@ -59,7 +59,7 @@ jobs:
             cxx: "g++-9",
             generators: "Ninja",
             target: "all",
-            numpy: "numpy>1.14.6"
+            numpy: "numpy"
           }
 
     steps:
