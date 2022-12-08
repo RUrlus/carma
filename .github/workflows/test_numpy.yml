@@ -45,8 +45,8 @@ jobs:
             name: "Minimum Numpy version",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "gcc-9",
-            cxx: "g++-9",
+            cc: "gcc-11",
+            cxx: "g++-11",
             generators: "Ninja",
             target: "all",
             numpy: "numpy==1.18.5"
@@ -55,8 +55,8 @@ jobs:
             name: "Latest Numpy version",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "gcc-9",
-            cxx: "g++-9",
+            cc: "gcc-11",
+            cxx: "g++-11",
             generators: "Ninja",
             target: "all",
             numpy: "numpy"

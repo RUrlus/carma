@@ -43,8 +43,8 @@ jobs:
             name: "Default settings",
             os: ubuntu-latest,
             build_type: "Debug",
-            cc: "gcc-9",
-            cxx: "g++-9",
+            cc: "gcc-11",
+            cxx: "g++-11",
             generators: "Ninja",
             target: "all",
             options: ""
@@ -53,8 +53,8 @@ jobs:
             name: "Hard steal",
             os: ubuntu-latest,
             build_type: "Debug",
-            cc: "gcc-9",
-            cxx: "g++-9",
+            cc: "gcc-11",
+            cxx: "g++-11",
             generators: "Ninja",
             target: "all",
             options: "-DENABLE_CARMA_HARD_STEAL=ON"
@@ -63,8 +63,8 @@ jobs:
             name: "Soft steal",
             os: ubuntu-latest,
             build_type: "Debug",
-            cc: "gcc-9",
-            cxx: "g++-9",
+            cc: "gcc-11",
+            cxx: "g++-11",
             generators: "Ninja",
             target: "all",
             options: "-DENABLE_CARMA_HARD_STEAL=ON"
@@ -73,21 +73,21 @@ jobs:
             name: "Not own data",
             os: ubuntu-latest,
             build_type: "Debug",
-            cc: "gcc-9",
-            cxx: "g++-9",
+            cc: "gcc-11",
+            cxx: "g++-11",
             generators: "Ninja",
             target: "all",
             options: "-DENABLE_CARMA_DONT_REQUIRE_OWNDATA=ON"
           }
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: '3.10'
 
       - uses: seanmiddleditch/gha-setup-ninja@master
 

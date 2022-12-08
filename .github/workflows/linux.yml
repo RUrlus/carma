@@ -40,20 +40,20 @@ jobs:
         python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
         config: 
         - {
-            name: "Ubuntu (Clang-10)",
+            name: "Ubuntu (Clang-14)",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "clang-10",
-            cxx: "clang++-10",
+            cc: "clang-14",
+            cxx: "clang++-14",
             generators: "Ninja",
             target: "all"
           }
         - {
-            name: "Ubuntu (GCC-9)",
+            name: "Ubuntu (GCC-11)",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "gcc-9",
-            cxx: "g++-9",
+            cc: "gcc-11",
+            cxx: "g++-11",
             generators: "Ninja",
             target: "all"
           }
