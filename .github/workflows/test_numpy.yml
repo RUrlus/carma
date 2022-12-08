@@ -49,7 +49,8 @@ jobs:
             cxx: "g++-11",
             generators: "Ninja",
             target: "all",
-            numpy: "numpy==1.18.5"
+            numpy: "numpy==1.18.5",
+            python-version: "3.8"
           }
         - {
             name: "Latest Numpy version",
@@ -59,7 +60,8 @@ jobs:
             cxx: "g++-11",
             generators: "Ninja",
             target: "all",
-            numpy: "numpy"
+            numpy: "numpy",
+            python-version: "3.11"
           }
 
     steps:
@@ -69,7 +71,7 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.config.python-version }}
 
       - name: Install dependencies
         run: |
