@@ -59,8 +59,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Print env
         run: |
           echo github.event.action: ${{ github.event.action }}
@@ -68,7 +66,7 @@ jobs:
 
       - name: Install dependencies on macos
         run: |
-          python -m pip install cmake
+          python -m pip install cmake ninja
           ninja --version
           cmake --version
       
