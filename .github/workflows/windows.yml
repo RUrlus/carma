@@ -60,8 +60,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Print env
         run: |
           echo github.event.action: ${{ github.event.action }}
@@ -69,7 +67,7 @@ jobs:
 
       - name: Install dependencies on windows
         run: |
-          choco install cmake
+          choco install cmake ninja
           ninja --version
           cmake --version
 
