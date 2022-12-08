@@ -20,7 +20,7 @@ jobs:
           # All of these options are optional, so you can remove them if you are happy with the defaults
           cancel_others: 'true'
   build:
-    name: "Asan Python (Clang-10)"
+    name: "Asan Python (Clang-14)"
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
@@ -64,8 +64,8 @@ jobs:
             -DCARMA_BUILD_TESTS=ON \
             -DBUILD_NATIVE_TESTS=OFF \
             -DBUILD_PYTHON_TESTS=ON \
-            -DCMAKE_C_COMPILER=clang-10 \
-            -DCMAKE_CXX_COMPILER=clang++-10 \
+            -DCMAKE_C_COMPILER=clang-14 \
+            -DCMAKE_CXX_COMPILER=clang++-14 \
             -DCMAKE_INSTALL_PREFIX:PATH=. \
             -DPython3_EXECUTABLE=${PY_CMD} \
             -DCMAKE_BUILD_TYPE=Asan \
