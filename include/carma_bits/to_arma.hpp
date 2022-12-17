@@ -45,26 +45,6 @@ inline armaT to_arma(const ArrayView&) {
 };
 
 /**
- * \brief Give armadillo object ownership of memory
- *
- * \details Armadillo will free the memory during destruction when the `mem_state == 0` and
- *          when `n_alloc > arma_config::mat_prealloc`.
- *          In cases where the number of elements is below armadillo's pre-allocation limit
- *          the memory will be copied in. This means that we have to free the memory if a copy
- *          of an array was stolen.
- *
- * \param[in]   dest    arma object to be given ownership
- * \param[in]   src     the view of the object from which to take ownership
- * \return void
- */
-template <typename armaT, iff_Arma<armaT> = 0>
-inline void give_ownership(armaT& dest, ArrayView& src) {
-    arma::access::rw(dest.n_alloc) = src.n_elem;
-    arma::access::rw(dest.mem_state) = 0;
-    src.release_if_copied_in();
-}
-
-/**
  * \brief Check if array dimensions are compatible with arma type
  */
 class FitsArmaType {
@@ -210,9 +190,10 @@ struct CopyConverter {
     armaT get(internal::ArrayView& src) {
         src.steal_copy();
         auto dest = internal::to_arma<armaT>(src);
-        internal::give_ownership(dest, src);
+        src.give_ownership(dest);
         return dest;
     };
+
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "CopyConverter";
 #endif
@@ -244,7 +225,7 @@ struct MoveConverter {
     armaT get(internal::ArrayView& src) {
         src.take_ownership();
         auto dest = internal::to_arma<armaT>(src);
-        internal::give_ownership(dest, src);
+        src.give_ownership(dest);
         return dest;
     };
 #ifdef CARMA_DEBUG
@@ -727,7 +708,7 @@ struct npConverterImpl {
         static_assert(is_Numpy<numpyT, typename armaT::elem_type>::value,
                       "|carma| `numpyT` must be a specialisation of `py::array_t`.");
         static_assert(is_Arma<armaT>::value,
-                      "|carma| `armaT` must be a (subclass) of `arma::Row`, `arma::Col`, `arma::Mat` or `arma::Cube`.");
+                      "|carma| `armaT` must be a (subclass of) `arma::Row`, `arma::Col`, `arma::Mat` or `arma::Cube`.");
         static_assert(not((is_MoveConverter<converter>::value || is_BorrowConverter<converter>::value) &&
                           std::is_const_v<std::remove_reference_t<numpyT>>),
                       "|carma| BorrowConverter and MoveConverter cannot be used with `const py::array_t`.");

@@ -11,6 +11,7 @@
 #include <numpy/arrayobject.h>
 
 #include <armadillo>
+#include <carma_bits/common.hpp>
 #include <carma_bits/numpy_api.hpp>
 #include <cstring>
 #include <stdexcept>
@@ -74,6 +75,28 @@ class ArrayView {
         strict = false;
         copy_in = n_elem <= arma::arma_config::mat_prealloc;
         PyArray_CLEARFLAGS(arr, NPY_ARRAY_OWNDATA);
+    }
+
+    /**
+     * \brief Give armadillo object ownership of memory
+     *
+     * \details Armadillo will free the memory during destruction when the `mem_state == 0` and
+     *          when `n_alloc > arma_config::mat_prealloc`.
+     *          In cases where the number of elements is below armadillo's pre-allocation limit
+     *          the memory will be copied in. This means that we have to free the memory if a copy
+     *          of an array was stolen.
+     *
+     * \param[in]   dest    arma object to be given ownership
+     * \return void
+     */
+    template <typename armaT, iff_Arma<armaT> = 0>
+    inline void give_ownership(armaT& dest) {
+#ifdef CARMA_EXTRA_DEBUG
+        std::cout << "|carma| releasing ownership of array " << obj << "to " << (&dest) << "\n";
+#endif
+        arma::access::rw(dest.n_alloc) = n_elem;
+        arma::access::rw(dest.mem_state) = 0;
+        release_if_copied_in();
     }
 
     void release_if_copied_in() {
