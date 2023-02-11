@@ -25,6 +25,8 @@
 #include <iostream>
 #endif  // CARMA_EXTRA_DEBUG
 
+#include <carma_bits/converters.hpp>
+
 #if defined(CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET)
 #if ((!defined(ARMA_ALIEN_MEM_ALLOC_FUNCTION)) || (!defined(ARMA_ALIEN_MEM_FREE_FUNCTION)))
 #error \
@@ -69,7 +71,7 @@ class carma_config_debug_message {
         std::cout << "\n|----------------------------------------------------------|\n"
                   << "|                    CARMA CONFIGURATION                   |"
                   << "\n|----------------------------------------------------------|\n|\n";
-        std::cout << "| Carma version: " + carma_version.as_string() << "\n|\n";
+        std::cout << "| Carma version: " + carma_version().as_string() << "\n|\n";
         std::cout << "| Default Numpy to Arma conversion config:\n"
                   << "| ----------------------------------------\n"
                   << "| * l-value converter:                 " << CARMA_DEFAULT_LVALUE_CONVERTER::name_ << "\n"
@@ -94,7 +96,5 @@ static carma_config_debug_message carma_config_debug_message_print;
 #endif  // CARMA_EXTRA_DEBUG
 
 }  // namespace carma
-
-#include <carma_bits/converters.hpp>
 
 #endif  // INCLUDE_CARMA_
