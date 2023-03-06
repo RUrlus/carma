@@ -1,4 +1,0 @@
-sphinx
-sphinx-rtd-theme
-sphinxcontrib-napoleon
-docutils<0.18
