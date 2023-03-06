@@ -9,8 +9,8 @@
 #include <type_traits>
 #include <typeinfo>
 
-#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) || \
-    defined(__BORLANDC__)
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) \
+    || defined(__BORLANDC__)
 #define OS_WIN
 #endif
 
@@ -46,8 +46,9 @@ namespace internal {
 inline std::string demangle(const char* mangled_name) {
     std::size_t len = 0;
     int status = 0;
-    std::unique_ptr<char, decltype(&std::free)> ptr(__cxxabiv1::__cxa_demangle(mangled_name, nullptr, &len, &status),
-                                                    &std::free);
+    std::unique_ptr<char, decltype(&std::free)> ptr(
+        __cxxabiv1::__cxa_demangle(mangled_name, nullptr, &len, &status), &std::free
+    );
     return ptr.get();
 }
 
@@ -60,7 +61,8 @@ inline std::string demangle(const char* name) { return name; }
 template <typename T>
 inline std::string get_full_typename() {
     std::string name;
-    if (std::is_const_v<std::remove_reference_t<T>>) name += "const ";
+    if (std::is_const_v<std::remove_reference_t<T>>)
+        name += "const ";
     name += demangle(typeid(T).name());
     if (std::is_lvalue_reference_v<T>) {
         name += "&";

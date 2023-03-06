@@ -22,8 +22,8 @@ namespace py = pybind11;
 
 /**
  * \brief Configurable Numpy to Armadillo converter.
- * \details npConverter should be used when you want to configure a specific conversion strategy for specific arma or
- * numpy types.
+ * \details npConverter should be used when you want to configure a specific
+ * conversion strategy for specific arma or numpy types.
  *
  * \tparam armaT     armadillo type
  * \tparam numpyT    pybind11::array_t specialisation
@@ -34,10 +34,14 @@ template <typename armaT, typename numpyT, typename config>
 struct npConverter {
     using config_ = config;
     armaT operator()(numpyT&& src) {
-        static_assert(is_ConversionConfig<config>::value,
-                      "|carma| config must be a specialisation of `ConversionConfig`");
-        return internal::npConverterImpl<armaT, typename config::converter_, typename config::resolution_,
-                                         typename config::mem_order_>()
+        static_assert(
+            is_ConversionConfig<config>::value, "|carma| config must be a specialisation of `ConversionConfig`"
+        );
+        return internal::npConverterImpl<
+                   armaT,
+                   typename config::converter_,
+                   typename config::resolution_,
+                   typename config::mem_order_>()
             .template operator()<decltype(src)>(std::forward<numpyT>(src));
     };
 };
@@ -55,9 +59,11 @@ struct npConverter {
  */
 template <typename armaT, typename numpyT, typename converter>
 inline void static_conversion_assert(armaT, numpyT, converter) {
-    static_assert(not(is_ViewConverter<typename converter::config_::converter_>::value &&
-                      (!std::is_const_v<std::remove_reference_t<numpyT>>)),
-                  "numpyT should be const when using the ViewConverter.");
+    static_assert(
+        not(is_ViewConverter<typename converter::config_::converter_>::value
+            && (!std::is_const_v<std::remove_reference_t<numpyT>>)),
+        "numpyT should be const when using the ViewConverter."
+    );
 }
 
 /**
@@ -66,9 +72,9 @@ inline void static_conversion_assert(armaT, numpyT, converter) {
  *          The converter used is based on the the armaT and numpyT.
  *          If numpyT is an r-value reference the MoveConverter is used.
  *          If armaT is const qualified the ViewConverter is used.
- *          If numpyT is an l-value reference the CARMA_DEFAULT_LVALUE_CONVERTER is used, BorrowConverter by default.
- *          If numpyT is an const l-value reference the CARMA_DEFAULT_CONST_LVALUE_CONVERTER is used, CopyConverter by
- *          default.
+ *          If numpyT is an l-value reference the CARMA_DEFAULT_LVALUE_CONVERTER
+ * is used, BorrowConverter by default. If numpyT is an const l-value reference
+ * the CARMA_DEFAULT_CONST_LVALUE_CONVERTER is used, CopyConverter by default.
  *
  * \tparam armaT     armadillo type, cannot be deduced and must be specified
  * \tparam numpyT    pybind11::array_t specialisation, can often be deduced
@@ -129,8 +135,8 @@ auto arr_to_row(py::array_t<eT>&& arr) {
 
 /**
  * \brief Configurable Numpy to arma::Row converter.
- * \details this converter should be used when you want to use a specific configuration
- *          for pybind11::array_t specialisations.
+ * \details this converter should be used when you want to use a specific
+ * configuration for pybind11::array_t specialisations.
  *
  * \tparam eT            element type
  * \tparam config        carma::ConversionConfig object
@@ -191,8 +197,8 @@ auto arr_to_col(py::array_t<eT>&& arr) {
 
 /**
  * \brief Configurable Numpy to arma::Col converter.
- * \details this converter should be used when you want to use a specific configuration
- *          for pybind11::array_t specialisations.
+ * \details this converter should be used when you want to use a specific
+ * configuration for pybind11::array_t specialisations.
  *
  * \tparam eT            element type
  * \tparam config        carma::ConversionConfig object
@@ -253,8 +259,8 @@ auto arr_to_mat(py::array_t<eT>&& arr) {
 
 /**
  * \brief Configurable Numpy to arma::Mat converter.
- * \details this converter should be used when you want to use a specific configuration
- *          for pybind11::array_t specialisations.
+ * \details this converter should be used when you want to use a specific
+ * configuration for pybind11::array_t specialisations.
  *
  * \tparam eT            element type
  * \tparam config        carma::ConversionConfig object
@@ -315,8 +321,8 @@ auto arr_to_cube(py::array_t<eT>&& arr) {
 
 /**
  * \brief Configurable Numpy to arma::Cube converter.
- * \details this converter should be used when you want to use a specific configuration
- *          for pybind11::array_t specialisations.
+ * \details this converter should be used when you want to use a specific
+ * configuration for pybind11::array_t specialisations.
  *
  * \tparam eT            element type
  * \tparam config        carma::ConversionConfig object

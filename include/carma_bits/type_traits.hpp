@@ -32,8 +32,9 @@ struct is_instance {
 
 template <typename targetType, typename refType>
 struct is_same_stripped {
-    static constexpr bool value = (std::is_same_v<std::remove_cv_t<std::remove_reference_t<targetType>>, refType> ||
-                                   std::is_same_v<std::remove_cv_t<std::remove_reference_t<targetType>>, refType*>);
+    static constexpr bool value
+        = (std::is_same_v<std::remove_cv_t<std::remove_reference_t<targetType>>, refType>
+           || std::is_same_v<std::remove_cv_t<std::remove_reference_t<targetType>>, refType*>);
 };
 
 template <typename T>
@@ -53,7 +54,8 @@ using iff_Numpy = std::enable_if_t<is_Numpy<numpyT, eT>::value, int>;
 // Use Arma's approach
 // template <typename armaT, typename eT>
 // struct is_armaMat_only {
-//     static constexpr bool value = internal::is_same_stripped<armaT, arma::MatFixed>::value;
+//     static constexpr bool value = internal::is_same_stripped<armaT,
+//     arma::MatFixed>::value;
 // };
 
 template <typename armaT>

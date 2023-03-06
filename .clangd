@@ -1,0 +1,5 @@
+CompileFlags:
+  Add: [-Wall, -Wextra, -Wunused-variable, -Wunused-const-variable,]
+
+Completion:
+  AllScopes: true
