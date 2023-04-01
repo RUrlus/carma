@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Urlus"
+  given-names: "Ralph"
+title: "CARMA: bidirectional conversions between Numpy and Armadillo"
+version: 0.6.7
+doi: 10.5281/zenodo.7791193
+date-released: 2023-04-01
+url: "https://github.com/RUrlus/carma"

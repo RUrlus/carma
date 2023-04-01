@@ -20,6 +20,8 @@
 [![Documentation Status](https://readthedocs.org/projects/carma/badge/?version=latest)](https://carma.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/github/license/RUrlus/carma)](https://github.com/RUrlus/carma/blob/stable/LICENSE)
 [![Release](https://img.shields.io/github/v/release/rurlus/carma)](https://github.com/RUrlus/carma/releases)
+[![DOI](https://zenodo.org/badge/235867993.svg)](https://zenodo.org/badge/latestdoi/235867993)
+
 
 ## Introduction
 
