@@ -42,8 +42,8 @@ typedef SSIZE_T ssize_t;
 #ifndef CARMA_VERSION_MAJOR
   #define CARMA_VERSION_MAJOR 0
   #define CARMA_VERSION_MINOR 6
-  #define CARMA_VERSION_PATCH 6
-  #define CARMA_VERSION_NAME  "0.6.6 HO"
+  #define CARMA_VERSION_PATCH 7
+  #define CARMA_VERSION_NAME  "0.6.7 HO"
 #endif
 
 namespace carma {
