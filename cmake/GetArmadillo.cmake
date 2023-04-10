@@ -6,7 +6,7 @@ IF (NOT USE_ARMA_VERSION)
     SET(USE_ARMA_VERSION "${DEFAULT_ARMA_VERSION}" CACHE STRING "Choose the version of Armadillo." FORCE)
     # Set the possible values of build type for cmake-gui
     SET_PROPERTY(CACHE USE_ARMA_VERSION PROPERTY STRINGS
-        "10.6.x" "10.8.x" "11.2.x" "11.4.x" "12.0.x"
+        "10.6.x" "10.8.x" "11.2.x" "11.4.x" "12.2.x"
     )
 ENDIF ()
 
