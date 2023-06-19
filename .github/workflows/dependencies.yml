@@ -35,7 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        armadillo: ["10.6.x", "10.8.x", "11.2.x", "11.4.x", "12.2.x"]
+        armadillo: ["10.6.x", "10.8.x", "11.2.x", "11.4.x", "12.4.x"]
         pybind: ["v2.6.0", "v2.10.0"]
 
     steps:
