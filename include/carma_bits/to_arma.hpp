@@ -675,7 +675,7 @@ struct npConverterInfo {
                   << "| * memory_order_policy:   " << mem_order_::name_ << "\n|\n";
 
         std::string shape;
-        shape.reserve(8);
+        shape.reserve(10);
         shape = "(";
         for (int i = 0; i < src.n_dim; i++) {
             shape += std::to_string(src.shape[i]);

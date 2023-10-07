@@ -7,6 +7,7 @@
 #include <pybind11/pybind11.h>
 // include order matters here
 #include <Python.h>
+
 #define NPY_NO_DEPRECATED_API NPY_1_18_API_VERSION
 #include <numpy/arrayobject.h>
 
@@ -16,6 +17,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace carma {
 
@@ -23,7 +25,7 @@ namespace internal {
 
 class ArrayView {
    public:
-    std::array<ssize_t, 3> shape;
+    std::array<py::ssize_t, 4> shape;
     PyObject* obj;
     PyArrayObject* arr;
     void* mem;
@@ -52,15 +54,16 @@ class ArrayView {
           mem{PyArray_DATA(arr)},
           n_elem{static_cast<arma::uword>(src.size())},
           n_dim{static_cast<int>(src.ndim())},
-          contiguous{is_f_contiguous(arr)   ? 2
-                     : is_c_contiguous(arr) ? 1
-                                            : 0},
+          contiguous{
+              is_f_contiguous(arr)   ? 2
+              : is_c_contiguous(arr) ? 1
+                                     : 0},
           owndata{src.owndata()},
           writeable{src.writeable()},
-          aligned{is_aligned(arr)} {
-        int clipped_n_dim = n_dim < 3 ? n_dim : 3;
-        std::memcpy(shape.data(), src.shape(), clipped_n_dim * sizeof(ssize_t));
-        ill_conditioned = (!aligned) || (!static_cast<bool>(contiguous));
+          aligned{is_aligned(arr)},
+          ill_conditioned((!aligned) || (!static_cast<bool>(contiguous))) {
+        int clipped_n_dim = n_dim < 4 ? n_dim : 4;
+        std::memcpy(shape.data(), src.shape(), clipped_n_dim * sizeof(py::ssize_t));
     };
 
     template <typename eT>
