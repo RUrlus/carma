@@ -1,5 +1,4 @@
-#ifndef INCLUDE_CARMA_BITS_NUMPY_API_HPP_
-#define INCLUDE_CARMA_BITS_NUMPY_API_HPP_
+#pragma once
 
 #include <Python.h>
 #include <pybind11/numpy.h>
@@ -39,8 +38,16 @@ struct npy_api {
     int (*PyArray_Size_)(PyObject *src);
     int (*PyArray_CopyInto_)(PyArrayObject *dest, PyArrayObject *src);
     PyObject *(*PyArray_NewCopy_)(PyArrayObject *, int);
-    PyObject *(*PyArray_NewFromDescr_)(PyTypeObject *subtype, PyArray_Descr *descr, int nd, npy_intp const *dims,
-                                       npy_intp const *strides, void *data, int flags, PyObject *obj);
+    PyObject *(*PyArray_NewFromDescr_)(
+        PyTypeObject *subtype,
+        PyArray_Descr *descr,
+        int nd,
+        npy_intp const *dims,
+        npy_intp const *strides,
+        void *data,
+        int flags,
+        PyObject *obj
+    );
     void (*PyArray_Free_)(PyArrayObject *, void *ptr);
     PyObject *(*PyArray_NewLikeArray_)(PyArrayObject *prototype, NPY_ORDER order, PyArray_Descr *descr, int subok);
     void *(*PyDataMem_NEW_)(size_t nbytes);
@@ -81,4 +88,3 @@ struct npy_api {
 
 }  // namespace internal
 }  // namespace carma
-#endif  // INCLUDE_CARMA_BITS_NUMPY_API_HPP_

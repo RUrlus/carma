@@ -1,5 +1,4 @@
-#ifndef INCLUDE_CARMA_BITS_ARRAY_VIEW_HPP_
-#define INCLUDE_CARMA_BITS_ARRAY_VIEW_HPP_
+#pragma once
 
 // pybind11 include required even if not explicitly used
 // to prevent link with pythonXX_d.lib on Win32
@@ -193,4 +192,3 @@ class ArrayView {
 
 }  // namespace internal
 }  // namespace carma
-#endif  // INCLUDE_CARMA_BITS_ARRAY_VIEW_HPP_

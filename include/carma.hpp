@@ -1,10 +1,9 @@
 /*  carma/carma: Bidirectional coverter of Numpy arrays and Armadillo objects
- *  Copyright (c) 2022 Ralph Urlus <rurlus.dev@gmail.com>
+ *  Copyright (c) 2023 Ralph Urlus <rurlus.dev@gmail.com>
  *  All rights reserved. Use of this source code is governed by a
  *  Apache-2.0 license that can be found in the LICENSE file.
  */
-#ifndef INCLUDE_CARMA_
-#define INCLUDE_CARMA_
+#pragma once
 
 /* If the Numpy allocator/deallocator have not been set through
  * the carma_armadillo target ARMA_ALIEN_MEM_ALLOC_FUNCTION and
@@ -97,5 +96,3 @@ static carma_config_debug_message carma_config_debug_message_print;
 #endif  // CARMA_EXTRA_DEBUG
 
 }  // namespace carma
-
-#endif  // INCLUDE_CARMA_

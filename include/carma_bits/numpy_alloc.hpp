@@ -3,8 +3,7 @@
  *  All rights reserved. Use of this source code is governed by a
  *  Apache-2.0 license that can be found in the LICENSE file.
  */
-#ifndef INCLUDE_CARMA_BITS_NUMPY_ALLOC_HPP_
-#define INCLUDE_CARMA_BITS_NUMPY_ALLOC_HPP_
+#pragma once
 
 // pybind11 include required even if not explicitly used
 // to prevent link with pythonXX_d.lib on Win32
@@ -36,7 +35,7 @@ inline void npy_free(void* ptr) {
     const auto& api = internal::npy_api::get();
 #ifdef CARMA_EXTRA_DEBUG
     std::cout << "|carma| freeing " << ptr << "\n";
-#endif  // ARMA_EXTRA_DEBUG
+#endif  // CARMA_EXTRA_DEBUG
     api.PyDataMem_FREE_(ptr);
 }  // npy_free
 
@@ -51,4 +50,3 @@ inline void npy_free(void* ptr) {
 #ifndef CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET
 #define CARMA_ARMA_ALIEN_MEM_FUNCTIONS_SET true
 #endif
-#endif  // INCLUDE_CARMA_BITS_NUMPY_ALLOC_HPP_

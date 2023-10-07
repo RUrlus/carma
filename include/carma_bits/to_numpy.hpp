@@ -1,5 +1,4 @@
-#ifndef INCLUDE_CARMA_BITS_TO_NUMPY_HPP_
-#define INCLUDE_CARMA_BITS_TO_NUMPY_HPP_
+#pragma once
 
 #include <armadillo>
 #include <carma_bits/common.hpp>
@@ -9,6 +8,17 @@
 namespace carma {
 
 namespace internal {
+
+// https://github.com/pybind/pybind11/issues/1042#issuecomment-642215028
+// template <typename armaT>
+// inline py::array_t<typename armaT::value_type> as_pyarray(armaT &&seq) {
+//     auto size = seq.size();
+//     auto data = seq.data();
+//     std::unique_ptr<armaT> seq_ptr = std::make_unique<armaT>(std::move(seq));
+//     auto capsule = py::capsule(seq_ptr.get(), [](void *p) { std::unique_ptr<armaT>(reinterpret_cast<armaT*>(p)); });
+//     seq_ptr.release();
+//     return py::array(size, data, capsule);
+// }
 
 template <typename armaT>
 inline py::capsule create_capsule(armaT data) {
@@ -89,4 +99,3 @@ py::array_t<eT> create_reference_array(const ArmaView& src);
 
 }  // namespace internal
 }  // namespace carma
-#endif  // INCLUDE_CARMA_BITS_TO_NUMPY_HPP_

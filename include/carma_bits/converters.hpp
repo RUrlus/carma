@@ -1,5 +1,4 @@
-#ifndef INCLUDE_CARMA_BITS_CONVERTERS_HPP_
-#define INCLUDE_CARMA_BITS_CONVERTERS_HPP_
+#pragma once
 
 #include <armadillo>
 #include <carma_bits/array_view.hpp>
@@ -335,4 +334,3 @@ auto arr_to_cube(numpyT arr) {
 }
 
 }  // namespace carma
-#endif  // INCLUDE_CARMA_BITS_CONVERTERS_HPP_

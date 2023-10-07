@@ -1,5 +1,4 @@
-#ifndef INCLUDE_CARMA_BITS_TO_ARMA_HPP_
-#define INCLUDE_CARMA_BITS_TO_ARMA_HPP_
+#pragma once
 
 #include <armadillo>
 #include <carma_bits/array_view.hpp>
@@ -836,4 +835,3 @@ struct toArma {
 }  // namespace internal
 
 }  // namespace carma
-#endif  // INCLUDE_CARMA_BITS_TO_ARMA_HPP_
