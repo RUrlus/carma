@@ -9,6 +9,10 @@
 #include <type_traits>
 #include <typeinfo>
 
+#ifndef CARMA_DEBUG
+#include <iostream>
+#endif  // CARMA_DEBUG
+
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__) \
     || defined(__BORLANDC__)
 #define OS_WIN
@@ -71,6 +75,28 @@ inline std::string get_full_typename() {
     }
     return name;
 }
+
+#ifndef CARMA_DEBUG
+template <typename... Args>
+inline void carma_debug_print(Args...) {}
+#else
+template <typename... Args>
+inline void carma_debug_print(Args... args) {
+    std::cout << "|carma| ";
+    (std::cout << ... << args) << "\n";
+}
+#endif
+
+#ifndef CARMA_EXTRA_DEBUG
+template <typename... Args>
+inline void carma_extra_debug_print(Args...) {}
+#else
+template <typename... Args>
+inline void carma_extra_debug_print(Args... args) {
+    std::cout << "|carma| ";
+    (std::cout << ... << args) << "\n";
+}
+#endif
 
 }  // namespace internal
 }  // namespace carma

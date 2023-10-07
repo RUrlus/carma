@@ -21,7 +21,12 @@
 #endif
 
 #include <armadillo>
+
 #ifdef CARMA_EXTRA_DEBUG
+#ifndef CARMA_DEBUG
+#define CARMA_DEBUG true
+#endif  // CARMA_DEBUG
+
 #include <iostream>
 #endif  // CARMA_EXTRA_DEBUG
 
@@ -58,11 +63,7 @@ struct carma_version {
     }
 };  // carma_version
 
-#if defined(CARMA_EXTRA_DEBUG)
-
-#ifndef CARMA_DEBUG
-#define CARMA_DEBUG true
-#endif  // CARMA_DEBUG
+#ifdef CARMA_EXTRA_DEBUG
 
 namespace anon {
 class carma_config_debug_message {

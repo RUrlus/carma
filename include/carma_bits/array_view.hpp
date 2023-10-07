@@ -69,9 +69,7 @@ class ArrayView {
     }
 
     void take_ownership() {
-#ifdef CARMA_EXTRA_DEBUG
-        std::cout << "|carma| taking ownership of array " << obj << "\n";
-#endif
+        carma_extra_debug_print("taking ownership of array ", obj);
         strict = false;
         copy_in = n_elem <= arma::arma_config::mat_prealloc;
         PyArray_CLEARFLAGS(arr, NPY_ARRAY_OWNDATA);
@@ -91,9 +89,7 @@ class ArrayView {
      */
     template <typename armaT, iff_Arma<armaT> = 0>
     inline void give_ownership(armaT& dest) {
-#ifdef CARMA_EXTRA_DEBUG
-        std::cout << "|carma| releasing ownership of array " << obj << "to " << (&dest) << "\n";
-#endif
+        carma_extra_debug_print("releasing ownership of array ", obj, " to ", (&dest));
         arma::access::rw(dest.n_alloc) = n_elem;
         arma::access::rw(dest.mem_state) = 0;
         release_if_copied_in();
@@ -101,22 +97,17 @@ class ArrayView {
 
     void release_if_copied_in() {
         if (copy_in) {
-#ifdef CARMA_EXTRA_DEBUG
-            std::cout << "|carma| array " << obj << " with size " << n_elem
-                      << " was copied in, as it does not exceed arma's prealloc size.\n";
-#endif
+            carma_extra_debug_print(
+                "array ", obj, " with size ", n_elem, " was copied in, as it does not exceed arma's prealloc size."
+            );
             if (stolen_copy) {
-#ifdef CARMA_EXTRA_DEBUG
-                std::cout << "|carma| freeing " << mem << "\n";
-#endif
+                carma_extra_debug_print("freeing ", mem);
                 // We copied in because of the array's size in the CopyConverter
                 // we need to free the memory as we own it
                 npy_api::get().PyDataMem_FREE_(mem);
                 mem = nullptr;
             } else {
-#ifdef CARMA_EXTRA_DEBUG
-                std::cout << "|carma| re-enabling owndata for array " << obj << "\n";
-#endif
+                carma_extra_debug_print("re-enabling owndata for array ", obj);
                 // We copied in because of the array's size in the MoveConterter
                 // if we free the memory any view or array that references this
                 // memory will segfault on the python side.

@@ -391,7 +391,7 @@ namespace internal {
 
 #ifdef CARMA_DEBUG
 template <typename converter, bool CopySwapResolution = false>
-inline void carma_debug_print(const internal::ArrayView& src) {
+inline void debug_print_conversion(const internal::ArrayView& src) {
     if constexpr (is_MoveConverter<converter>::value) {
         std::cout << "|carma| array " << src.arr << " does not meet MoveConverter conditions\n";
     } else if constexpr (is_ViewConverter<converter>::value) {
@@ -402,7 +402,7 @@ inline void carma_debug_print(const internal::ArrayView& src) {
 }
 #else
 template <typename... T>
-inline void carma_debug_print(const internal::ArrayView&){};
+inline void debug_print_conversion(const internal::ArrayView&){};
 #endif
 
 inline std::string get_array_address(const ArrayView& src) {
@@ -439,7 +439,7 @@ struct CopyResolution {
     template <typename armaT, typename converter, iff_MoveConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy || (!src.owndata) || (!src.writeable))) {
-            internal::carma_debug_print<converter>(src);
+            internal::debug_print_conversion<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return MoveConverter().get<armaT>(src);
@@ -448,7 +448,7 @@ struct CopyResolution {
     template <typename armaT, typename converter, iff_ViewConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
-            internal::carma_debug_print<converter>(src);
+            internal::debug_print_conversion<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return ViewConverter().get<armaT>(src);
@@ -527,7 +527,7 @@ struct CopySwapResolution {
                 + " cannot copy-swapped as it does not own the data or is not writeable"
             );
         } else if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
-            internal::carma_debug_print<converter, true>(src);
+            internal::debug_print_conversion<converter, true>(src);
             src.swap_copy();
         }
         return BorrowConverter().get<armaT>(src);
@@ -541,7 +541,7 @@ struct CopySwapResolution {
     template <typename armaT, typename converter, iff_MoveConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy || (!src.owndata) || (!src.writeable))) {
-            internal::carma_debug_print<converter>(src);
+            internal::debug_print_conversion<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return MoveConverter().get<armaT>(src);
@@ -550,7 +550,7 @@ struct CopySwapResolution {
     template <typename armaT, typename converter, iff_ViewConverter<converter> = 0>
     armaT resolve(internal::ArrayView& src) {
         if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
-            internal::carma_debug_print<converter>(src);
+            internal::debug_print_conversion<converter>(src);
             return CopyConverter().get<armaT>(src);
         }
         return ViewConverter().get<armaT>(src);
