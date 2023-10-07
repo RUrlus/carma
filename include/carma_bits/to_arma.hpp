@@ -507,14 +507,16 @@ struct RaiseResolution {
 
 /**
  * \brief Resolution policy that allows (silent) copying to meet the required
- * conditions when required even with BorrowConverter. \details The
- * CopySwapResolution is behaves identically to CopyResolution policy with the
+ * conditions when required even with BorrowConverter.
+ *
+ * \details The CopySwapResolution is behaves identically to CopyResolution policy with the
  * exception that it can handle ill conditioned and/or arrays with the wrong
  * memory layout. An exception is raised when the array does not own it's memory
- * or is marked as not writeable. \warning CopySwapResolution handles ill
- * conditioned memory by copying the array's memory to the right state and
- * swapping it in the place of the existing memory. This makes use of an
- * deprecated numpy function to directly interface with the array fields. As
+ * or is marked as not writeable.
+ *
+ * \warning CopySwapResolution handles ill conditioned memory by copying the
+ * array's memory to the right state and swapping it in the place of the existing memory.
+ * This makes use of an deprecated numpy function to directly interface with the array fields. As
  * such this resolution policy should be considered experimental. This policy
  * will likely not work with Numpy >= v2.0
  */
@@ -605,12 +607,10 @@ struct is_ResolutionPolicy {
  * \brief Create compile-time configuration object for Numpy to Armadillo
  * conversion.
  *
- * \tparam converter the converter to be used options are: BorrowConverter,
- * CopyConverter, MoveConverter, ViewConverter \tparam resolution_policy which
- * resolution policy to use when the array cannot be converted directly, options
- * are: RaiseResolution, CopyResolution, CopySwapResolution \tparam
- * memory_order_policy which memory order policy to use, options are:
- * ColumnOrder, TransposedRowOrder
+ * \tparam converter the converter to be used options are: BorrowConverter, CopyConverter, MoveConverter, ViewConverter
+ * \tparam resolution_policy which resolution policy to use when the array cannot be converted directly, options are:
+ * RaiseResolution, CopyResolution, CopySwapResolution
+ * \tparam memory_order_policy which memory order policy to use, options are: ColumnOrder, TransposedRowOrder
  */
 template <
     class converter,
@@ -800,8 +800,9 @@ struct npConverterBase {
             "|carma| `memory_order_policy` must be one of: ColumnOrder, "
             "TransposedRowOrder."
         );
-        return internal::npConverterImpl<armaT, converter, resolution_policy, memory_order_policy>(
-        )(std::forward<numpyT>(src));
+        return internal::npConverterImpl<armaT, converter, resolution_policy, memory_order_policy>()(
+            std::forward<numpyT>(src)
+        );
     }
 };
 
@@ -816,16 +817,18 @@ struct toArma {
             return internal::npConverterImpl<armaT, MoveConverter, resolution_policy, memory_order_policy>()
                 .template operator()<decltype(src)>(std::forward<numpyT>(src));
         } else if constexpr (std::is_const_v<std::remove_reference_t<armaT>>) {
-            return internal::npConverterImpl<armaT, ViewConverter, resolution_policy, memory_order_policy>(
-            )(std::forward<numpyT>(src));
+            return internal::npConverterImpl<armaT, ViewConverter, resolution_policy, memory_order_policy>()
+                .template operator()<decltype(src)>(std::forward<numpyT>(src));
         } else if constexpr (std::is_const_v<std::remove_reference_t<decltype(src)>>) {
             return internal::
-                npConverterImpl<armaT, CARMA_DEFAULT_CONST_LVALUE_CONVERTER, resolution_policy, memory_order_policy>(
-                )(std::forward<numpyT>(src));
+                npConverterImpl<armaT, CARMA_DEFAULT_CONST_LVALUE_CONVERTER, resolution_policy, memory_order_policy>()(
+                    std::forward<numpyT>(src)
+                );
         } else {
             return internal::
-                npConverterImpl<armaT, CARMA_DEFAULT_LVALUE_CONVERTER, resolution_policy, memory_order_policy>(
-                )(std::forward<numpyT>(src));
+                npConverterImpl<armaT, CARMA_DEFAULT_LVALUE_CONVERTER, resolution_policy, memory_order_policy>()(
+                    std::forward<numpyT>(src)
+                );
         }
     }
 };

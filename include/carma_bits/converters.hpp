@@ -70,11 +70,11 @@ inline void static_conversion_assert(armaT, numpyT, converter) {
  * \brief Generic Numpy to Armadillo converter.
  * \details Default generic converter with support for Row, Col, Mat and Cube.
  *          The converter used is based on the the armaT and numpyT.
- *          If numpyT is an r-value reference the MoveConverter is used.
  *          If armaT is const qualified the ViewConverter is used.
- *          If numpyT is an l-value reference the CARMA_DEFAULT_LVALUE_CONVERTER
- * is used, BorrowConverter by default. If numpyT is an const l-value reference
- * the CARMA_DEFAULT_CONST_LVALUE_CONVERTER is used, CopyConverter by default.
+ *          If numpyT is an r-value reference the MoveConverter is used.
+ *          If numpyT is an l-value reference the CARMA_DEFAULT_LVALUE_CONVERTER is used, BorrowConverter by default.
+ *          If numpyT is an const l-value reference the CARMA_DEFAULT_CONST_LVALUE_CONVERTER is used, CopyConverter by
+ *          default.
  *
  * \tparam armaT     armadillo type, cannot be deduced and must be specified
  * \tparam numpyT    pybind11::array_t specialisation, can often be deduced
