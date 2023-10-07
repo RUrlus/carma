@@ -25,16 +25,17 @@ inline void set_writeable(PyArrayObject *src) { PyArray_ENABLEFLAGS(src, NPY_ARR
 inline void set_owndata(PyArrayObject *src) { PyArray_ENABLEFLAGS(src, NPY_ARRAY_OWNDATA); }
 
 struct npy_api {
-    typedef struct {
+    using PyArray_Dims = struct {
         Py_intptr_t *ptr;
         int len;
-    } PyArray_Dims;
+    };
 
     static npy_api &get() {
         static npy_api api = lookup();
         return api;
     }
 
+    PyArray_Descr *(*PyArray_DescrFromType_)(int typenum);
     int (*PyArray_Size_)(PyObject *src);
     int (*PyArray_CopyInto_)(PyArrayObject *dest, PyArrayObject *src);
     PyObject *(*PyArray_NewCopy_)(PyArrayObject *, int);
@@ -47,6 +48,7 @@ struct npy_api {
 
    private:
     enum functions {
+        API_PyArray_DescrFromType = 45,
         API_PyArray_Size = 59,
         API_PyArray_CopyInto = 82,
         API_PyArray_NewCopy = 85,
@@ -63,6 +65,7 @@ struct npy_api {
         void **api_ptr = reinterpret_cast<void **>(PyCapsule_GetPointer(c.ptr(), nullptr));
         npy_api api;
 #define DECL_NPY_API(Func) api.Func##_ = (decltype(api.Func##_))api_ptr[API_##Func];
+        DECL_NPY_API(PyArray_DescrFromType);
         DECL_NPY_API(PyArray_Size);
         DECL_NPY_API(PyArray_CopyInto);
         DECL_NPY_API(PyArray_NewCopy);
