@@ -171,7 +171,6 @@ articles
 pyenv.cfg
 
 *.pdf
-compile_commands.json
-.clangd
 extern
+bin
 _old
