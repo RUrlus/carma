@@ -4,12 +4,11 @@
 #include <cxxabi.h>
 #endif  // __GNUG__ || __clang__
 
-#include <armadillo>
-#include <carma_bits/type_traits.hpp>
+#include <string>
 #include <type_traits>
 #include <typeinfo>
 
-#ifndef CARMA_DEBUG
+#ifdef CARMA_DEBUG
 #include <iostream>
 #endif  // CARMA_DEBUG
 
@@ -18,12 +17,13 @@
 #define OS_WIN
 #endif
 
-// Fix for lack of ssize_t on Windows for >= CPython3.10
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4127)  // warning C4127: Conditional expression is constant
-#include <BaseTsd.h>
-typedef SSIZE_T ssize_t;
+// FIXME check if we need this...
+// Fix for lack of ssize_t on Windows for >= CPython3.10
+// #include <BaseTsd.h>
+// typedef SSIZE_T ssize_t;
 #endif
 
 #ifndef CARMA_DEFINED_EXPECT

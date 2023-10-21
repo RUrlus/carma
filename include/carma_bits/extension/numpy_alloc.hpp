@@ -13,18 +13,16 @@
 #include <numpy/arrayobject.h>
 #include <numpy/ndarraytypes.h>
 
-#include <carma_bits/numpy_api.hpp>
+#include <carma_bits/internal/numpy_api.hpp>
 #include <cstddef>
 #ifdef CARMA_DEBUG
 #include <iostream>
 #endif
 
-namespace carma {
-namespace alloc {
+namespace carma::alloc {
 
 inline void* npy_malloc(size_t bytes) {
-    const auto& api = internal::npy_api::get();
-    void* ptr = api.PyDataMem_NEW_(bytes);
+    void* ptr = internal::npy_api::get().PyDataMem_NEW_(bytes);
 #ifdef CARMA_EXTRA_DEBUG
     std::cout << "|carma| allocated " << ptr << "\n";
 #endif  // ARMA_EXTRA_DEBUG
@@ -32,15 +30,13 @@ inline void* npy_malloc(size_t bytes) {
 }  // npy_malloc
 
 inline void npy_free(void* ptr) {
-    const auto& api = internal::npy_api::get();
 #ifdef CARMA_EXTRA_DEBUG
     std::cout << "|carma| freeing " << ptr << "\n";
 #endif  // CARMA_EXTRA_DEBUG
-    api.PyDataMem_FREE_(ptr);
+    internal::npy_api::get().PyDataMem_FREE_(ptr);
 }  // npy_free
 
-}  // namespace alloc
-}  // namespace carma
+}  // namespace carma::alloc
 
 // carma makes use of the below Armadillo macros to enable
 // handing over memory ownership to armadillo objects.

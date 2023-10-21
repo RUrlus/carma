@@ -1,0 +1,12 @@
+/*  carma: Bidirectional coverter of Numpy arrays and Armadillo objects
+ *  Copyright (c) 2023 Ralph Urlus <rurlus.dev@gmail.com>
+ *  All rights reserved. Use of this source code is governed by a
+ *  Apache-2.0 license that can be found in the LICENSE file.
+ */
+#pragma once
+
+#include <carma_bits/config.hpp>
+// config should be included first
+#include <carma_bits/converter_types.hpp>
+#include <carma_bits/converters.hpp>
+#include <carma_bits/version.hpp>

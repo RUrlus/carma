@@ -34,6 +34,7 @@ struct npy_api {
         return api;
     }
 
+    PyTypeObject *PyArray_Type_;
     PyArray_Descr *(*PyArray_DescrFromType_)(int typenum);
     int (*PyArray_Size_)(PyObject *src);
     int (*PyArray_CopyInto_)(PyArrayObject *dest, PyArrayObject *src);
