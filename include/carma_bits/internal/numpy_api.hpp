@@ -41,7 +41,7 @@ struct npy_api {
     PyObject *(*PyArray_NewCopy_)(PyArrayObject *, int);
     PyObject *(*PyArray_NewFromDescr_)(
         PyTypeObject *subtype,
-        PyArray_Descr *descr,
+        PyObject *descr,
         int nd,
         npy_intp const *dims,
         npy_intp const *strides,
@@ -56,6 +56,7 @@ struct npy_api {
 
    private:
     enum functions {
+        API_PyArray_Type = 2,
         API_PyArray_DescrFromType = 45,
         API_PyArray_Size = 59,
         API_PyArray_CopyInto = 82,
@@ -73,6 +74,7 @@ struct npy_api {
         void **api_ptr = reinterpret_cast<void **>(PyCapsule_GetPointer(c.ptr(), nullptr));
         npy_api api;
 #define DECL_NPY_API(Func) api.Func##_ = (decltype(api.Func##_))api_ptr[API_##Func];
+        DECL_NPY_API(PyArray_Type);
         DECL_NPY_API(PyArray_DescrFromType);
         DECL_NPY_API(PyArray_Size);
         DECL_NPY_API(PyArray_CopyInto);
