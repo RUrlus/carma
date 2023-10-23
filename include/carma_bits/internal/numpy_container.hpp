@@ -84,16 +84,15 @@ class NumpyContainer {
         // get description from element type
         auto dtype = py::dtype::of<eT>();
         // create Fortran order strides
-        auto tmp = api.PyArray_NewFromDescr_(
         auto strides = py::detail::f_strides(shape, dtype.itemsize());
+        auto tmp = reinterpret_cast<PyArrayObject*>(api.PyArray_NewFromDescr_(
             api.PyArray_Type_, dtype.release().ptr(), n_dim, shape.data(), strides.data(), dest.memptr(), flags, nullptr
-        );
+        ));
         // copy the array to a well behaved target-order
         int ret_code = api.PyArray_CopyInto_(tmp, arr);
         if (ret_code != 0) {
             throw std::runtime_error("|carma| Copy of numpy array failed with ret_code: " + std::to_string(ret_code));
         }
-
         // make sure to remove owndata flag to prevent memory being freed
         PyArray_CLEARFLAGS(tmp, NPY_ARRAY_OWNDATA);
         // clean up temporary array but not the memory it viewed
