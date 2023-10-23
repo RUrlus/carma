@@ -1,228 +1,92 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
 
-SET(CARMA_VERSION_MAJOR 0)
-SET(CARMA_VERSION_MINOR 6)
-SET(CARMA_VERSION_PATCH 6)
-SET(CARMA_VERSION_INFO "${CARMA_VERSION_MAJOR}.${CARMA_VERSION_MINOR}.${CARMA_VERSION_PATCH}")
+set(CARMA_VERSION_MAJOR 1)
+set(CARMA_VERSION_MINOR 0)
+set(CARMA_VERSION_PATCH 0)
+set(CARMA_VERSION_INFO
+    "${CARMA_VERSION_MAJOR}.${CARMA_VERSION_MINOR}.${CARMA_VERSION_PATCH}")
 
-PROJECT(
-    carma
-    VERSION ${CARMA_VERSION_INFO}
-    LANGUAGES CXX
-)
-INCLUDE(GNUInstallDirs)
-
-SET(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
-LIST(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")
-# ##############################################################################
-#                                   SETTINGS                                   #
-# ##############################################################################
-OPTION(CARMA_INSTALL_LIB "Install CARMA headers" OFF)
-SET(CARMA_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/carma")
-
-SET(DEFAULT_BUILD_TYPE "Release")
-# Set build type to Release if not specified
-INCLUDE(BuildType)
-
-IF (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    # workaround like https://github.com/nlohmann/json/issues/1408
-    # to avoid error like: carma\...\include\armadillo_bits/arma_str.hpp(194):
-    # error C2039: '_snprintf': is not a member of 'std'
-    ADD_DEFINITIONS(-DHAVE_SNPRINTF)
-ENDIF ()
-
-OPTION(CARMA_DEV_MODE "Enable additional definitions for development" OFF)
-OPTION(CARMA_DEV_DEBUG_MODE "Turn on all debugging definitions" OFF)
-OPTION(CARMA_BUILD_TESTS "Build tests for carma" OFF)
-OPTION(CARMA_BUILD_EXAMPLES "Build examples for carma" OFF)
-
-# collect user settable options
-INCLUDE(${PROJECT_SOURCE_DIR}/carma_config.cmake)
-INCLUDE(ParseOptions)
-CONFIGURE_FILE(
-    ${PROJECT_SOURCE_DIR}/include/carma_bits/config.h.in
-    ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h
-    @ONLY
-)
+project(
+  carma
+  VERSION ${CARMA_VERSION_INFO}
+  LANGUAGES CXX)
+include(GNUInstallDirs)
 
 # ##############################################################################
-#                                   TARGET                                     #
+# SETTINGS                                   #
 # ##############################################################################
-ADD_LIBRARY(carma INTERFACE)
-ADD_LIBRARY(carma::carma ALIAS carma)
+# add_subdirectory(${PROJECT_SOURCE_DIR}/extern/armadillo-code)
+set(CMAKE_CXX_STANDARD
+    17
+    CACHE STRING "C++ version selection")
+set(CMAKE_CXX_STANDARD_REQUIRED ON) # optional, ensure standard is supported
+set(CMAKE_CXX_EXTENSIONS OFF) # optional, keep compiler extensions off
 
-TARGET_COMPILE_DEFINITIONS(carma
-    INTERFACE
-    CARMA_USE_GENERATED_CONFIG=1
-    CARMA_VERSION_MAJOR=${CARMA_VERSION_MAJOR}
-    CARMA_VERSION_MINOR=${CARMA_VERSION_MINOR}
-    CARMA_VERSION_PATCH=${CARMA_VERSION_PATCH}
-    CARMA_VERSION_NAME=${CARMA_VERSION_INFO}
-    "$<$<CONFIG:RELEASE>:${CARMA_RELEASE_DEFINITIONS}>"
-)
-TARGET_COMPILE_FEATURES(carma INTERFACE cxx_std_14)
+if(NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
 
-IF(CARMA_DEV_MODE)
-    TARGET_COMPILE_OPTIONS(carma
-        INTERFACE
-        -Wall
-        -Wextra
-        -Wunused-variable
-        -Wunused-const-variable
-    )
-ENDIF()
+# find_program(CCACHE_FOUND ccache) if(CCACHE_FOUND) set_property(GLOBAL
+# PROPERTY RULE_LAUNCH_COMPILE ccache) endif(CCACHE_FOUND)
 
-TARGET_INCLUDE_DIRECTORIES(carma
-    INTERFACE
-    $<INSTALL_INTERFACE:${CARMA_INCLUDE_INSTALL_DIR}>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-)
+# if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC") # workaround like
+# https://github.com/nlohmann/json/issues/1408 # to avoid error like:
+# carma\...\include\armadillo_bits/arma_str.hpp(194): # error C2039:
+# '_snprintf': is not a member of 'std' add_definitions(-DHAVE_SNPRINTF) endif
+# ()
 
-TARGET_LINK_LIBRARIES(carma
-    INTERFACE
-        armadillo::armadillo
-        Python3::NumPy
-        Python3::Module
-        pybind11::pybind11
-)
+# Create the public carma header
+# configure_file("${PROJECT_SOURCE_DIR}/include/carma.hpp"
+# "${PROJECT_SOURCE_DIR}/include/carma" COPYONLY)
 
-ADD_LIBRARY(carma_headers INTERFACE)
-ADD_LIBRARY(carma::headers ALIAS carma_headers)
-
-TARGET_COMPILE_DEFINITIONS(carma_headers
-    INTERFACE
-    CARMA_VERSION_MAJOR=${CARMA_VERSION_MAJOR}
-    CARMA_VERSION_MINOR=${CARMA_VERSION_MINOR}
-    CARMA_VERSION_PATCH=${CARMA_VERSION_PATCH}
-    CARMA_VERSION_NAME=${CARMA_VERSION_INFO}
-)
-TARGET_COMPILE_FEATURES(carma_headers INTERFACE cxx_std_14)
-
-TARGET_INCLUDE_DIRECTORIES(carma_headers
-    INTERFACE
-    $<INSTALL_INTERFACE:${CARMA_INCLUDE_INSTALL_DIR}>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-)
-    
-
-# Only install the headers
-IF (CARMA_INSTALL_LIB)
-    # modified from https://dominikberner.ch/cmake-interface-lib/
-
-    # locations are provided by GNUInstallDirs
-    INSTALL(
-        TARGETS carma
-        EXPORT carma_Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
-
-    INSTALL(
-        TARGETS carma_headers
-        EXPORT carma_Header_Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
-    
-    INCLUDE(CMakePackageConfigHelpers)
-    write_basic_package_version_file(
-        "carmaConfigVersion.cmake"
-        VERSION ${PROJECT_VERSION}
-        COMPATIBILITY SameMinorVersion
-    )
-    
-    configure_package_config_file(
-        "${PROJECT_SOURCE_DIR}/cmake/carmaConfig.cmake.in"
-        "${PROJECT_BINARY_DIR}/carmaConfig.cmake"
-        INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
-    )
-
-    INSTALL(
-      EXPORT carma_Targets
-      FILE carmaCarmaTargets.cmake
-      NAMESPACE carma::
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
-    )
-
-    INSTALL(
-      EXPORT carma_Header_Targets
-      FILE carmaHeaderTargets.cmake
-      NAMESPACE carma::
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
-    )
-
-    INSTALL(
-        FILES
-            "${PROJECT_BINARY_DIR}/carmaConfig.cmake"
-            "${PROJECT_BINARY_DIR}/carmaConfigVersion.cmake"
-            "${PROJECT_SOURCE_DIR}/cmake/carmaDependencyTargets.cmake"
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/carma/cmake
-    )
-
-    INSTALL(
-        FILES "${PROJECT_SOURCE_DIR}/include/carma"
-        DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}
-    )
-
-    INSTALL(
-        DIRECTORY ${PROJECT_SOURCE_DIR}/include/carma_bits
-        DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}
-        FILES_MATCHING
-            PATTERN "*.h"
-    )
-
-     INSTALL(
-        FILES ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h 
-        DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}/carma_bits
-     )
-    
-ELSE()
-    # ##############################################################################
-    #                                REQUIREMENTS                                  #
-    # ##############################################################################
-    FIND_PACKAGE(Python3 COMPONENTS Development NumPy QUIET)
-    IF (NOT Python3_FOUND)
-        FIND_PACKAGE(Python3 COMPONENTS Development.Module NumPy REQUIRED)
-    ENDIF()
-
-    # Needed to ensure the same Python executable is found by Pybind11
-    IF (NOT DEFINED PYTHON_EXECUTABLE)
-        SET(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
-    ENDIF ()
-
-    # create armadillo and or pybind11 target if not defined
-    INCLUDE(ThirdPartyTargets)
-
-    TARGET_PRECOMPILE_HEADERS(carma
-        INTERFACE
-            ${PROJECT_SOURCE_DIR}/include/carma_bits/cnalloc.h
-    )
-ENDIF()
 # ##############################################################################
-#                              TEST TARGETS                                    #
+# REQUIREMENTS                                  #
 # ##############################################################################
 
-IF(CARMA_BUILD_TESTS OR CARMA_BUILD_EXAMPLES)
-    SET(CMAKE_CXX_STANDARD 14)
-ENDIF()
+find_package(
+  Python3
+  COMPONENTS Interpreter Development NumPy
+  REQUIRED)
+if(NOT DEFINED PYTHON_EXECUTABLE)
+  set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+endif()
+find_package(pybind11 REQUIRED)
+find_package(Armadillo REQUIRED)
 
-IF(CARMA_BUILD_TESTS)
-    INCLUDE(CTest)
-    ENABLE_TESTING()
-    INCLUDE(GetCatch2)
-    ADD_SUBDIRECTORY(tests)
-    INCLUDE(ClangFormatTarget)
-    INCLUDE(CoverageTarget)
-ENDIF()
+add_library(carma INTERFACE)
+add_library(carma_expansion INTERFACE)
+add_library(carma_headers INTERFACE)
+add_library(carma::carma ALIAS carma)
+add_library(carma::headers ALIAS carma_headers)
+add_library(carma::expansion ALIAS carma_expansion)
 
-IF(CARMA_BUILD_EXAMPLES)
-    ADD_SUBDIRECTORY(examples)
-ENDIF()
-#------------------------------------------------------
-INCLUDE(ClearOptions)
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_SAVED})
-UNSET(CMAKE_MODULE_PATH_SAVED)
+target_compile_definitions(
+  carma
+  INTERFACE CARMA_VERSION_MAJOR=${CARMA_VERSION_MAJOR}
+            CARMA_VERSION_MINOR=${CARMA_VERSION_MINOR}
+            CARMA_VERSION_PATCH=${CARMA_VERSION_PATCH}
+            CARMA_VERSION_NAME=${CARMA_VERSION_INFO})
+set_target_properties(carma PROPERTIES CXX_STANDARD_REQUIRED ON)
+
+target_compile_options(carma INTERFACE -Wall -Wextra -Wunused-variable
+                                       -Wunused-const-variable)
+if(CARMA_ENABLE_EXTRA_DEBUG)
+  target_compile_definitions(carma INTERFACE CARMA_EXTRA_DEBUG=true
+                                             CARMA_DEBUG=true)
+  set(ignoreMe "${CARMA_ENABLE_DEBUG}")
+elseif(CARMA_ENABLE_DEBUG)
+  target_compile_definitions(carma INTERFACE CARMA_DEBUG=true)
+endif()
+
+target_include_directories(
+  carma INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                  ${ARMADILLO_INCLUDE_DIRS})
+
+target_link_libraries(carma INTERFACE ${ARMADILLO_LIBRARIES} pybind11::pybind11
+                                      Python3::NumPy Python3::Module)
+
+add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
+
+target_link_libraries(main carma pybind11::embed)
+
+install(TARGETS main DESTINATION "${PROJECT_SOURCE_DIR}/bin")
