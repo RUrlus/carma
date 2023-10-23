@@ -84,11 +84,8 @@ class NumpyContainer {
         // get description from element type
         auto dtype = py::dtype::of<eT>();
         // create Fortran order strides
-        auto strides = std::vector<npy_intp>(n_dim, dtype.itemsize());
-        for (int i = 1; i < n_dim; ++i) {
-            strides[i] = strides[i - 1] * shape[i - 1];
-        }
         auto tmp = api.PyArray_NewFromDescr_(
+        auto strides = py::detail::f_strides(shape, dtype.itemsize());
             api.PyArray_Type_, dtype.release().ptr(), n_dim, shape.data(), strides.data(), dest.memptr(), flags, nullptr
         );
         // copy the array to a well behaved target-order
