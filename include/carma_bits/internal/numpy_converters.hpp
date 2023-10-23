@@ -43,6 +43,36 @@ inline armaT to_arma(const NumpyContainer&) {
     static_assert(!is_Arma<armaT>::value, "|carma| encountered unhandled armaT.");
 };
 
+template <typename armaT, iff_Row<armaT> = 0>
+inline armaT construct_arma(const NumpyContainer& src) {
+    using eT = typename armaT::elem_type;
+    return arma::Row<eT>(src.n_elem, arma::fill::none);
+};
+
+template <typename armaT, iff_Col<armaT> = 1>
+inline armaT construct_arma(const NumpyContainer& src) {
+    using eT = typename armaT::elem_type;
+    return arma::Col<eT>(src.n_elem, arma::fill::none);
+};
+
+template <typename armaT, iff_Mat<armaT> = 2>
+inline armaT construct_arma(const NumpyContainer& src) {
+    using eT = typename armaT::elem_type;
+    return arma::Mat<eT>(src.n_rows, src.n_cols, arma::fill::none);
+};
+
+template <typename armaT, iff_Cube<armaT> = 3>
+inline armaT construct_arma(const NumpyContainer& src) {
+    using eT = typename armaT::elem_type;
+    return arma::Cube<eT>(src.n_rows, src.n_cols, src.n_slices, arma::fill::none);
+};
+
+// catch against unknown armaT with nicer to understand compile time issue
+template <typename armaT, std::enable_if_t<!is_Arma<armaT>::value>>
+inline armaT construct_arma(const NumpyContainer&) {
+    static_assert(!is_Arma<armaT>::value, "|carma| encountered unhandled armaT.");
+};
+
 /**
  * \brief Check if array dimensions are compatible with arma type
  */

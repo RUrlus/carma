@@ -1,9 +1,9 @@
 #pragma once
 #include <armadillo>
 #include <carma_bits/base/config.hpp>
-#include <carma_bits/base/numpy_converters.hpp>
 #include <carma_bits/internal/common.hpp>
 #include <carma_bits/internal/numpy_container.hpp>
+#include <carma_bits/internal/numpy_converters.hpp>
 #include <carma_bits/internal/type_traits.hpp>
 #include <utility>  // std::forward
 
