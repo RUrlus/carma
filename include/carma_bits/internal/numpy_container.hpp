@@ -18,12 +18,13 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace carma::internal {
 
 class NumpyContainer {
    public:
-    std::array<py::ssize_t, 4> shape;
+    std::vector<py::ssize_t> shape;
     PyObject* obj;
     PyArrayObject* arr;
     void* mem;
@@ -61,8 +62,8 @@ class NumpyContainer {
           writeable{src.writeable()},
           aligned{is_aligned(arr)},
           ill_conditioned((!aligned) || (!static_cast<bool>(contiguous))) {
-        int clipped_n_dim = n_dim < 4 ? n_dim : 4;
-        std::memcpy(shape.data(), src.shape(), clipped_n_dim * sizeof(py::ssize_t));
+        shape = std::vector<py::ssize_t>(n_dim);
+        std::memcpy(shape.data(), src.shape(), n_dim * sizeof(py::ssize_t));
     };
 
     template <typename eT>
