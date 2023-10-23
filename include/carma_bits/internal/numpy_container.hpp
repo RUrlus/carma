@@ -75,7 +75,7 @@ class NumpyContainer {
     template <typename armaT, iff_Arma<armaT> = 0>
     inline void copy_into(armaT& dest) {
         using eT = typename armaT::elem_type;
-        carma_debug_print("Copying data of array ", obj, " to ", dest.memptr(), " using Numpy.");
+        carma_extra_debug_print("Copying data of array ", obj, " to ", dest.memptr(), " using Numpy.");
         auto api = npy_api::get();
         // make the temporary array writeable and mark the memory as aligned and give the order of the arma object
         int flags
@@ -100,7 +100,7 @@ class NumpyContainer {
     }  // copy_into
 
     inline void make_arma_compatible() {
-        carma_debug_print("Copying array ", obj, " to Arma compatible layout using Numpy.");
+        carma_extra_debug_print("Copying array ", obj, " to Arma compatible layout using Numpy.");
         auto api = npy_api::get();
         PyObject* dest_obj = api.PyArray_NewLikeArray_(arr, NPY_FORTRANORDER, nullptr, 0);
         auto dest_arr = reinterpret_cast<PyArrayObject*>(dest_obj);

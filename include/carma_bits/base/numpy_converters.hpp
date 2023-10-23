@@ -1,7 +1,8 @@
 #pragma once
 #include <armadillo>
 #include <carma_bits/base/config.hpp>
-#include <carma_bits/base/converter_types.hpp>
+#include <carma_bits/base/numpy_converters.hpp>
+#include <carma_bits/converter_types.hpp>
 #include <carma_bits/internal/common.hpp>
 #include <carma_bits/internal/numpy_container.hpp>
 #include <carma_bits/internal/numpy_converters.hpp>
@@ -27,13 +28,21 @@ struct NumpyConverter {
             "|carma| `memory_order_policy` must be one of: ColumnOrder, "
             "TransposedRowOrder."
         );
-        NumpyContainer view(src);
-        FitsArmaType().check<armaT>(view);
-        memory_order_policy().template check<armaT>(view);
-        if (CARMA_UNLIKELY(src.ill_conditioned || src.order_copy)) {
-            return CopyIntoConverter().get<armaT>(src);
+        NumpyContainer container(src);
+        FitsArmaType().check<armaT>(container);
+        memory_order_policy().template check<armaT>(container);
+        if (CARMA_UNLIKELY(container.ill_conditioned || container.order_copy)) {
+            carma_debug_print(
+                "Using CopyIntoConverter, array ",
+                container.arr,
+                " does not meet the required conditions and must be copied into the Arma object using Numpy."
+            );
+            return CopyIntoConverter().get<armaT>(container);
         }
-        return CopyInConverter().get<armaT>(src);
+        carma_debug_print(
+            "Using CopyInConverter, array ", container.arr, " will be copied in by Arma object's constructor."
+        );
+        return CopyInConverter().get<armaT>(container);
     }
 };
 

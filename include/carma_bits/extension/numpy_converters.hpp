@@ -139,13 +139,13 @@ struct NumpyConverter {
             "references"
         );
 #endif
-        NumpyContainer view(src);
+        NumpyContainer container(src);
 #ifdef CARMA_EXTRA_DEBUG
-        NumpyConverterInfo<armaT, numpyT, converter, resolution_policy, memory_order_policy>()(view);
+        NumpyConverterInfo<armaT, numpyT, converter, resolution_policy, memory_order_policy>()(container);
 #endif  // CARMA_EXTRA_DEBUG
-        FitsArmaType().check<armaT>(view);
-        memory_order_policy().template check<armaT>(view);
-        return resolution_policy().template resolve<armaT, converter>(view);
+        FitsArmaType().check<armaT>(container);
+        memory_order_policy().template check<armaT>(container);
+        return resolution_policy().template resolve<armaT, converter>(container);
     }
 };
 
