@@ -162,7 +162,7 @@ auto arr_to_row(const py::array_t<eT>& arr) {
  */
 template <typename eT>
 auto arr_to_row(py::array_t<eT>&& arr) {
-    return internal::DefaultNumpyConverter<arma::Row<eT>>()(arr);
+    return internal::DefaultNumpyConverter<arma::Row<eT>>()(std::forward<decltype(arr)>(arr));
 }
 
 /**
@@ -224,7 +224,7 @@ auto arr_to_col(const py::array_t<eT>& arr) {
  */
 template <typename eT>
 auto arr_to_col(py::array_t<eT>&& arr) {
-    return internal::DefaultNumpyConverter<arma::Col<eT>>()(arr);
+    return internal::DefaultNumpyConverter<arma::Col<eT>>()(std::forward<decltype(arr)>(arr));
 }
 
 /**
@@ -286,7 +286,7 @@ auto arr_to_mat(const py::array_t<eT>& arr) {
  */
 template <typename eT>
 auto arr_to_mat(py::array_t<eT>&& arr) {
-    return internal::DefaultNumpyConverter<arma::Mat<eT>>()(arr);
+    return internal::DefaultNumpyConverter<arma::Mat<eT>>()(std::forward<decltype(arr)>(arr));
 }
 
 /**
@@ -348,7 +348,7 @@ auto arr_to_cube(const py::array_t<eT>& arr) {
  */
 template <typename eT>
 auto arr_to_cube(py::array_t<eT>&& arr) {
-    return internal::DefaultNumpyConverter<arma::Cube<eT>>()(arr);
+    return internal::DefaultNumpyConverter<arma::Cube<eT>>()(std::forward<decltype(arr)>(arr));
 }
 
 /**
