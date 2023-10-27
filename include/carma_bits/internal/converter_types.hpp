@@ -1,9 +1,11 @@
 #pragma once
 
 #include <carma_bits/extension/numpy_container.hpp>
+#include <carma_bits/internal/arma_container.hpp>
 #include <carma_bits/internal/common.hpp>
 #include <carma_bits/internal/numpy_api.hpp>
 #include <carma_bits/internal/type_traits.hpp>
+#include <utility>
 
 namespace carma {
 /* --------------------------------------------------------------
@@ -20,19 +22,29 @@ namespace carma {
  *          to be copied to the right order.
  */
 struct TransposedRowOrder {
-    template <typename aramT, internal::iff_Row<aramT> = 0>
+    template <typename armaT, internal::iff_Arma<armaT> = 0>
+    void check(internal::ArmaContainer& src) {
+        std::reverse(src.shape.begin(), src.shape.end());
+        src.fortran_order = false;
+        if constexpr (!internal::is_Vec<armaT>::value) {
+            // row and columns are both C and Fortran contiguous
+            src.order_flag = py::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_;
+        }
+    }
+
+    template <typename armaT, internal::iff_Row<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = 1;
         src.n_cols = src.n_elem;
     }
 
-    template <typename aramT, internal::iff_Col<aramT> = 0>
+    template <typename armaT, internal::iff_Col<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = src.n_elem;
         src.n_cols = 1;
     }
 
-    template <typename aramT, internal::iff_Mat<aramT> = 0>
+    template <typename armaT, internal::iff_Mat<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = src.shape[1];
         src.n_cols = src.shape[0];
@@ -41,7 +53,7 @@ struct TransposedRowOrder {
         src.target_order = NPY_CORDER;
     }
 
-    template <typename aramT, internal::iff_Cube<aramT> = 0>
+    template <typename armaT, internal::iff_Cube<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = src.shape[2];
         src.n_cols = src.shape[1];
@@ -63,17 +75,23 @@ struct TransposedRowOrder {
  *          to be copied to the right order.
  */
 struct ColumnOrder {
-    template <typename aramT, internal::iff_Row<aramT> = 0>
+    template <typename armaT, internal::iff_Arma<armaT> = 0>
+    void check(internal::ArmaContainer& src) {
+        src.fortran_order = true;
+    }
+
+    template <typename armaT, internal::iff_Row<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = 1;
         src.n_cols = src.n_elem;
     }
 
+    template <typename armaT, internal::iff_Col<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = src.n_elem;
         src.n_cols = 1;
-    template <typename aramT, internal::iff_Mat<aramT> = 0>
     }
+    template <typename armaT, internal::iff_Mat<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = src.shape[0];
         src.n_cols = src.shape[1];
@@ -81,7 +99,7 @@ struct ColumnOrder {
         src.target_order = NPY_FORTRANORDER;
     }
 
-    template <typename aramT, internal::iff_Cube<aramT> = 0>
+    template <typename armaT, internal::iff_Cube<armaT> = 0>
     void check(internal::NumpyContainer& src) {
         src.n_rows = src.shape[0];
         src.n_cols = src.shape[1];
