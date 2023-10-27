@@ -4,6 +4,7 @@
 #include <cxxabi.h>
 #endif  // __GNUG__ || __clang__
 
+#include <memory>
 #include <string>
 #include <type_traits>
 #include <typeinfo>
@@ -42,9 +43,8 @@
 #endif  // CARMA_LIKELY
 #endif  // CARMA_DEFINED_EXPECT
 
-namespace carma {
+namespace carma::internal {
 
-namespace internal {
 #if defined(__GNUG__) || defined(__clang__)
 
 inline std::string demangle(const char* mangled_name) {
@@ -98,5 +98,4 @@ inline void carma_extra_debug_print(Args... args) {
 }
 #endif
 
-}  // namespace internal
-}  // namespace carma
+}  // namespace carma::internal

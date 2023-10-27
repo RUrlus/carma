@@ -41,7 +41,7 @@ struct BorrowConverter {
     template <typename armaT, internal::iff_Arma<armaT> = 0>
     armaT get(const internal::NumpyContainer& src) {
         return internal::to_arma<armaT>(src);
-    };
+    }
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "BorrowConverter";
 #endif
@@ -67,7 +67,7 @@ struct ViewConverter {
     template <typename armaT, internal::iff_Arma<armaT> = 0>
     armaT get(const internal::NumpyContainer& src) {
         return internal::to_arma<armaT>(src);
-    };
+    }
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "ViewConverter";
 #endif
@@ -93,7 +93,7 @@ struct CopyConverter {
         auto dest = internal::to_arma<armaT>(src);
         src.give_ownership(dest);
         return dest;
-    };
+    }
 
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "CopyConverter";
@@ -128,7 +128,7 @@ struct MoveConverter {
         auto dest = internal::to_arma<armaT>(src);
         src.give_ownership(dest);
         return dest;
-    };
+    }
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "MoveConverter";
 #endif
@@ -203,7 +203,7 @@ struct CopyResolution {
             return CopyConverter().get<armaT>(src);
         }
         return ViewConverter().get<armaT>(src);
-    };
+    }
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "CopyResolution";
 #endif
@@ -250,7 +250,7 @@ struct RaiseResolution {
             );
         }
         return ViewConverter().get<armaT>(src);
-    };
+    }
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "RaiseResolution";
 #endif
@@ -307,7 +307,7 @@ struct CopySwapResolution {
             return CopyConverter().get<armaT>(src);
         }
         return ViewConverter().get<armaT>(src);
-    };
+    }
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "CopySwapResolution";
 #endif

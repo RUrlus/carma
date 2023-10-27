@@ -12,6 +12,7 @@
 #include <string>
 #include <type_traits>
 #include <typeinfo>
+#include <utility>
 
 namespace carma::internal {
 
@@ -88,7 +89,7 @@ struct NumpyConverterInfo {
         }
         std::cout << "|\n|-----------------------------------------------------"
                      "-----|\n\n";
-    };
+    }
 };
 
 #endif  // CARMA_EXTRA_DEBUG
