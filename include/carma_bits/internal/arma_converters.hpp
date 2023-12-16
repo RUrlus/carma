@@ -2,31 +2,25 @@
 
 #define NPY_NO_DEPRECATED_API NPY_1_18_API_VERSION
 #include <numpy/arrayobject.h>
+#include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
 
 #include <armadillo>
+#include <carma_bits/internal/arma_container.hpp>
 #include <carma_bits/internal/common.hpp>
 #include <carma_bits/internal/numpy_api.hpp>
+#include <carma_bits/internal/type_traits.hpp>
+
+namespace py = pybind11;
 
 namespace carma {
-
 namespace internal {
 
-// https://github.com/pybind/pybind11/issues/1042#issuecomment-642215028
-// template <typename armaT>
-// inline py::array_t<typename armaT::value_type> as_pyarray(armaT &&seq) {
-//     auto size = seq.size();
-//     auto data = seq.data();
-//     std::unique_ptr<armaT> seq_ptr = std::make_unique<armaT>(std::move(seq));
-//     auto capsule = py::capsule(seq_ptr.get(), [](void *p) { std::unique_ptr<armaT>(reinterpret_cast<armaT*>(p)); });
-//     seq_ptr.release();
-//     return py::array(size, data, capsule);
-// }
-
 template <typename armaT>
-inline py::capsule create_capsule(armaT data) {
+inline py::capsule create_capsule(armaT* data) {
     return py::capsule(data, [](void* f) {
         auto mat = reinterpret_cast<armaT*>(f);
-        carma_extra_debug_print("|carma| freeing memory @", mat->memptr());
+        carma_extra_debug_print("freeing memory @", mat->memptr());
         delete mat;
     });
 } /* create_capsule */
@@ -43,15 +37,6 @@ inline py::capsule create_view_capsule(const armaT* data) {
 #endif
 } /* create_view_capsule */
 
-struct ArmaView {
-    int n_dim;
-    int flags;
-    npy_intp* shape;
-    npy_intp* strides;
-    void* data = nullptr;
-    NPY_ORDER target_order;
-};
-
 /**
  * \brief Create an array that references the data in a capsule.
  * \details Create an array that references the data.
@@ -62,28 +47,20 @@ struct ArmaView {
  * \param src              uniform object that provides view on Armadillo's object meta-data
  * \return py::array_t<eT> array with capsule base
  */
-template <typename eT>
-py::array_t<eT> create_capsule_array(const ArmaView& src);
-
-/**
- * \brief Create an array that owns the data.
- * \details Create an array that owns the data without copying.
- *          Lifetime management is handed over to Numpy which will free the memory with its de-alloctor.
- *          The caller must ensure that memory was allocated using Numpy's allocator.
- *
- * \tparam eT              the element type
- * \param src              uniform object that provides view on Armadillo's object meta-data
- * \return py::array_t<eT> array with own data
- */
-template <typename eT>
-py::array_t<eT> create_owning_array(const ArmaView& src) {
-    auto api = py::detail::npy_api::get();
-    // get description from element type
-    auto descr = py::dtype::of<eT>();
-    auto obj = api.PyArray_NewFromDescr_(
-        api.PyArray_Type_, descr.release().ptr(), src.n_dim, src.shape, src.strides, src.data, src.flags, nullptr
+template <
+    typename armaT,
+    typename eT = armaT_eT<armaT>,
+    typename baseT = get_baseT<armaT>,
+    internal::iff_Arma<armaT> = 0>
+py::array_t<eT> create_capsule_array(ArmaContainer& src) {
+    // note that py::array_t moves the shape and stride containers.
+    auto arr = py::array_t<eT>(
+        src.get_shape(),                                          // shape
+        src.get_strides(),                                        // striedes
+        src.data<eT>(),                                           // the data pointer
+        create_capsule<baseT>(reinterpret_cast<baseT*>(src.obj))  // numpy array references this parent
     );
-    return py::reinterpret_steal<py::array_t<eT>>(obj);
+    return arr;
 }
 
 /**
@@ -96,8 +73,56 @@ py::array_t<eT> create_owning_array(const ArmaView& src) {
  * \param src              uniform object that provides view on Armadillo's object meta-data
  * \return py::array_t<eT> array with read-only capsule base
  */
+template <
+    typename armaT,
+    typename eT = armaT_eT<armaT>,
+    typename baseT = get_baseT<armaT>,
+    internal::iff_Arma<armaT> = 0>
+py::array_t<eT> create_reference_array(ArmaContainer& src) {
+    auto arr = py::array_t<eT>(
+        src.get_shape(),                                               // shape
+        src.get_strides(),                                             // striedes
+        src.data<eT>(),                                                // the data pointer
+        create_view_capsule<baseT>(reinterpret_cast<baseT*>(src.obj))  // numpy array references this parent
+    );
+    auto arr_ptr = reinterpret_cast<PyArrayObject*>(arr.ptr());
+    PyArray_ENABLEFLAGS(arr_ptr, src.order_flag);
+    if (!src.writeable) {
+        PyArray_CLEARFLAGS(arr_ptr, NPY_ARRAY_WRITEABLE | NPY_ARRAY_OWNDATA);
+    }
+}
+
+/**
+ * \brief Create an array that owns the data.
+ * \details Create an array that owns the data without copying.
+ *          Lifetime management is handed over to Numpy which will free the memory with its de-alloctor.
+ *          The caller must ensure that memory was allocated using Numpy's allocator.
+ *
+ * \tparam eT              the element type
+ * \param src              uniform object that provides view on Armadillo's object meta-data
+ * \return py::array_t<eT> array with own data
+ */
 template <typename eT>
-py::array_t<eT> create_reference_array(const ArmaView& src);
+py::array_t<eT> create_owning_array(ArmaContainer& src) {
+    auto api = py::detail::npy_api::get();
+    // get description from element type
+    auto descr = py::dtype::of<eT>();
+    auto strides = src.get_strides();
+    // note that PyArray_NewFromDescr copies the shape and stride containers.
+    auto obj = api.PyArray_NewFromDescr_(
+        api.PyArray_Type_,
+        descr.release().ptr(),
+        src.ndim,
+        src.shape.data(),
+        strides.data(),
+        src.data<eT>(),
+        src.flags(),
+        nullptr
+    );
+
+    PyArray_ENABLEFLAGS(obj, NPY_ARRAY_OWNDATA);
+    return py::reinterpret_steal<py::array_t<eT>>(obj);
+}
 
 }  // namespace internal
 }  // namespace carma

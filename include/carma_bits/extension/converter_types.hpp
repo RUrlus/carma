@@ -2,6 +2,8 @@
 
 #include <armadillo>
 #include <carma_bits/extension/numpy_container.hpp>
+#include <carma_bits/internal/arma_container.hpp>
+#include <carma_bits/internal/arma_converters.hpp>
 #include <carma_bits/internal/common.hpp>
 #include <carma_bits/internal/converter_types.hpp>
 #include <carma_bits/internal/numpy_converters.hpp>
@@ -128,6 +130,12 @@ struct MoveConverter {
         auto dest = internal::to_arma<armaT>(src);
         src.give_ownership(dest);
         return dest;
+    }
+
+    template <typename armaT, typename eT = typename armaT::elem_type, internal::iff_Arma<armaT> = 0>
+    py::array_t<eT> get(armaT&& src, internal::ArmaContainer& container) {
+        container.obj = new armaT(std::move(src));
+        return internal::create_owning_array<armaT>(container);
     }
 #ifdef CARMA_DEBUG
     static constexpr std::string_view name_ = "MoveConverter";

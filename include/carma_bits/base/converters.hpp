@@ -2,6 +2,7 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <armadillo>
+#include <carma_bits/base/arma_converters.hpp>
 #include <carma_bits/base/numpy_converters.hpp>
 #include <utility>
 
