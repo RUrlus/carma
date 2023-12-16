@@ -49,6 +49,12 @@ struct is_Numpy {
 template <typename numpyT, typename eT>
 using iff_Numpy = std::enable_if_t<is_Numpy<numpyT, eT>::value, int>;
 
+template <typename T>
+using get_baseT = std::remove_cv_t<std::remove_reference_t<T>>;
+
+template <typename armaT>
+using armaT_eT = typename get_baseT<armaT>::elem_type;
+
 // FIXME
 // Use Arma's approach
 // template <typename armaT, typename eT>
@@ -57,26 +63,26 @@ using iff_Numpy = std::enable_if_t<is_Numpy<numpyT, eT>::value, int>;
 //     arma::MatFixed>::value;
 // };
 
-template <typename armaT>
-using iff_Row = std::enable_if_t<arma::is_Row<armaT>::value, int>;
+template <typename armaT, typename baseT = get_baseT<armaT>>
+using iff_Row = std::enable_if_t<arma::is_Row<baseT>::value, int>;
 
-template <typename armaT>
-using iff_Col = std::enable_if_t<arma::is_Col<armaT>::value, int>;
+template <typename armaT, typename baseT = get_baseT<armaT>>
+using iff_Col = std::enable_if_t<arma::is_Col<baseT>::value, int>;
 
-template <typename armaT>
-using iff_Vec = std::enable_if_t<arma::is_Col<armaT>::value || arma::is_Row<armaT>::value, int>;
+template <typename armaT, typename baseT = get_baseT<armaT>>
+using iff_Vec = std::enable_if_t<arma::is_Col<baseT>::value || arma::is_Row<baseT>::value, int>;
 
-template <typename armaT>
-using iff_Mat = std::enable_if_t<arma::is_Mat_only<armaT>::value, int>;
+template <typename armaT, typename baseT = get_baseT<armaT>>
+using iff_Mat = std::enable_if_t<arma::is_Mat_only<baseT>::value, int>;
 
-template <typename armaT>
-using iff_MatOrVec = std::enable_if_t<arma::is_Mat<armaT>::value, int>;
+template <typename armaT, typename baseT = get_baseT<armaT>>
+using iff_MatOrVec = std::enable_if_t<arma::is_Mat<baseT>::value, int>;
 
-template <typename armaT>
-using iff_Cube = std::enable_if_t<arma::is_Cube<armaT>::value, int>;
+template <typename armaT, typename baseT = get_baseT<armaT>>
+using iff_Cube = std::enable_if_t<arma::is_Cube<baseT>::value, int>;
 
-template <typename armaT>
-using iff_Arma = std::enable_if_t<arma::is_Mat<armaT>::value || arma::is_Cube<armaT>::value, int>;
+template <typename armaT, typename baseT = get_baseT<armaT>>
+using iff_Arma = std::enable_if_t<arma::is_Mat<baseT>::value || arma::is_Cube<baseT>::value, int>;
 
 template <typename armaT>
 struct is_Vec {
