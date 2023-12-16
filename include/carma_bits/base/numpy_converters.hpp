@@ -40,9 +40,9 @@ struct NumpyConverter {
             return CopyIntoConverter().get<armaT>(container);
         }
         carma_debug_print(
-            "Using CopyInConverter, array ", container.arr, " will be copied in by Arma object's constructor."
+            "Using CopyConverter, array ", container.arr, " will be copied in by Arma object's constructor."
         );
-        return CopyInConverter().get<armaT>(container);
+        return CopyConverter().get<armaT>(container);
     }
 };
 
@@ -52,7 +52,7 @@ struct DefaultNumpyConverter {
     armaT operator()(numpyT&& src) {
         return internal::NumpyConverter<armaT, CARMA_DEFAULT_MEMORY_ORDER>().template operator(
         )<decltype(src)>(std::forward<numpyT>(src));
-    };
+    }
 };
 
 }  // namespace carma::internal

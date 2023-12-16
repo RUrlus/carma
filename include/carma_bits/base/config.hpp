@@ -22,8 +22,8 @@ class carma_config_debug_message {
         std::cout << "| Carma mode: base\n|\n";
         std::cout << "| Default Numpy to Arma conversion config:\n"
                   << "| ----------------------------------------\n"
-                  << "| * l-value converter:                 " << CopyInConverter::name_ << "\n"
-                  << "| * const l-value converter:           " << CopyInConverter::name_ << "\n"
+                  << "| * l-value converter:                 " << CopyConverter::name_ << "\n"
+                  << "| * const l-value converter:           " << CopyConverter::name_ << "\n"
                   << "| * memory_order_policy:               " << CARMA_DEFAULT_MEMORY_ORDER::name_ << "\n";
         std::cout << "|\n|----------------------------------------------------------|\n\n";
     };

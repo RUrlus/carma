@@ -111,30 +111,15 @@ struct MoveConverter;
 //  * \brief Convert by copying the Numpy array's memory
 //  *
 //  * \details Convert the Numpy array to `armaT` by copying the
-//  *          memory in using arma. The resulting arma object
-//  *          is _not_ strict and owns the data.
-//  *
-//  *          The copy in converter requires that be
-//  *              * aligned and contiguous
-//  *              * compatible with the specified `memory_order_policy`
-//  *
-//  * \param[in]   src    the view of the numpy array
-//  * \return arma object
-//  */
-// struct CopyInConverter;
-//
-// /**
-//  * \brief Convert by copying the Numpy array's memory
-//  *
-//  * \details Convert the Numpy array to `armaT` by copying the
 //  *          memory. The resulting arma object is _not_ strict
 //  *          and owns the data.
 //  *
 //  *          The copy converter does not have any requirements
 //  *          with regard to the memory
 //  *
-//  *          if the array is not well-behaved we need to copy with Numpy
-//  *          If we copy in because of the pre-alloc size we need to free the memory again
+//  *          If the array is not well-behaved we need to copy with Numpy
+//  *          Note if we copy in because of the pre-alloc size we need to
+//  *          free the memory again
 //  *
 //  * \param[in]   src    the view of the numpy array
 //  * \return arma object
