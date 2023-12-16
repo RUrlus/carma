@@ -9,6 +9,7 @@ namespace carma::internal {
 class ArmaContainer {
     void* mem;
     py::ssize_t itemsize;
+    // aligned and writeable what numpy calls behaved
     int default_flags = py::detail::npy_api::NPY_ARRAY_ALIGNED_ | py::detail::npy_api::NPY_ARRAY_WRITEABLE_;
 
    public:
@@ -16,13 +17,14 @@ class ArmaContainer {
     arma::uword n_elem;
     int ndim = 2;
     int order_flag;
+    bool writeable = true;
     bool order_copy = false;
     bool copy_out = false;
     bool fortran_order = true;
     void* obj;
 
     template <typename armaT, typename eT = typename armaT::elem_type, iff_Arma<armaT> = 0>
-    explicit ArmaContainer(const armaT& src) {
+    explicit ArmaContainer(armaT& src) {
         if constexpr (arma::is_Row<armaT>::value) {
             shape = {1, static_cast<py::ssize_t>(src.n_elem)};
         } else if constexpr (arma::is_Col<armaT>::value) {
@@ -50,7 +52,7 @@ class ArmaContainer {
     [[nodiscard]] int flags() const { return default_flags | order_flag; }
 
     template <typename eT>
-    eT* data() const {
+    eT* data() {
         return reinterpret_cast<eT*>(mem);
     }
 
