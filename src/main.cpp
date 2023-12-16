@@ -18,7 +18,10 @@ int main() {
     py::scoped_interpreter guard{};
 
     py::module_ sys = py::module_::import("sys");
-    sys.attr("path").attr("append")("/Users/rurlus/.pyenv/versions/3.10.9/envs/CARMA/lib/python3.10/site-packages");
+
+#ifdef CARMA_ENV_PATH
+    sys.attr("path").attr("append")(CARMA_ENV_PATH);
+#endif
 
     py::module np = py::module::import("numpy");
     py::module np_rand = py::module::import("numpy.random");
