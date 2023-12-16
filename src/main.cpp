@@ -39,6 +39,11 @@ int main() {
     auto mat = carma::arr_to_mat(arr);
     auto mat2 = carma::arr_to_mat(std::move(farr));
 
+    auto matr = arma::Mat<double>(10, 10, arma::fill::randu);
+
+    auto rconv = carma::internal::DefaultArmaConverter();
+    py::array_t<double> rarr = rconv(std::move(matr));
+
     // auto mat = my_custom_converter()(std::move(arr));
     // auto mat2 = my_custom_converter()(std::move(farr));
 
