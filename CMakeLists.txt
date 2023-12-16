@@ -54,11 +54,9 @@ find_package(pybind11 REQUIRED)
 find_package(Armadillo REQUIRED)
 
 add_library(carma INTERFACE)
-add_library(carma_expansion INTERFACE)
 add_library(carma_headers INTERFACE)
 add_library(carma::carma ALIAS carma)
 add_library(carma::headers ALIAS carma_headers)
-add_library(carma::expansion ALIAS carma_expansion)
 
 target_compile_definitions(
   carma
@@ -70,6 +68,11 @@ set_target_properties(carma PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_options(carma INTERFACE -Wall -Wextra -Wunused-variable
                                        -Wunused-const-variable)
+if(CARMA_ENABLE_EXTENSION_MODE)
+  target_compile_definitions(carma INTERFACE CARMA_EXTENSION_MODE)
+endif()
+
+
 if(CARMA_ENABLE_EXTRA_DEBUG)
   target_compile_definitions(carma INTERFACE CARMA_EXTRA_DEBUG=true
                                              CARMA_DEBUG=true)
@@ -85,8 +88,15 @@ target_include_directories(
 target_link_libraries(carma INTERFACE ${ARMADILLO_LIBRARIES} pybind11::pybind11
                                       Python3::NumPy Python3::Module)
 
+add_library(carma_extension INTERFACE)
+target_link_libraries(carma_extension INTERFACE carma)
+target_compile_definitions(carma_extension INTERFACE CARMA_EXTENSION_MODE)
+add_library(carma::extension ALIAS carma_extension)
+
+
 add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
-target_link_libraries(main carma pybind11::embed)
+# target_link_libraries(main carma::extension pybind11::embed)
+target_link_libraries(main carma::carma pybind11::embed)
 
 install(TARGETS main DESTINATION "${PROJECT_SOURCE_DIR}/bin")
