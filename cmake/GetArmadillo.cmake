@@ -1,6 +1,6 @@
 include(FetchContent)
 
-SET(DEFAULT_ARMA_VERSION 12.6.x)
+SET(DEFAULT_ARMA_VERSION 12.8.x)
 IF (NOT USE_ARMA_VERSION)
     MESSAGE(STATUS "carma: Setting Armadillo version to 'v${DEFAULT_ARMA_VERSION}' as none was specified.")
     SET(USE_ARMA_VERSION "${DEFAULT_ARMA_VERSION}" CACHE STRING "Choose the version of Armadillo." FORCE)
