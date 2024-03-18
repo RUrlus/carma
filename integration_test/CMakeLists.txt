@@ -11,7 +11,7 @@ SET(MODNAME "integration_test_carma")
 # -- EXTERNAL
 INCLUDE(FetchContent)
 
-SET(USE_PYBIND11_VERSION "v2.6.2")
+SET(USE_PYBIND11_VERSION v2.11.1)
 
 # Pybind11
 FetchContent_Declare(
@@ -25,14 +25,14 @@ FetchContent_GetProperties(Pybind11Repo)
 
 STRING(TOLOWER "Pybind11Repo" lcName)
 IF (NOT ${lcName}_POPULATED)
-  MESSAGE(STATUS "carma: collecting Pybind11 ${USE_PYBIND11_VERSION}")
-  # Fetch the content using previously declared details
-  FetchContent_Populate(Pybind11Repo)
+    MESSAGE(STATUS "carma: collecting Pybind11 ${USE_PYBIND11_VERSION}")
+    # Fetch the content using previously declared details
+    FetchContent_Populate(Pybind11Repo)
 ENDIF ()
 
 ADD_SUBDIRECTORY(extern/pybind11)
 
-SET(USE_ARMA_VERSION 10.6.x)
+SET(USE_ARMA_VERSION 12.8.x)
 FetchContent_Declare(
   CarmaArmadillo
   GIT_REPOSITORY https://gitlab.com/conradsnicta/armadillo-code.git
