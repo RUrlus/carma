@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0] - 2024-03-27
+
+### Changes
+
+* Update default Armadillo version to 12.8.x
+* Update default Pybind11 version 2.11.1
+
 ## [0.6.6] - 2022-05-22
 
 ### Changes

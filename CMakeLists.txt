@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(CARMA_VERSION_MAJOR 0)
-set(CARMA_VERSION_MINOR 6)
-set(CARMA_VERSION_PATCH 7)
+set(CARMA_VERSION_MINOR 7)
+set(CARMA_VERSION_PATCH 0)
 set(CARMA_VERSION_INFO
     "${CARMA_VERSION_MAJOR}.${CARMA_VERSION_MINOR}.${CARMA_VERSION_PATCH}")
 
@@ -14,9 +14,9 @@ include(GNUInstallDirs)
 
 set(CMAKE_MODULE_PATH_SAVED ${CMAKE_MODULE_PATH})
 list(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")
-# ##############################################################################
+# # #############################################################################
 # SETTINGS                                   #
-# ##############################################################################
+# # #############################################################################
 option(CARMA_INSTALL_LIB "Install CARMA headers" OFF)
 set(CARMA_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/carma")
 
@@ -43,9 +43,9 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/include/carma_bits/config.h.in
   ${PROJECT_BINARY_DIR}/include/carma_bits/generated_config.h @ONLY)
 
-# ##############################################################################
+# # #############################################################################
 # TARGET                                     #
-# ##############################################################################
+# # #############################################################################
 add_library(carma INTERFACE)
 add_library(carma::carma ALIAS carma)
 
@@ -151,9 +151,9 @@ if(CARMA_INSTALL_LIB)
           DESTINATION ${CARMA_INCLUDE_INSTALL_DIR}/carma_bits)
 
 else()
-  # ############################################################################
+  # # ###########################################################################
   # REQUIREMENTS                                  #
-  # ############################################################################
+  # # ###########################################################################
   find_package(
     Python3
     COMPONENTS Development NumPy
@@ -176,9 +176,9 @@ else()
   target_precompile_headers(carma INTERFACE
                             ${PROJECT_SOURCE_DIR}/include/carma_bits/cnalloc.h)
 endif()
-# ##############################################################################
+# # #############################################################################
 # TEST TARGETS                                    #
-# ##############################################################################
+# # #############################################################################
 
 if(CARMA_BUILD_TESTS OR CARMA_BUILD_EXAMPLES)
   set(CMAKE_CXX_STANDARD 14)
