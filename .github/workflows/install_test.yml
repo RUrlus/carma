@@ -117,7 +117,8 @@ jobs:
           python -m pip install numpy pytest
           
       - name: Install CARMA
-        if: runner.os == 'Linux'
+        # install with sudo
+        if: runner.os == 'Linux' || matrix.config.os == 'macos-latest'
         run: |
           mkdir build
           cd build
@@ -136,7 +137,7 @@ jobs:
           sudo cmake --build . --config Release --target install
 
       - name: Install CARMA
-        if: runner.os != 'Linux'
+        if: startsWith(matrix.config.os, 'windows')
         run: |
           mkdir build
           cd build
