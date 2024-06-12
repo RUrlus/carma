@@ -58,7 +58,7 @@ struct npy_api {
         API_PyArray_Free = 165,
         API_PyArray_Size = 59,
         API_PyArray_NewCopy = 85,
-        API_PyArray_CopyInto = 82,
+        API_PyArray_CopyInto = 50,
         API_PyArray_NewLikeArray = 277,
         API_PyArray_NewFromDescr = 94,
         API_PyDataMem_NEW = 288,
@@ -66,13 +66,13 @@ struct npy_api {
     };
 
     static npy_api lookup() {
-        py::module m = py::module::import("numpy.core.multiarray");
+        pybind11::module_ m = pybind11::detail::import_numpy_core_submodule("multiarray");
         auto c = m.attr("_ARRAY_API");
-#if PY_MAJOR_VERSION >= 3
-        void **api_ptr = reinterpret_cast<void **>(PyCapsule_GetPointer(c.ptr(), nullptr));
-#else
-        void **api_ptr = reinterpret_cast<void **>(PyCObject_AsVoidPtr(c.ptr()));
-#endif
+        void** api_ptr = (void**)PyCapsule_GetPointer(c.ptr(), nullptr);
+        if (api_ptr == nullptr) {
+            pybind11::raise_from(PyExc_SystemError, "FAILURE obtaining numpy _ARRAY_API pointer.");
+            throw pybind11::error_already_set();
+        }
         npy_api api;
 #define DECL_NPY_API(Func) api.Func##_ = (decltype(api.Func##_)) api_ptr[API_##Func];
         DECL_NPY_API(PyArray_Free);
