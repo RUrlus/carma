@@ -1,12 +1,12 @@
 include(FetchContent)
 
-SET(DEFAULT_PYBIND11_VERSION v2.11.1)
+SET(DEFAULT_PYBIND11_VERSION v2.12.0)
 IF (NOT USE_PYBIND11_VERSION)
   MESSAGE(STATUS "carma: Setting Pybind11 version to '${DEFAULT_PYBIND11_VERSION}' as none was specified.")
   SET(USE_PYBIND11_VERSION "${DEFAULT_PYBIND11_VERSION}" CACHE STRING "Choose the version of Pybind11." FORCE)
   # Set the possible values of build type for cmake-gui
   SET_PROPERTY(CACHE USE_PYBIND11_VERSION PROPERTY STRINGS
-    "v2.6.2" "v2.7.1" "v2.8.1" "v2.9.0" "v2.9.1" "v2.9.2" "v2.10.4" "v2.11.1"
+    "v2.12.0"
 )
 ENDIF ()
 

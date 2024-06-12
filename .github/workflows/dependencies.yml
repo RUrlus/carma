@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         armadillo: ["10.8.x", "11.4.x", "12.4.x", "12.6.x", "12.8.x"]
-        pybind: ["v2.10.4", "v2.11.1"]
+        pybind: ["v2.12.0"]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it

@@ -11,7 +11,7 @@ SET(MODNAME "integration_test_carma")
 # -- EXTERNAL
 INCLUDE(FetchContent)
 
-SET(USE_PYBIND11_VERSION v2.11.1)
+SET(USE_PYBIND11_VERSION v2.12.0)
 
 # Pybind11
 FetchContent_Declare(
