@@ -32,7 +32,7 @@ ENDIF ()
 
 ADD_SUBDIRECTORY(extern/pybind11)
 
-SET(USE_ARMA_VERSION 12.8.x)
+SET(USE_ARMA_VERSION 14.4.x)
 FetchContent_Declare(
   CarmaArmadillo
   GIT_REPOSITORY https://gitlab.com/conradsnicta/armadillo-code.git
