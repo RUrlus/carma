@@ -69,11 +69,11 @@ jobs:
             target: "all"
           }
         - {
-            name: "Ubuntu (GCC-11)",
+            name: "Ubuntu (GCC)",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "gcc-11",
-            cxx: "g++-11",
+            cc: "gcc",
+            cxx: "g++",
             generators: "Ninja",
             target: "all"
           }
