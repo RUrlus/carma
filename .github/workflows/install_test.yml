@@ -48,11 +48,11 @@ jobs:
             target: "ALL_BUILD"
           }
         - {
-            name: "Ubuntu (Clang-14)",
+            name: "Ubuntu (Clang)",
             os: ubuntu-latest,
             build_type: "Release",
-            cc: "clang-14",
-            cxx: "clang++-14",
+            cc: "clang",
+            cxx: "clang++",
             generators: "Ninja",
             target: "all"
           }
