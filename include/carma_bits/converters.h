@@ -748,16 +748,27 @@ struct type_caster<armaT, enable_if_t<carma::is_convertible<armaT>::value>> {
         if (!buffer) {
             throw carma::ConversionError("CARMA: Input cannot be interpreted as array.");
         }
-        // borrow the array
+        // ``tmp`` is an aux-memory cube/mat with mem_state=2 and
+        // n_alloc=0, pointing at the numpy buffer.
         armaT tmp = carma::to_arma<armaT>::from(buffer, false);
-        // meet conditions that allow armadillo to steal the matrix
-        arma::access::rw(tmp.n_alloc) = tmp.n_elem;
-        arma::access::rw(tmp.mem_state) = 0;
-        // move the created matrix into the empty but instantiated default
+        // Move into ``value``. Modern Armadillo's steal_mem handles
+        // view-mode sources on move-assignment via the
+        // ``is_move && (x.mem_state == 2)`` clause (see
+        // ``Cube_meat.hpp::steal_mem`` line ~5217 and
+        // ``Mat_meat.hpp::steal_mem`` for the matrix equivalent), so
+        // the destination gets the numpy pointer with mem_state=2 and
+        // n_alloc=0 — no free on destruction. The previous mem_state
+        // patching (``n_alloc = n_elem; mem_state = 0;`` before the
+        // move, then patching back to ``mem_state = 2`` after) is
+        // unsafe for small inputs (n_elem <= Cube_prealloc::mem_n_elem
+        // = 64 for cubes, Mat_prealloc::mem_n_elem = 16 for matrices)
+        // because ``steal_mem`` then routes through the
+        // copy-then-reset-source path which calls
+        // ``release(x.mem)`` on the borrowed numpy buffer — a
+        // use-after-free that ASan catches immediately and that
+        // surfaces as ``malloc(): unaligned tcache chunk`` /
+        // ``free(): double free`` in release builds.
         value = std::move(tmp);
-        // reset settings such that the array is in a borrow state
-        arma::access::rw(value.n_alloc) = 0;
-        arma::access::rw(value.mem_state) = 2;
         return true;
     }
 
