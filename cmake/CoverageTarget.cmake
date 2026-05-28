@@ -8,7 +8,6 @@ IF (ENABLE_COVERAGE)
     ENDIF ()
 
     SET(LCOV_EXCLUDE_PATTERN
-        "'${PROJECT_SOURCE_DIR}/third_party/*'"
         "'${PROJECT_SOURCE_DIR}/extern/*'"
         "'${PROJECT_SOURCE_DIR}/tests/src/bindings.cpp'"
     )
