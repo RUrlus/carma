@@ -12,7 +12,7 @@ ENDIF ()
 
 FetchContent_Declare(
   CarmaArmadillo
-  GIT_REPOSITORY https://gitlab.com/conradsnicta/armadillo-code.git
+  GIT_REPOSITORY https://gitlab.com/armadillo-lib/armadillo-code.git
   GIT_TAG        ${USE_ARMA_VERSION}
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/extern/armadillo-code
 )
